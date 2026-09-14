@@ -15,6 +15,8 @@ import { getCourses } from "@/lib/data/courses";
 import { getFaqItems } from "@/lib/data/faq";
 import { getSiteSettings } from "@/lib/data/settings";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const [heroCategories, featuredProjects, games, courses, faq, settings] = await Promise.all([
     getHeroCategories(),
