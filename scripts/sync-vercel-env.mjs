@@ -76,7 +76,11 @@ function addEnv(key, value, environment) {
     "--value",
     value,
   ];
-  if (isSensitiveKey(key)) args.push("--sensitive");
+  if (key.startsWith("NEXT_PUBLIC_")) {
+    args.push("--type", "config");
+  } else if (isSensitiveKey(key)) {
+    args.push("--sensitive");
+  }
 
   const result = runVercel(args);
   if (result.status !== 0) {
