@@ -77,7 +77,7 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
 
       <HeroMetadata active={homeReady} peek={homePeek && !homeReady} />
 
-      <div className="hero-composition relative z-10 flex min-h-[100dvh] flex-col px-[var(--gutter)] pb-16 pt-20 sm:pt-24 md:pb-20 md:pt-28">
+      <div className="hero-composition relative z-10 flex min-h-[100dvh] flex-col px-[var(--gutter)] pb-8 sm:pb-12 md:pb-20 lg:pb-16">
         {/* Eyebrow */}
         <motion.p
           data-reveal=""
@@ -90,14 +90,14 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
                 : { opacity: 0, y: 8, letterSpacing: "0.08em" }
           }
           transition={{ duration: 0.65, delay: 0.18, ease: EASE_EDITORIAL }}
-          className="mb-3 text-center text-xs font-medium uppercase tracking-[0.2em] text-foreground/60 sm:mb-5 sm:text-sm"
+          className="mb-2 text-center text-[0.65rem] font-medium uppercase tracking-[0.18em] text-foreground/55 sm:mb-5 sm:text-sm sm:tracking-[0.2em]"
         >
           Computação Gráfica · Design de Games
         </motion.p>
 
         {/* Wordmark — single line, dominant */}
         <motion.div
-          className="-translate-y-3 flex flex-col items-center overflow-visible text-center sm:-translate-y-4 md:-translate-y-6"
+          className="flex flex-col items-center overflow-visible text-center sm:-translate-y-4 md:-translate-y-6"
           style={{ y: titleY, x: titlePointerX }}
         >
           <motion.h1
@@ -115,8 +115,8 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
 
         {/* Stage: robot + scattered tiles — layout original */}
         <div
-          className="relative mx-auto -mt-[6vw] flex w-full max-w-[1400px] flex-1 items-center justify-center sm:-mt-[7vw] lg:-mt-[8vw]"
-          style={{ minHeight: "clamp(320px, 42vw, 620px)" }}
+          className="relative mx-auto -mt-2 flex w-full max-w-[1400px] items-center justify-center sm:-mt-[7vw] lg:-mt-[8vw] lg:flex-1"
+          style={{ minHeight: "clamp(200px, 38vw, 620px)" }}
         >
           <div className="pointer-events-none absolute inset-0 hidden -translate-y-[clamp(1.5rem,5vh,3.5rem)] lg:block" aria-hidden={false}>
             {categories.map((category) => (
@@ -138,9 +138,8 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
           {/* Robot — central hero piece */}
           <motion.div
             data-reveal=""
-            className="relative z-20 shrink-0 -mt-[clamp(3rem,9vh,6rem)]"
+            className="hero-robot-stage relative z-20 mx-auto shrink-0"
             style={{
-              width: "clamp(220px, 29vw, 500px)",
               y: robotScrollY,
               x: robotPointerX,
               transformPerspective: 900,
@@ -171,29 +170,32 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
           </motion.div>
         </div>
 
-        {/* Mobile copy */}
-        <motion.div
-          data-reveal=""
-          initial={{ opacity: 0, y: 12 }}
-          animate={homeReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-          transition={{ duration: DUR.editorial, delay: STAGGER * 6, ease: EASE_EDITORIAL }}
-          className="relative z-20 mx-auto mt-6 max-w-md text-center lg:hidden"
-        >
-          <HeroHeadline className="font-display text-xl font-black uppercase leading-[0.95] tracking-tight text-foreground" />
-          <p className="-translate-y-0.5 mt-3 max-w-sm text-sm leading-relaxed text-muted">{HERO_COPY}</p>
-          <HeroCta active={homeReady} className="mt-3 -translate-y-2 flex justify-center" />
-        </motion.div>
+        {/* Mobile copy + carousel — stacked below robot */}
+        <div className="relative z-20 mt-4 flex flex-col gap-5 sm:mt-6 lg:hidden">
+          <motion.div
+            data-reveal=""
+            initial={{ opacity: 0, y: 12 }}
+            animate={homeReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+            transition={{ duration: DUR.editorial, delay: STAGGER * 6, ease: EASE_EDITORIAL }}
+            className="mx-auto max-w-md text-center"
+          >
+            <HeroHeadline className="font-display text-[clamp(1.35rem,5.5vw,1.75rem)] font-black uppercase leading-[0.92] tracking-tight text-foreground" />
+            <p className="mt-2.5 text-pretty text-[0.8125rem] leading-relaxed text-muted">{HERO_COPY}</p>
+            <HeroCta active={homeReady} className="mt-4 flex justify-center" />
+          </motion.div>
+
+          <HeroCategoryCarousel
+            categories={categories}
+            active={homeReady}
+            peek={homePeek && !homeReady}
+            hoveredId={hoveredId}
+            onHover={setHoveredId}
+            embedded
+          />
+        </div>
       </div>
 
       <HeroSidebar active={homeReady} peek={homePeek && !homeReady} />
-
-      <HeroCategoryCarousel
-        categories={categories}
-        active={homeReady}
-        peek={homePeek && !homeReady}
-        hoveredId={hoveredId}
-        onHover={setHoveredId}
-      />
     </section>
   );
 }

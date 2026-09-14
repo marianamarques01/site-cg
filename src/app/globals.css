@@ -45,6 +45,8 @@
   --gutter: clamp(1.25rem, 4vw, 4.5rem);
   --section-y: clamp(3.25rem, 7vw, 5.5rem);
   --header-h: clamp(3.75rem, 5vw, 4.5rem);
+  --header-offset: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+  --hero-offset: calc(var(--header-offset) + 2.5rem);
   /* minimal (default) */
   --color-depth: #0e0e0e;
   --hero-mark-opacity: 0.04;
@@ -435,6 +437,65 @@ body {
 
 .hero-composition {
   isolation: isolate;
+  padding-top: var(--hero-offset);
+}
+
+/* Mobile hero — tighter rhythm, larger robot, safe-area aware */
+.hero-robot-stage {
+  width: clamp(240px, 64vw, 340px);
+}
+
+@media (min-width: 640px) {
+  .hero-robot-stage {
+    width: clamp(260px, 42vw, 420px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-robot-stage {
+    width: clamp(280px, 29vw, 500px);
+    margin-top: calc(-1 * clamp(3rem, 9vh, 6rem));
+  }
+}
+
+html {
+  scroll-padding-top: var(--header-offset);
+}
+
+@media (max-width: 639px) {
+  :root {
+    --gutter: clamp(1rem, 4.5vw, 1.25rem);
+    --header-h: 3.5rem;
+    --hero-offset: calc(var(--header-offset) + 2.75rem);
+  }
+
+  .hero-wordmark-text {
+    font-size: clamp(2.65rem, 10.2vw, 3.75rem);
+    letter-spacing: -0.028em;
+    --wordmark-stroke-w: 1px;
+  }
+
+  .hero-editorial {
+    min-height: auto;
+  }
+
+  .hero-composition {
+    min-height: 100dvh;
+    min-height: 100svh;
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --hero-offset: calc(var(--header-offset) + 2.75rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --hero-floor: clamp(2.5rem, 7vh, 5.5rem);
+    --hero-floor-meta: clamp(3.5rem, 9vh, 6.5rem);
+  }
 }
 
 .hero-project-frame {

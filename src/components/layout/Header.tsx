@@ -84,7 +84,7 @@ export default function Header() {
       animate={{ y: hidden && !reduceMotion ? "-100%" : "0%" }}
       transition={{ duration: DUR.mechSlow, ease: EASE_MECH }}
       className={clsx(
-        "site-header fixed inset-x-0 top-0 z-50 transition-[background-color,border-color] duration-500",
+        "site-header fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top,0px)] transition-[background-color,border-color] duration-500",
         scrolled
           ? "border-b border-foreground/[0.06] bg-void/75 backdrop-blur-sm"
           : "border-b border-foreground/[0.04] bg-transparent",
@@ -143,15 +143,16 @@ export default function Header() {
           })}
         </nav>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           <a
             href={FUMEC_SITE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 border border-foreground/15 px-2.5 py-1.5 text-[0.58rem] font-medium uppercase tracking-[0.16em] text-muted transition-colors hover:border-magenta/50 hover:text-foreground sm:px-3"
+            className="inline-flex items-center gap-1.5 border border-foreground/15 px-2 py-1.5 text-[0.58rem] font-medium uppercase tracking-[0.16em] text-muted transition-colors hover:border-magenta/50 hover:text-foreground max-[380px]:px-2 sm:px-3"
+            aria-label="Visitar site FUMEC.br"
           >
-            FUMEC.br
-            <span aria-hidden="true" className="text-magenta">
+            <span className="max-[380px]:sr-only">FUMEC.br</span>
+            <span aria-hidden="true" className="text-magenta max-[380px]:text-sm">
               ↗
             </span>
           </a>
@@ -287,7 +288,7 @@ export default function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: DUR.mechSlow, ease: EASE_MECH }}
-            className="fixed inset-x-0 top-[var(--header-h)] z-40 hidden border-b border-border bg-void/95 px-[var(--gutter)] py-8 backdrop-blur-md md:block"
+            className="fixed inset-x-0 top-[var(--header-offset)] z-40 hidden border-b border-border bg-void/95 px-[var(--gutter)] py-8 backdrop-blur-md md:block"
           >
             <nav
               className="mx-auto grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-3"

@@ -58,6 +58,9 @@ export default function CineclubeSection() {
     >
       <FilmStrip tone={M.ink} />
 
+      {/* Furos na borda superior da área roxa */}
+      <FilmEdge side="top" className="absolute inset-x-0 top-9 z-[1] h-3.5" />
+
       <div
         aria-hidden="true"
         className="texture-grain pointer-events-none absolute -inset-[50%] h-[200%] w-[200%] animate-grain opacity-[0.09] mix-blend-overlay"
@@ -138,29 +141,40 @@ export default function CineclubeSection() {
           >
             <div
               ref={mascotRef}
-              className="relative w-full"
+              className="relative w-full px-4"
               onPointerMove={reduceMotion ? undefined : handleMascotMove}
               onPointerLeave={reduceMotion ? undefined : handleMascotLeave}
             >
-              <motion.div
-                animate={reduceMotion ? undefined : { y: [0, -18, 0], rotate: [-2, 2, -2] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                className="relative aspect-[579/630] w-full"
+              <div
+                className="relative overflow-hidden border-2 px-3 pb-6 pt-8 sm:px-4 sm:pb-8 sm:pt-10"
+                style={{
+                  borderColor: M.peach,
+                  background: `linear-gradient(165deg, ${M.ink}88 0%, ${M.purple}44 50%, transparent 100%)`,
+                }}
               >
+                <FilmEdge side="top" className="inset-x-0 h-3.5" />
+                <FilmEdge side="bottom" className="inset-x-0 h-3.5" />
+
                 <motion.div
-                  className="relative h-full w-full"
-                  style={reduceMotion ? undefined : { x: moonX, y: moonY }}
+                  animate={reduceMotion ? undefined : { y: [0, -18, 0], rotate: [-2, 2, -2] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  className="relative mx-auto aspect-[579/630] w-full max-w-[22rem]"
                 >
-                  <Image
-                    src="/cineclube/brand/mascot.png"
-                    alt="Mascote do Cineclube Méliès — lua de cartola"
-                    fill
-                    className="object-contain drop-shadow-[0_20px_50px_rgba(33,23,53,0.55)]"
-                    sizes="(max-width: 1024px) 70vw, 420px"
-                    priority={false}
-                  />
+                  <motion.div
+                    className="relative h-full w-full"
+                    style={reduceMotion ? undefined : { x: moonX, y: moonY }}
+                  >
+                    <Image
+                      src="/cineclube/brand/mascot.png"
+                      alt="Mascote do Cineclube Méliès — lua de cartola"
+                      fill
+                      className="object-contain drop-shadow-[0_20px_50px_rgba(33,23,53,0.55)]"
+                      sizes="(max-width: 1024px) 70vw, 420px"
+                      priority={false}
+                    />
+                  </motion.div>
                 </motion.div>
-              </motion.div>
+              </div>
             </div>
           </RevealPass>
         </div>
@@ -168,6 +182,35 @@ export default function CineclubeSection() {
 
       <FilmStrip tone={M.ink} flip />
     </section>
+  );
+}
+
+/** Furos de película nas bordas — laterais ou superiores/inferiores. */
+function FilmEdge({
+  side,
+  className = "",
+}: {
+  side: "left" | "right" | "top" | "bottom";
+  className?: string;
+}) {
+  const position = {
+    left: "left-0",
+    right: "right-0",
+    top: "top-0",
+    bottom: "bottom-0",
+  }[side];
+
+  return (
+    <div
+      aria-hidden="true"
+      className={`absolute ${position} ${className}`}
+      style={{
+        backgroundImage: `radial-gradient(${M.ink} 38%, transparent 44%)`,
+        backgroundSize: "10px 10px",
+        backgroundPosition: "center",
+        opacity: 0.5,
+      }}
+    />
   );
 }
 

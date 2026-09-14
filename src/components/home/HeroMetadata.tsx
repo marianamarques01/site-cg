@@ -29,7 +29,7 @@ export default function HeroMetadata({ active, peek }: HeroMetadataProps) {
     <>
       <motion.aside
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-[calc(clamp(5rem,12vh,8rem)+0.5rem)] right-[var(--gutter)] z-20 hidden lg:block"
+        className="pointer-events-none absolute bottom-[calc(var(--hero-floor)+0.5rem)] right-[var(--gutter)] z-20 hidden lg:block"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: fade, y: active ? 0 : 10 }}
         transition={{ duration: DUR.editorial, delay: STAGGER * 8, ease: EASE_EDITORIAL }}
@@ -58,7 +58,7 @@ export default function HeroMetadata({ active, peek }: HeroMetadataProps) {
       </motion.aside>
 
       <motion.footer
-        className="pointer-events-none absolute bottom-[clamp(6rem,15vh,9.5rem)] left-0 right-0 z-20 hidden flex-col items-center gap-1 lg:flex"
+        className="pointer-events-none absolute bottom-[var(--hero-floor-meta)] left-0 right-0 z-20 hidden flex-col items-center gap-1 lg:flex"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: fade, y: active ? 0 : 10 }}
         transition={{ duration: DUR.editorial, delay: STAGGER * 10, ease: EASE_EDITORIAL }}

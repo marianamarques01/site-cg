@@ -13,6 +13,8 @@ type HeroCategoryCarouselProps = {
   peek?: boolean;
   hoveredId: string | null;
   onHover: (id: string | null) => void;
+  /** When true, sits in the hero composition flow (no absolute offsets). */
+  embedded?: boolean;
 };
 
 export default function HeroCategoryCarousel({
@@ -21,6 +23,7 @@ export default function HeroCategoryCarousel({
   peek,
   hoveredId,
   onHover,
+  embedded = false,
 }: HeroCategoryCarouselProps) {
   return (
     <motion.div
@@ -30,10 +33,15 @@ export default function HeroCategoryCarousel({
         active ? { opacity: 1, y: 0 } : peek ? { opacity: 0.16, y: 10 } : { opacity: 0, y: 16 }
       }
       transition={{ duration: DUR.editorial, delay: STAGGER * 5, ease: EASE_EDITORIAL }}
-      className="relative z-20 -mx-[var(--gutter)] mt-2 w-[calc(100%+2*var(--gutter))] -translate-y-[clamp(1rem,4vh,2.5rem)] lg:hidden"
+      className={clsx(
+        "relative z-20 lg:hidden",
+        embedded
+          ? "-mx-[var(--gutter)] w-[calc(100%+2*var(--gutter))]"
+          : "-mx-[var(--gutter)] mt-2 w-[calc(100%+2*var(--gutter))] -translate-y-[clamp(1rem,4vh,2.5rem)]",
+      )}
     >
       <div
-        className="flex gap-4 overflow-x-auto px-[var(--gutter)] pb-2 snap-x snap-mandatory scrollbar-none"
+        className="flex gap-3 overflow-x-auto px-[var(--gutter)] pb-1 snap-x snap-mandatory scrollbar-none sm:gap-4"
         aria-label="Categorias de produção"
       >
         {categories.map((category) => {
@@ -45,12 +53,12 @@ export default function HeroCategoryCarousel({
               href={category.href}
               transitionTypes={["nav-forward"]}
               data-cursor-label="ver"
-              className="hero-project w-[min(72vw,240px)] shrink-0 snap-center transition-transform duration-500 active:scale-[0.98]"
+              className="hero-project w-[min(68vw,220px)] shrink-0 snap-center transition-transform duration-500 active:scale-[0.98] sm:w-[min(72vw,240px)]"
               onPointerEnter={() => onHover(category.id)}
               onPointerLeave={() => onHover(null)}
             >
               <motion.div
-                className={clsx("hero-project-frame relative overflow-hidden aspect-[4/5] w-full")}
+                className={clsx("hero-project-frame relative aspect-[4/5] w-full overflow-hidden")}
                 animate={{ scale: isHovered ? 1.03 : 1 }}
                 transition={{ duration: DUR.mech, ease: EASE_EDITORIAL }}
               >
@@ -60,7 +68,7 @@ export default function HeroCategoryCarousel({
                     alt={category.label}
                     fill
                     className="object-cover"
-                    sizes="72vw"
+                    sizes="68vw"
                   />
                 )}
                 <span className="hero-project-index">{category.id}</span>
@@ -72,7 +80,7 @@ export default function HeroCategoryCarousel({
           );
         })}
       </div>
-      <p className="mt-3 px-[var(--gutter)] text-center text-[0.65rem] uppercase tracking-[0.18em] text-foreground/40">
+      <p className="mt-2 px-[var(--gutter)] text-center text-[0.6rem] uppercase tracking-[0.16em] text-foreground/35 sm:mt-3 sm:text-[0.65rem] sm:tracking-[0.18em]">
         Deslize para explorar
       </p>
     </motion.div>

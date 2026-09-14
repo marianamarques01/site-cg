@@ -18,7 +18,7 @@ const HERO_CTA = "Ver produções";
 
 export default function HeroSidebar({ active, peek }: HeroSidebarProps) {
   return (
-    <aside className="hero-copy absolute bottom-[clamp(5rem,12vh,8rem)] left-[var(--gutter)] z-20 hidden max-w-[min(22rem,42vw)] lg:block">
+    <aside className="hero-copy absolute bottom-[var(--hero-floor)] left-[var(--gutter)] z-20 hidden max-w-[min(22rem,42vw)] lg:block">
       <motion.div
         data-reveal=""
         initial={{ opacity: 0, y: 16, clipPath: "inset(0% 0% 100% 0%)" }}
