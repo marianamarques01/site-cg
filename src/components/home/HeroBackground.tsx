@@ -18,6 +18,8 @@ type HeroBackgroundProps = {
   ready?: boolean;
   /** Splash-only: image + tint, no fireflies/lines/texture — halves compositor work. */
   minimal?: boolean;
+  /** Splash-only: skip mount fade — SplashScreen drives visibility. */
+  static?: boolean;
 };
 
 export default function HeroBackground({
@@ -25,6 +27,7 @@ export default function HeroBackground({
   pointerY,
   ready = true,
   minimal = false,
+  static: isStatic = false,
 }: HeroBackgroundProps) {
   const reduceMotion = useReducedMotion();
   const fallbackX = useMotionValue(0);
@@ -39,9 +42,9 @@ export default function HeroBackground({
     <div className="hero-scene" aria-hidden="true">
       <motion.div
         className="hero-scene-base absolute inset-0"
-        initial={{ opacity: 0, scale: 1.04 }}
-        animate={{ opacity: ready ? 1 : 0.4, scale: 1 }}
-        transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: isStatic ? 1 : 0, scale: isStatic ? 1 : 1.04 }}
+        animate={{ opacity: ready || isStatic ? 1 : 0.4, scale: 1 }}
+        transition={{ duration: isStatic ? 0 : 1.1, ease: [0.16, 1, 0.3, 1] }}
         style={{ x: bgX, y: bgY }}
       >
         <Image

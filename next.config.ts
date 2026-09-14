@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
   basePath: basePath || undefined,
   assetPrefix: basePath ? `${basePath}/` : undefined,
   trailingSlash: isGitHubPages ? true : undefined,
+  async redirects() {
+    return [
+      { source: "/jogos", destination: "/producoes#jogos", permanent: true },
+      { source: "/jogos/:slug", destination: "/producoes/:slug", permanent: true },
+    ];
+  },
   images: {
     unoptimized: isGitHubPages,
     remotePatterns: [

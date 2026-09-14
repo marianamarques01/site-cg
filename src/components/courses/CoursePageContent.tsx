@@ -39,7 +39,7 @@ export default function CoursePageContent({
   const accent = COURSE_TONE[slug];
   const isGames = slug === "design-de-games";
   const showcase = isGames ? showcaseGames.slice(0, 3) : showcaseProjects.slice(0, 3);
-  const showcaseHref = isGames ? "/jogos" : "/producoes";
+  const showcaseHref = isGames ? "/producoes#jogos" : "/producoes";
   const showcaseLabel = isGames ? "Ver todos os jogos" : "Ver todas as produções";
 
   return (
@@ -116,9 +116,7 @@ export default function CoursePageContent({
 
           <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
             {showcase.map((item, i) => {
-              const href = isGames
-                ? `/jogos/${(item as Game).slug}`
-                : `/producoes/${(item as Project).slug}`;
+              const href = `/producoes/${item.slug}`;
               const label = isGames
                 ? (item as Game).genre
                 : (item as Project).category;

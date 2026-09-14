@@ -78,7 +78,7 @@ export default function CtaSection({ titleLines, description }: CtaSectionProps)
               "Imagem ou jogo: duas formações na FUMEC, um estúdio compartilhado. Escolhe a tua e vê de perto como a turma produz."}
           </p>
           <Magnetic className="shrink-0" strength={0.4}>
-            <PrimaryButton href="#cursos" cursorLabel="explorar">
+            <PrimaryButton href="/sobre#cursos" cursorLabel="explorar">
               Conhecer os cursos
             </PrimaryButton>
           </Magnetic>

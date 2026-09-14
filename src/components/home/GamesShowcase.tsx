@@ -28,7 +28,7 @@ export default function GamesShowcase({ games }: GamesShowcaseProps) {
               kicker="Jogos dos alunos"
               titleLines={["Jogável, jogado,", "julgado em sala."]}
               description="Protótipos e jogos completos produzidos pelos alunos de Design de Games."
-              href="/jogos"
+              href="/producoes#jogos"
               linkLabel="Ver todos os jogos"
             />
           </Container>
@@ -37,7 +37,7 @@ export default function GamesShowcase({ games }: GamesShowcaseProps) {
         {games.map((game) => (
           <Link
             key={game.slug}
-            href={`/jogos/${game.slug}`}
+            href={`/producoes/${game.slug}`}
             transitionTypes={["nav-forward"]}
             className="group block w-[78vw] sm:w-[52vw] md:w-[34vw] lg:w-[28vw]"
             data-cursor-label="jogar"

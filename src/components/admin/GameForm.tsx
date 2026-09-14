@@ -151,7 +151,7 @@ export default function GameForm({ game, mediaItems, currentCoverUrl, action, de
               </a>
               {game.status === "published" ? (
                 <a
-                  href={`/jogos/${game.slug}`}
+                  href={`/producoes/${game.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-muted underline-offset-4 hover:text-brand hover:underline"

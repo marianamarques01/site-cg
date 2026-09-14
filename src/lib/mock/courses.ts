@@ -5,6 +5,11 @@ export const COURSE_TONE: Record<CourseSlug, string> = {
   "design-de-games": "var(--color-magenta)",
 };
 
+export const COURSE_OFFICIAL_URL: Record<CourseSlug, string> = {
+  "computacao-grafica": "https://processoseletivo.fumec.br/cursos/computacao-grafica/",
+  "design-de-games": "https://processoseletivo.fumec.br/cursos/design-de-games/",
+};
+
 export const courses: Course[] = [
   {
     slug: "computacao-grafica",

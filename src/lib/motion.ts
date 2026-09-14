@@ -32,6 +32,18 @@ export const DUR = {
 /** One stagger for the whole site. 60ms — never more. */
 export const STAGGER = 0.06;
 
+/** First beat after splash curtain — hero entrance cascade starts here. */
+export const HERO_HOME_ENTRANCE_DELAY = 0.08;
+
+/** Hero robot — rise from depth after splash handoff. */
+export const HERO_ROBOT_REVEAL_DUR = 0.88;
+/** Wait for splash curtain to lift before robot entrance reads on screen. */
+export const HERO_ROBOT_SPLASH_DELAY = 0.52;
+/** Hero poster tiles — wait for robot entrance before emerging. */
+export const HERO_TILE_REVEAL_DELAY = 0.78;
+/** Hero poster tiles — slow emerge from behind the robot. */
+export const HERO_TILE_REVEAL_DUR = 1.15;
+
 /** Springs live only where there's a pointer: there the overshoot is contact physics. */
 export const SPRING_POINTER = { stiffness: 150, damping: 20, mass: 0.4 } as const;
 export const SPRING_TILT = { stiffness: 220, damping: 20 } as const;

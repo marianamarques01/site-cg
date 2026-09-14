@@ -66,23 +66,14 @@ function isSensitiveKey(key) {
 }
 
 function addEnv(key, value, environment) {
-  const args = [
-    "env",
-    "add",
-    key,
-    environment,
-    "--force",
-    "--yes",
-    "--value",
-    value,
-  ];
+  const args = ["env", "add", key, environment, "--force", "--yes"];
   if (key.startsWith("NEXT_PUBLIC_")) {
     args.push("--type", "config");
   } else if (isSensitiveKey(key)) {
     args.push("--sensitive");
   }
 
-  const result = runVercel(args);
+  const result = runVercel(args, value);
   if (result.status !== 0) {
     const msg = (result.stderr || result.stdout || "").trim();
     throw new Error(`Falha ao adicionar ${key} (${environment}): ${msg}`);

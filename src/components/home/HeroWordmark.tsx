@@ -6,6 +6,8 @@ import { DUR, EASE_EDITORIAL, STAGGER } from "@/lib/motion";
 type HeroWordmarkProps = {
   active?: boolean;
   delay?: number;
+  /** Skip mask reveal — splash already landed the wordmark in place. */
+  instant?: boolean;
   /** Splash morph keeps the markup stable without mask reveal. */
   splashMode?: boolean;
   className?: string;
@@ -25,10 +27,12 @@ function CriativaLayers() {
 export default function HeroWordmark({
   active = true,
   delay = 0.28,
+  instant = false,
   splashMode = false,
   className = "",
 }: HeroWordmarkProps) {
   const reduceMotion = useReducedMotion();
+  const snap = reduceMotion || instant;
 
   const baseClass =
     "hero-wordmark-text block whitespace-nowrap font-display font-black uppercase";
@@ -61,7 +65,7 @@ export default function HeroWordmark({
             hidden: { y: reduceMotion ? "0%" : "112%" },
             visible: {
               y: "0%",
-              transition: reduceMotion
+              transition: snap
                 ? { duration: 0 }
                 : { duration: DUR.editorialSlow, delay, ease: EASE_EDITORIAL },
             },
@@ -76,7 +80,7 @@ export default function HeroWordmark({
             hidden: { y: reduceMotion ? "0%" : "112%" },
             visible: {
               y: "0%",
-              transition: reduceMotion
+              transition: snap
                 ? { duration: 0 }
                 : {
                     duration: DUR.editorialSlow,

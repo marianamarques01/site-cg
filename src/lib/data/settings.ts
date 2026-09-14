@@ -7,7 +7,7 @@ export const DEFAULT_MARQUEE_ITEMS: DbSiteSettings["marquee_items"] = [
   { label: "MODELAGEM 3D", href: "/producoes" },
   { label: "DESIGN DE GAMES", href: "/cursos/design-de-games" },
   { label: "CONCEPT ART", href: "/producoes" },
-  { label: "JOGOS", href: "/jogos" },
+  { label: "JOGOS", href: "/producoes#jogos" },
   { label: "COMPUTAÇÃO GRÁFICA", href: "/cursos/computacao-grafica" },
   { label: "ANIMAÇÃO", href: "/producoes" },
   { label: "POSTERS", href: "/producoes" },

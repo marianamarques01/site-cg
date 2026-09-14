@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Container from "@/components/ui/Container";
@@ -9,7 +8,7 @@ import MaskedLines from "@/components/ui/MaskedLines";
 import ActionLink from "@/components/ui/ActionLink";
 import SectionRule from "@/components/ui/SectionRule";
 import { DUR, EASE_EDITORIAL } from "@/lib/motion";
-import { COURSE_TONE } from "@/lib/mock/courses";
+import { COURSE_OFFICIAL_URL, COURSE_TONE } from "@/lib/mock/courses";
 import type { Course } from "@/lib/mock/types";
 
 /**
@@ -22,16 +21,20 @@ import type { Course } from "@/lib/mock/types";
  */
 type CoursesSectionProps = {
   courses: Course[];
+  compact?: boolean;
 };
 
-export default function CoursesSection({ courses }: CoursesSectionProps) {
+export default function CoursesSection({ courses, compact }: CoursesSectionProps) {
   const [hovered, setHovered] = useState<number | null>(null);
   const reduceMotion = useReducedMotion();
 
   return (
-    <section id="cursos" className="py-[var(--section-y)]">
+    <section
+      id="cursos"
+      className={compact ? "py-6 md:py-8" : "py-[var(--section-y)]"}
+    >
       <Container>
-        <RevealPass from="left" className="mb-10 md:mb-12">
+        <RevealPass from="left" className={compact ? "mb-5 md:mb-6" : "mb-10 md:mb-12"}>
           <span className="text-xs font-medium uppercase tracking-[0.2em] text-brand">
             Conheça os cursos
           </span>
@@ -50,16 +53,19 @@ export default function CoursesSection({ courses }: CoursesSectionProps) {
           />
 
           {courses.map((course, i) => (
-            <Link
+            <a
               key={course.slug}
-              href={`/cursos/${course.slug}`}
-              transitionTypes={["nav-forward"]}
-              data-cursor-label="explorar"
+              href={COURSE_OFFICIAL_URL[course.slug]}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Conhecer o curso ${course.name} no site da FUMEC`}
               onPointerEnter={() => setHovered(i)}
               onPointerLeave={() => setHovered(null)}
               onFocus={() => setHovered(i)}
               onBlur={() => setHovered(null)}
-              className="group relative flex h-full flex-col justify-between gap-10 overflow-hidden border-b border-border px-1 py-12 md:px-10 md:py-16"
+              className={`group relative flex h-full flex-col justify-between overflow-hidden border-b border-border px-1 md:px-10 ${
+                compact ? "gap-6 py-8 md:py-10" : "gap-10 py-12 md:py-16"
+              }`}
             >
               {/* Replaces the chromatic glitch that used to live here. The
                   grid drifts and the course's own colour bleeds in from the
@@ -104,7 +110,7 @@ export default function CoursesSection({ courses }: CoursesSectionProps) {
               <span className="relative">
                 <ActionLink active={hovered === i}>Conhecer o curso</ActionLink>
               </span>
-            </Link>
+            </a>
           ))}
         </div>
       </Container>

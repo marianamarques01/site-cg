@@ -21,7 +21,42 @@ import type { HeroCategory } from "@/lib/mock/categories";
 import { useIntro, useIntroAnchor } from "@/components/ui/IntroProvider";
 import { useVisualMode } from "@/components/ui/VisualModeProvider";
 import { withBasePath } from "@/lib/base-path";
-import { DUR, EASE_EDITORIAL, SPRING_POINTER, STAGGER } from "@/lib/motion";
+import {
+  DUR,
+  EASE_EDITORIAL,
+  HERO_HOME_ENTRANCE_DELAY,
+  HERO_ROBOT_REVEAL_DUR,
+  HERO_ROBOT_SPLASH_DELAY,
+  SPRING_POINTER,
+  STAGGER,
+} from "@/lib/motion";
+
+const ROBOT_STAGE = {
+  hidden: {
+    opacity: 0,
+    scale: 0.8,
+    y: 56,
+    rotateX: 16,
+    rotateY: -8,
+    filter: "blur(14px)",
+  },
+  peek: {
+    opacity: 0.2,
+    scale: 0.9,
+    y: 28,
+    rotateX: 9,
+    rotateY: -4,
+    filter: "blur(5px)",
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    rotateX: 0,
+    rotateY: 0,
+    filter: "blur(0px)",
+  },
+} as const;
 
 type HeroProps = {
   categories?: HeroCategory[];
@@ -30,9 +65,20 @@ type HeroProps = {
 export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
-  const { stage, homePeek, homeReady, splashEnabled } = useIntro();
+  const { stage, homePeek, homeReady, handoffDone, splashEnabled, introPending } =
+    useIntro();
+  const settled = !introPending && (handoffDone || !splashEnabled);
+  const robotPeek = !splashEnabled && homePeek && !settled;
+  const robotSnap = !!reduceMotion;
+  const fromSplash = splashEnabled && settled;
+  /** Robot entrance fires once splash is done — not during overlay. */
+  const robotEntrance = !splashEnabled || handoffDone;
+  const robotFull = robotEntrance && (settled || !splashEnabled);
+  const entrance = (offset: number) =>
+    reduceMotion ? 0 : fromSplash ? HERO_HOME_ENTRANCE_DELAY + offset : offset;
   const { isMinimal } = useVisualMode();
   const wordmarkAnchor = useIntroAnchor("wordmark");
+  const eyebrowAnchor = useIntroAnchor("eyebrow");
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const { scrollYProgress } = useScroll({
@@ -67,30 +113,35 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
       onPointerMove={onPointerMove}
       className="hero-editorial relative min-h-[100dvh] w-full overflow-x-clip"
     >
-      {!(splashEnabled && stage === "splash") && (
+      {!(introPending || (splashEnabled && stage === "splash")) && (
         <HeroBackground
           pointerX={px}
           pointerY={py}
-          ready={homeReady || homePeek}
+          ready={settled || homePeek}
           minimal={isMinimal}
         />
       )}
 
-      <HeroMetadata active={homeReady} peek={homePeek && !homeReady} />
+      <HeroMetadata active={settled} peek={homePeek && !settled} />
 
       <div className="hero-composition relative z-10 flex min-h-[100dvh] flex-col px-[var(--gutter)] pb-8 sm:pb-12 md:pb-20 lg:pb-16">
         {/* Eyebrow */}
         <motion.p
+          ref={eyebrowAnchor}
           data-reveal=""
           initial={{ opacity: 0, y: 8, letterSpacing: "0.08em" }}
           animate={
-            homeReady
+            settled
               ? { opacity: 1, y: 0, letterSpacing: "0.24em" }
-              : homePeek
+              : !splashEnabled && homePeek
                 ? { opacity: 0.22, y: 4, letterSpacing: "0.16em" }
                 : { opacity: 0, y: 8, letterSpacing: "0.08em" }
           }
-          transition={{ duration: 0.65, delay: 0.18, ease: EASE_EDITORIAL }}
+          transition={{
+            duration: reduceMotion ? 0 : 0.65,
+            delay: entrance(0.1),
+            ease: EASE_EDITORIAL,
+          }}
           className="mb-2 text-center text-[0.65rem] font-medium uppercase tracking-[0.18em] text-foreground/55 sm:mb-5 sm:text-sm sm:tracking-[0.2em]"
         >
           Computação Gráfica · Design de Games
@@ -107,9 +158,10 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
             style={{ y: titlePointerY }}
           >
             <HeroWordmark
-              active={homeReady}
-              splashMode={splashEnabled}
-              className={splashEnabled && !homeReady ? "!opacity-0" : undefined}
+              active={settled}
+              delay={fromSplash ? 0.18 : 0.28}
+              splashMode={splashEnabled && !handoffDone}
+              className={splashEnabled && !handoffDone ? "!opacity-0" : undefined}
             />
           </motion.h1>
         </motion.div>
@@ -138,35 +190,70 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
 
           {/* Robot — central hero piece */}
           <motion.div
-            data-reveal=""
             className="hero-robot-stage relative z-20 mx-auto shrink-0"
             style={{
               y: robotScrollY,
               x: robotPointerX,
               transformPerspective: 900,
             }}
-            initial={{ opacity: 0, scale: 0.94, filter: "blur(8px)" }}
-            animate={
-              homeReady
-                ? { opacity: 1, scale: 1, filter: "blur(0px)" }
-                : homePeek
-                  ? { opacity: 0.22, scale: 0.97, filter: "blur(3px)" }
-                  : { opacity: 0, scale: 0.94, filter: "blur(8px)" }
-            }
-            transition={{ duration: 0.52, delay: homePeek && !homeReady ? 0 : STAGGER * 3, ease: EASE_EDITORIAL }}
           >
-            <motion.div style={{ rotateY: robotRotateY, rotateX: robotRotateX, y: robotPointerY }}>
-              <div className="hero-robot-wrap relative">
-                <Image
-                  src={withBasePath("/1.png")}
-                  alt="Obra em destaque — personagem 3D produzido por aluno"
-                  width={500}
-                  height={500}
-                  className="hero-robot relative z-10 w-full"
-                  priority
-                />
-                <div className="hero-robot-glow" aria-hidden="true" />
-              </div>
+            <motion.div
+              className="origin-[50%_88%]"
+              variants={ROBOT_STAGE}
+              initial="hidden"
+              animate={
+                !robotEntrance
+                  ? "hidden"
+                  : robotFull
+                    ? "visible"
+                    : robotPeek
+                      ? "peek"
+                      : "hidden"
+              }
+              transition={
+                robotSnap
+                  ? { duration: 0 }
+                  : {
+                      duration: HERO_ROBOT_REVEAL_DUR,
+                      delay: fromSplash
+                        ? HERO_ROBOT_SPLASH_DELAY
+                        : entrance(homePeek ? 0 : STAGGER * 3),
+                      ease: EASE_EDITORIAL,
+                    }
+              }
+            >
+              <motion.div style={{ rotateY: robotRotateY, rotateX: robotRotateX, y: robotPointerY }}>
+                <div className="hero-robot-wrap relative">
+                  <motion.div
+                    className="hero-robot-glow"
+                    aria-hidden="true"
+                    initial={{ opacity: 0, scale: 0.55 }}
+                    animate={{
+                      opacity: robotFull ? 1 : 0,
+                      scale: robotFull ? 1 : 0.75,
+                    }}
+                    transition={
+                      robotSnap
+                        ? { duration: 0 }
+                        : {
+                            duration: HERO_ROBOT_REVEAL_DUR,
+                            delay: fromSplash
+                              ? HERO_ROBOT_SPLASH_DELAY + 0.14
+                              : entrance(homePeek ? 0.14 : STAGGER * 3 + 0.18),
+                            ease: EASE_EDITORIAL,
+                          }
+                    }
+                  />
+                  <Image
+                    src={withBasePath("/1.png")}
+                    alt="Obra em destaque — personagem 3D produzido por aluno"
+                    width={500}
+                    height={500}
+                    className="hero-robot relative z-10 w-full"
+                    priority
+                  />
+                </div>
+              </motion.div>
             </motion.div>
           </motion.div>
         </div>
@@ -176,27 +263,32 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
           <motion.div
             data-reveal=""
             initial={{ opacity: 0, y: 12 }}
-            animate={homeReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-            transition={{ duration: DUR.editorial, delay: STAGGER * 6, ease: EASE_EDITORIAL }}
+            animate={settled ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+            transition={{
+              duration: reduceMotion ? 0 : DUR.editorial,
+              delay: entrance(STAGGER * 6),
+              ease: EASE_EDITORIAL,
+            }}
             className="mx-auto max-w-md text-center"
           >
             <HeroHeadline className="flex flex-col gap-1.5 font-display text-[clamp(1.35rem,5.5vw,1.75rem)] font-black uppercase leading-[0.92] tracking-tight text-foreground sm:gap-2" />
             <p className="mt-2.5 text-pretty text-[0.8125rem] leading-relaxed text-muted">{HERO_COPY}</p>
-            <HeroCta active={homeReady} className="mt-4 flex justify-center" />
+            <HeroCta active={settled} delay={entrance(STAGGER * 7)} className="mt-4 flex justify-center" />
           </motion.div>
 
           <HeroCategoryCarousel
             categories={categories}
-            active={homeReady}
-            peek={homePeek && !homeReady}
+            active={settled}
+            peek={homePeek && !settled}
             hoveredId={hoveredId}
             onHover={setHoveredId}
+            entranceDelay={entrance(STAGGER * 5)}
             embedded
           />
         </div>
       </div>
 
-      <HeroSidebar active={homeReady} peek={homePeek && !homeReady} />
+      <HeroSidebar active={settled} peek={homePeek && !settled} entranceDelay={entrance(STAGGER * 6)} />
     </section>
   );
 }

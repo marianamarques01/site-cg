@@ -40,6 +40,19 @@ export const posts: BlogPost[] = [
       "As notas de campo viraram checklist para o próximo ciclo de protótipos. Publicamos aqui para quem está montando playtest pela primeira vez.",
     ],
   },
+  {
+    slug: "workshop-concept-art-personagens",
+    title: "Workshop de concept art: do sketch ao turnaround",
+    category: "Bastidores",
+    date: "2025-04-08",
+    excerpt: "Como a turma de Computação Gráfica montou personagens completos em um dia de oficina intensiva.",
+    tone: "electric",
+    body: [
+      "A oficina começou com referências coladas na parede — fotos de tecido, anatomia e paletas de cor tiradas de filmes de animação. Cada dupla tinha quatro horas para sair de um thumbnail A6 até um turnaround legível em três ângulos.",
+      "O truque que mais funcionou foi bloquear silhueta antes de detalhar: grupos que pulavam direto para render perdiam tempo refazendo proporções. Quem passava pelo sketch rápido em cinza chegava ao final com personagem consistente e pronto para modelagem.",
+      "Alguns turnarounds viraram base para projetos da galeria. Se quiser ver o resultado visual, confere a seção de produções.",
+    ],
+  },
 ];
 
 export function getPostBySlug(slug: string) {

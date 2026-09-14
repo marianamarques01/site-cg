@@ -7,6 +7,7 @@ import { DUR, EASE_EDITORIAL, STAGGER } from "@/lib/motion";
 type HeroSidebarProps = {
   active: boolean;
   peek?: boolean;
+  entranceDelay?: number;
 };
 
 const HERO_HEADLINE = ["DA PRIMEIRA LINHA", "AO ÚLTIMO PIXEL."];
@@ -14,9 +15,9 @@ const HERO_HEADLINE = ["DA PRIMEIRA LINHA", "AO ÚLTIMO PIXEL."];
 const HERO_COPY =
   "Curtas, jogos, modelagem, animação, artes e experimentos produzidos pelos alunos da FUMEC.";
 
-const HERO_CTA = "Ver produções";
+const HERO_CTA = "Ver projetos";
 
-export default function HeroSidebar({ active, peek }: HeroSidebarProps) {
+export default function HeroSidebar({ active, peek, entranceDelay = STAGGER * 6 }: HeroSidebarProps) {
   return (
     <aside className="hero-copy absolute bottom-[var(--hero-floor)] left-[var(--gutter)] z-20 hidden max-w-[min(22rem,42vw)] lg:block">
       <motion.div
@@ -29,7 +30,11 @@ export default function HeroSidebar({ active, peek }: HeroSidebarProps) {
               ? { opacity: 0.18, y: 8, clipPath: "inset(0% 0% 60% 0%)" }
               : { opacity: 0, y: 16, clipPath: "inset(0% 0% 100% 0%)" }
         }
-        transition={{ duration: DUR.editorial, delay: STAGGER * 6, ease: EASE_EDITORIAL }}
+        transition={{
+          duration: DUR.editorial,
+          delay: entranceDelay,
+          ease: EASE_EDITORIAL,
+        }}
         className="text-left"
       >
         <HeroHeadline className="font-display text-[clamp(1.35rem,2.4vw,2rem)] font-black uppercase leading-[0.95] tracking-tight text-foreground" />
@@ -38,7 +43,7 @@ export default function HeroSidebar({ active, peek }: HeroSidebarProps) {
           {HERO_COPY}
         </p>
 
-        <HeroCta active={active} className="mt-3 -translate-y-2" />
+        <HeroCta active={active} delay={entranceDelay + STAGGER} className="mt-3 -translate-y-2" />
       </motion.div>
     </aside>
   );
@@ -46,9 +51,11 @@ export default function HeroSidebar({ active, peek }: HeroSidebarProps) {
 
 export function HeroCta({
   active,
+  delay = STAGGER * 7,
   className = "mt-6",
 }: {
   active: boolean;
+  delay?: number;
   className?: string;
 }) {
   return (
@@ -56,7 +63,11 @@ export function HeroCta({
       className={className}
       initial={{ opacity: 0 }}
       animate={{ opacity: active ? 1 : 0 }}
-      transition={{ duration: DUR.editorial, delay: STAGGER * 7, ease: EASE_EDITORIAL }}
+      transition={{
+        duration: DUR.editorial,
+        delay,
+        ease: EASE_EDITORIAL,
+      }}
     >
       <Link
         href="/producoes"

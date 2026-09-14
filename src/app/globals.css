@@ -952,6 +952,40 @@ html {
   background-size: 160px 160px;
 }
 
+/* Cinema page bg — hero image, overlays lighter than the home hero. */
+.cinema-page-photo {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.cinema-page-field .hero-scene-tint {
+  background: color-mix(in srgb, var(--color-void) 38%, transparent);
+}
+
+.cinema-page-field .hero-scene-overlay {
+  opacity: 0.42;
+}
+
+.cinema-page-field .hero-scene-vignette {
+  opacity: 0.55;
+}
+
+/* Admin — bordered panels stay on surface over the cinema bg. */
+.admin-portal :where(a, article, div, form, section, table).border.border-border {
+  background-color: var(--color-surface);
+}
+
+.admin-portal :where(input, textarea, select).border-border {
+  background-color: transparent;
+}
+
+.admin-portal thead {
+  background-color: color-mix(in srgb, var(--color-surface-raised) 88%, var(--color-void));
+}
+
 /* Outlined ticker type fills with brand blue on contact — the same
    "only the accent lights up" rule the rest of the site follows. */
 .marquee-outline {

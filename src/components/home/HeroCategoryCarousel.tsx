@@ -15,6 +15,7 @@ type HeroCategoryCarouselProps = {
   onHover: (id: string | null) => void;
   /** When true, sits in the hero composition flow (no absolute offsets). */
   embedded?: boolean;
+  entranceDelay?: number;
 };
 
 export default function HeroCategoryCarousel({
@@ -24,6 +25,7 @@ export default function HeroCategoryCarousel({
   hoveredId,
   onHover,
   embedded = false,
+  entranceDelay = STAGGER * 5,
 }: HeroCategoryCarouselProps) {
   return (
     <motion.div
@@ -32,7 +34,7 @@ export default function HeroCategoryCarousel({
       animate={
         active ? { opacity: 1, y: 0 } : peek ? { opacity: 0.16, y: 10 } : { opacity: 0, y: 16 }
       }
-      transition={{ duration: DUR.editorial, delay: STAGGER * 5, ease: EASE_EDITORIAL }}
+      transition={{ duration: DUR.editorial, delay: entranceDelay, ease: EASE_EDITORIAL }}
       className={clsx(
         "relative z-20 lg:hidden",
         embedded

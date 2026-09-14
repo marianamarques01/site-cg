@@ -6,8 +6,7 @@ const COLUMNS: { title: string; links: { href: string; label: string }[] }[] = [
   {
     title: "Explorar",
     links: [
-      { href: "/producoes", label: "Produções" },
-      { href: "/jogos", label: "Jogos" },
+      { href: "/producoes", label: "Projetos" },
       { href: "/blog", label: "Blog" },
     ],
   },
@@ -21,6 +20,7 @@ const COLUMNS: { title: string; links: { href: string; label: string }[] }[] = [
   {
     title: "Institucional",
     links: [
+      { href: "/sobre", label: "Sobre" },
       { href: "/contato", label: "Contato" },
       { href: "https://www.fumec.br", label: "FUMEC.br" },
     ],

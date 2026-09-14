@@ -106,7 +106,7 @@ export const HERO_CATEGORIES: HeroCategory[] = [
   {
     id: "05",
     label: "Jogos",
-    href: "/jogos",
+    href: "/producoes#jogos",
     tone: "mix",
     aspect: "aspect-video",
     top: "72%",

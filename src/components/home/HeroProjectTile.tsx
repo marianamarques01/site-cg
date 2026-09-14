@@ -5,7 +5,13 @@ import Link from "next/link";
 import { motion, useTransform, type MotionValue } from "framer-motion";
 import clsx from "clsx";
 import type { HeroCategory } from "@/lib/mock/categories";
-import { DUR, EASE_EDITORIAL, STAGGER } from "@/lib/motion";
+import {
+  DUR,
+  EASE_EDITORIAL,
+  HERO_TILE_REVEAL_DELAY,
+  HERO_TILE_REVEAL_DUR,
+  STAGGER,
+} from "@/lib/motion";
 
 const PARALLAX_NEAR = -220;
 const PARALLAX_FAR = -120;
@@ -124,8 +130,10 @@ function LegacyProjectTile({
                   : { opacity: 0, scale: 0.6, x: category.fromX, y: category.fromY }
             }
             transition={{
-              duration: 0.62,
-              delay: category.order * STAGGER,
+              duration: active ? HERO_TILE_REVEAL_DUR : 0.62,
+              delay: active
+                ? category.order * STAGGER + HERO_TILE_REVEAL_DELAY
+                : category.order * STAGGER,
               ease: EASE_EDITORIAL,
             }}
           >
@@ -255,8 +263,10 @@ function EditorialProjectTile({
                     }
             }
             transition={{
-              duration: 0.72,
-              delay: active ? category.order * STAGGER + 0.55 : category.order * STAGGER,
+              duration: active ? HERO_TILE_REVEAL_DUR : 0.72,
+              delay: active
+                ? category.order * STAGGER + HERO_TILE_REVEAL_DELAY
+                : category.order * STAGGER,
               ease: EASE_EDITORIAL,
             }}
           >

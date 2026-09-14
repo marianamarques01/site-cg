@@ -12,33 +12,37 @@ import {
   type MotionValue,
 } from "framer-motion";
 import HeroBackground from "@/components/home/HeroBackground";
+import HeroWordmark from "@/components/home/HeroWordmark";
 import { useIntro } from "@/components/ui/IntroProvider";
 import { lockScroll, unlockScroll } from "@/lib/scrollLock";
 
 /* --------------------------------------------------------------------------
-   Not a screen in front of the Home — the Home's hero, shot close, pulling
-   back. One continuous camera move: compose → pause → wordmark → zoom out →
-   small FLIP corrections onto the real anchors in the last ~18%.
+   Compose mark → reveal copy → hold → dissolve. No camera morph to Home.
    -------------------------------------------------------------------------- */
 
-const TOTAL_S = 2.25;
-const SKIP_S = 0.48;
+/** Total timeline — hold composition → dissolve → curtain lift (no black beat). */
+const TOTAL_S = 4;
 
-/** Progress gates (0–1). Mapped to ~2250ms total. */
+const SEC = {
+  composeEnd: 0.9,
+  pauseEnd: 1.0,
+  wordmarkEnd: 1.35,
+  /** +1s hold with mark + copy fully visible before dissolve. */
+  fadeStart: 2.5,
+  contentFadeEnd: 3.3,
+  /** Black hold removed (−1s vs prior 0.65s beat). */
+  revealStart: 3.3,
+} as const;
+
 const P = {
-  composeStart: 0.067,
-  composeEnd: 0.31,
-  pauseEnd: 0.378,
-  wordmarkEnd: 0.52,
-  cameraStart: 0.511,
-  cameraEnd: 0.9,
-  homePeek: 0.58,
-  measure: 0.72,
-  handoff: 0.756,
-  correctionStart: 0.78,
-  correctionEnd: 0.96,
-  finish: 0.956,
-  overlayFade: 0.82,
+  composeStart: 0,
+  composeEnd: SEC.composeEnd / TOTAL_S,
+  pauseEnd: SEC.pauseEnd / TOTAL_S,
+  wordmarkEnd: SEC.wordmarkEnd / TOTAL_S,
+  fadeStart: SEC.fadeStart / TOTAL_S,
+  contentFadeEnd: SEC.contentFadeEnd / TOTAL_S,
+  blackHoldEnd: SEC.revealStart / TOTAL_S,
+  revealStart: SEC.revealStart / TOTAL_S,
 } as const;
 
 const DEPTH_MARK = 5;
@@ -63,19 +67,6 @@ const PATHS: PathSpec[] = [
   },
 ];
 
-type MotionPlan = {
-  markCameraX: number;
-  markCameraY: number;
-  markCameraScale: number;
-  markCorrX: number;
-  markCorrY: number;
-  markCorrScale: number;
-  wordStartX: number;
-  wordStartY: number;
-  wordStartScale: number;
-  wordBox: DOMRect;
-};
-
 function clamp01(v: number) {
   return Math.min(1, Math.max(0, v));
 }
@@ -84,53 +75,8 @@ function rangeProgress(p: number, start: number, end: number) {
   return clamp01((p - start) / (end - start));
 }
 
-function easeOutCubic(t: number) {
+function easeOut(t: number) {
   return 1 - (1 - t) ** 3;
-}
-
-function mixMarkMotion(
-  p: number,
-  plan: MotionPlan | null,
-): { x: number; y: number; scale: number; opacity: number } {
-  if (!plan) {
-    const compose = rangeProgress(p, P.composeStart, P.composeEnd);
-    return { x: 0, y: 0, scale: 1.06 - compose * 0.06, opacity: compose > 0.05 ? 1 : 0 };
-  }
-
-  const cameraT = easeOutCubic(rangeProgress(p, P.cameraStart, P.cameraEnd));
-  const corrT = easeOutCubic(rangeProgress(p, P.correctionStart, P.correctionEnd));
-  const fadeOut = rangeProgress(p, P.overlayFade, 1);
-
-  return {
-    x: plan.markCameraX * cameraT + plan.markCorrX * corrT,
-    y: plan.markCameraY * cameraT + plan.markCorrY * corrT,
-    scale: plan.markCameraScale + plan.markCorrScale * corrT,
-    opacity: 1 - fadeOut * 0.95,
-  };
-}
-
-function mixWordMotion(
-  p: number,
-  plan: MotionPlan | null,
-): { x: number; y: number; scale: number; reveal: number; opacity: number } {
-  if (!plan) return { x: 0, y: 0, scale: 0.14, reveal: 0, opacity: 0 };
-
-  const reveal = easeOutCubic(rangeProgress(p, P.pauseEnd, P.wordmarkEnd));
-  const cameraT = easeOutCubic(rangeProgress(p, P.cameraStart, P.cameraEnd));
-  const corrT = easeOutCubic(rangeProgress(p, P.correctionStart, P.correctionEnd));
-  const fadeOut = rangeProgress(p, P.overlayFade, 1);
-
-  const fromX = plan.wordStartX * (1 - cameraT);
-  const fromY = plan.wordStartY * (1 - cameraT);
-  const fromScale = plan.wordStartScale + (1 - plan.wordStartScale) * cameraT;
-
-  return {
-    x: fromX,
-    y: fromY,
-    scale: fromScale,
-    reveal,
-    opacity: reveal * (1 - fadeOut * 0.95) * (1 - corrT * 0.15),
-  };
 }
 
 function MarkPath({
@@ -141,15 +87,14 @@ function MarkPath({
   progress: MotionValue<number>;
 }) {
   const opacity = useTransform(progress, (p) => {
-    const t = rangeProgress(p, P.composeStart + path.stagger, P.composeEnd);
-    return easeOutCubic(t);
+    const t = easeOut(rangeProgress(p, P.composeStart + path.stagger, P.composeEnd));
+    return t;
   });
   const transform = useTransform(progress, (p) => {
-    const t = rangeProgress(p, P.composeStart + path.stagger, P.composeEnd);
-    const e = easeOutCubic(t);
-    const rotate = path.enterFrom * (1 - e);
-    const x = -14 * (1 - e);
-    const scale = 1.06 - 0.06 * e;
+    const t = easeOut(rangeProgress(p, P.composeStart + path.stagger, P.composeEnd));
+    const rotate = path.enterFrom * (1 - t);
+    const x = -14 * (1 - t);
+    const scale = 1.06 - 0.06 * t;
     return `translateX(${x}px) rotate(${rotate}deg) scale(${scale})`;
   });
 
@@ -162,45 +107,31 @@ function MarkPath({
         transformOrigin: "248px 247.5px",
         opacity,
         transform,
-        willChange: "transform, opacity",
       }}
     />
   );
 }
 
 export default function SplashScreen() {
-  const { splashEnabled, beginHomePeek, beginHandoff, finishIntro, getAnchorRect } =
-    useIntro();
+  const { splashEnabled, finishIntro } = useIntro();
 
   const [dismissed, setDismissed] = useState(false);
-  const [plan, setPlan] = useState<MotionPlan | null>(null);
 
   const overlayRef = useRef<HTMLDivElement>(null);
-  const markBoxRef = useRef<HTMLDivElement>(null);
-  const planRef = useRef<MotionPlan | null>(null);
   const progress = useMotionValue(0);
   const controlsRef = useRef<ReturnType<typeof animate> | null>(null);
   const pointerRafRef = useRef<number | null>(null);
   const pendingPointerRef = useRef({ x: 0, y: 0 });
-  const flagsRef = useRef({
-    wordMeasure: false,
-    peek: false,
-    measure: false,
-    handoff: false,
-    finish: false,
-    unlock: false,
-    dismiss: false,
-  });
+  const flagsRef = useRef({ finish: false, unlock: false, dismiss: false });
 
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
 
   const parallaxStrength = useTransform(
     progress,
-    [0, 0.35, 0.55, 0.78, 1],
-    [0, 0, 1, 0.15, 0],
+    [0, P.composeEnd, P.fadeStart, P.contentFadeEnd],
+    [0, 0.5, 0.15, 0],
   );
-  const bgReveal = useTransform(progress, [0, P.composeEnd, P.cameraStart, P.homePeek], [0.28, 0.48, 0.72, 1]);
   const markParallaxX = useTransform(
     [pointerX, parallaxStrength],
     ([x, s]) => (x as number) * DEPTH_MARK * (s as number),
@@ -218,135 +149,74 @@ export default function SplashScreen() {
     ([y, s]) => (y as number) * 2 * (s as number),
   );
 
-  const cameraScale = useTransform(
-    progress,
-    [0, P.composeEnd, P.cameraStart, P.cameraEnd, 1],
-    [1.14, 1.08, 1.04, 1, 1],
-  );
-  const overlayOpacity = useTransform(progress, [P.overlayFade, 1], [1, 0]);
+  /** Black curtain — stays opaque through hold, lifts only at the end. */
+  const curtainOpacity = useTransform(progress, [P.revealStart, 1], [1, 0]);
   const openingDarkness = useTransform(
     progress,
-    [0, P.composeEnd, P.cameraStart, P.overlayFade, 1],
-    [0.92, 0.78, 0.42, 0.06, 0],
+    [0, P.composeEnd, P.wordmarkEnd, P.fadeStart, P.contentFadeEnd],
+    [0.06, 0.28, 0.42, 0.42, 0.42],
   );
-  const wireframeOpacity = useTransform(progress, [0, P.composeStart, P.composeEnd], [0.42, 0.28, 0]);
-  const kickerOpacity = useTransform(progress, [P.pauseEnd, P.wordmarkEnd, P.overlayFade, 1], [0, 0.7, 0.35, 0]);
+  const wireframeOpacity = useTransform(progress, [0, P.composeStart, P.composeEnd], [0.38, 0.24, 0]);
 
-  const markMotion = useTransform(progress, (p) => mixMarkMotion(p, planRef.current));
-  const markXBase = useTransform(markMotion, (m) => m.x);
-  const markYBase = useTransform(markMotion, (m) => m.y);
-  const markScale = useTransform(markMotion, (m) => m.scale);
-  const markOpacity = useTransform(markMotion, (m) => m.opacity);
-
-  const wordMotion = useTransform(progress, (p) => mixWordMotion(p, planRef.current));
-  const wordOpacity = useTransform(wordMotion, (w) => w.opacity);
-  const wordX = useTransform(wordMotion, (w) => w.x);
-  const wordY = useTransform(wordMotion, (w) => w.y);
-  const wordScale = useTransform(wordMotion, (w) => w.scale);
-  const wordRevealY = useTransform(wordMotion, (w) => `${(1 - w.reveal) * 112}%`);
-
-  const markX = useTransform(
-    [markXBase, markParallaxX],
-    ([x, px]: number[]) => x + px,
+  const markCompose = useTransform(progress, (p) =>
+    easeOut(rangeProgress(p, P.composeStart, P.composeEnd)),
   );
-  const markY = useTransform(
-    [markYBase, markParallaxY],
-    ([y, py]: number[]) => y + py,
+  const markScale = useTransform(markCompose, (t) => 1.06 - t * 0.06);
+  const markOpacity = useTransform(progress, (p) => {
+    const compose = easeOut(rangeProgress(p, P.composeStart, P.composeEnd));
+    const fadeOut = easeOut(rangeProgress(p, P.fadeStart, P.contentFadeEnd));
+    return compose * (1 - fadeOut);
+  });
+
+  const copyReveal = useTransform(progress, (p) =>
+    easeOut(rangeProgress(p, P.pauseEnd, P.wordmarkEnd)),
   );
+  const copyOpacity = useTransform(progress, (p) => {
+    const reveal = easeOut(rangeProgress(p, P.pauseEnd, P.wordmarkEnd));
+    const fadeOut = easeOut(rangeProgress(p, P.fadeStart, P.contentFadeEnd));
+    return reveal * (1 - fadeOut);
+  });
+  const sceneOpacity = useTransform(progress, (p) => {
+    const fadeOut = easeOut(rangeProgress(p, P.fadeStart, P.contentFadeEnd));
+    return 1 - fadeOut;
+  });
+  const wordRevealY = useTransform(copyReveal, (r) => `${(1 - r) * 112}%`);
 
-  const buildPlan = (includeMark: boolean) => {
-    const wordAnchor = getAnchorRect("wordmark");
-    if (!wordAnchor || wordAnchor.width === 0) return;
-
-    const wordStartY = window.innerHeight * 0.76;
-    const wordStartScale = Math.min(0.16, 180 / Math.max(wordAnchor.width, 1));
-    const wordStartX = window.innerWidth / 2 - (wordAnchor.left + wordAnchor.width / 2);
-    const wordStartYOffset = wordStartY - (wordAnchor.top + wordAnchor.height / 2);
-
-    const base: MotionPlan = {
-      markCameraX: 0,
-      markCameraY: 0,
-      markCameraScale: 1,
-      markCorrX: 0,
-      markCorrY: 0,
-      markCorrScale: 0,
-      wordStartX,
-      wordStartY: wordStartYOffset,
-      wordStartScale,
-      wordBox: wordAnchor,
-    };
-
-    if (includeMark) {
-      const markAnchor = getAnchorRect("brand-mark");
-      const markBox = markBoxRef.current?.getBoundingClientRect();
-      if (!markAnchor || !markBox || markAnchor.width === 0) {
-        planRef.current = base;
-        setPlan(base);
-        return;
-      }
-
-      const markFullX = markAnchor.left + markAnchor.width / 2 - (markBox.left + markBox.width / 2);
-      const markFullY = markAnchor.top + markAnchor.height / 2 - (markBox.top + markBox.height / 2);
-      const markFullScale = markAnchor.width / markBox.width;
-      const cameraShare = 0.88;
-
-      base.markCameraX = markFullX * cameraShare;
-      base.markCameraY = markFullY * cameraShare;
-      base.markCameraScale = 1 + (markFullScale - 1) * cameraShare;
-      base.markCorrX = markFullX * (1 - cameraShare);
-      base.markCorrY = markFullY * (1 - cameraShare);
-      base.markCorrScale = (markFullScale - 1) * (1 - cameraShare);
-    }
-
-    planRef.current = base;
-    setPlan(base);
-  };
+  const markX = useTransform([markParallaxX], ([px]: number[]) => px);
+  const markY = useTransform([markParallaxY], ([py]: number[]) => py);
 
   const runTimeline = () => {
     controlsRef.current?.stop();
-    controlsRef.current = animate(
-      progress,
-      [0, 0.31, 0.36, 0.52, 0.9, 1],
-      {
-        duration: TOTAL_S,
-        times: [0, 0.22, 0.26, 0.4, 0.86, 1],
-        ease: ["easeOut", "linear", "easeIn", "easeInOut", "easeOut", "easeOut"],
-      },
-    );
+    controlsRef.current = animate(progress, 1, {
+      duration: TOTAL_S,
+      ease: "linear",
+    });
+  };
+
+  const finishSplash = () => {
+    const f = flagsRef.current;
+    if (!f.unlock) {
+      f.unlock = true;
+      unlockScroll();
+    }
+    if (!f.finish) {
+      f.finish = true;
+      finishIntro();
+    }
   };
 
   const skip = () => {
     if (progress.get() >= 0.995) return;
     controlsRef.current?.stop();
-
-    const f = flagsRef.current;
-    if (!f.wordMeasure) buildPlan(false);
-    if (!f.measure) buildPlan(true);
-    if (!f.unlock) {
-      f.unlock = true;
-      unlockScroll();
-    }
-    if (!f.peek) {
-      f.peek = true;
-      beginHomePeek();
-    }
-    if (!f.handoff) {
-      f.handoff = true;
-      beginHandoff();
-    }
-
+    finishSplash();
     overlayRef.current?.style.setProperty("pointer-events", "none");
     overlayRef.current?.style.setProperty("cursor", "default");
     controlsRef.current = animate(progress, 1, {
-      duration: SKIP_S,
+      duration: 0.45,
       ease: [0.65, 0.05, 0, 1],
       onComplete: () => {
-        if (!f.finish) {
-          f.finish = true;
-          finishIntro();
-        }
-        if (!f.dismiss) {
-          f.dismiss = true;
+        if (!flagsRef.current.dismiss) {
+          flagsRef.current.dismiss = true;
           setDismissed(true);
         }
       },
@@ -356,31 +226,10 @@ export default function SplashScreen() {
   useMotionValueEvent(progress, "change", (v) => {
     const f = flagsRef.current;
 
-    if (v >= P.cameraStart && !f.unlock) {
-      f.unlock = true;
-      unlockScroll();
+    if (v >= P.revealStart && !f.finish) {
+      finishSplash();
     }
-    if (v >= P.pauseEnd && !f.wordMeasure) {
-      f.wordMeasure = true;
-      buildPlan(false);
-    }
-    if (v >= P.homePeek && !f.peek) {
-      f.peek = true;
-      beginHomePeek();
-    }
-    if (v >= P.measure && !f.measure) {
-      f.measure = true;
-      buildPlan(true);
-    }
-    if (v >= P.handoff && !f.handoff) {
-      f.handoff = true;
-      beginHandoff();
-    }
-    if (v >= P.finish && !f.finish) {
-      f.finish = true;
-      finishIntro();
-    }
-    if (v >= P.correctionStart && overlayRef.current) {
+    if (v >= P.fadeStart && overlayRef.current) {
       overlayRef.current.style.pointerEvents = "none";
       overlayRef.current.style.cursor = "default";
     }
@@ -398,20 +247,12 @@ export default function SplashScreen() {
       overlayRef.current.style.pointerEvents = "auto";
       overlayRef.current.style.cursor = "pointer";
     }
-    flagsRef.current = {
-      wordMeasure: false,
-      peek: false,
-      measure: false,
-      handoff: false,
-      finish: false,
-      unlock: false,
-      dismiss: false,
-    };
+    flagsRef.current = { finish: false, unlock: false, dismiss: false };
     progress.set(0);
-    planRef.current = null;
-    setPlan(null);
 
-    runTimeline();
+    requestAnimationFrame(() => {
+      requestAnimationFrame(runTimeline);
+    });
 
     const onPointerMove = (event: PointerEvent) => {
       pendingPointerRef.current = {
@@ -478,32 +319,25 @@ export default function SplashScreen() {
         key="splash"
         aria-hidden="true"
         onClick={skip}
-        className="fixed inset-0 z-[200] isolate overflow-hidden [contain:strict]"
+        className="fixed inset-0 z-[200] isolate overflow-hidden"
         style={{
           pointerEvents: "auto",
           cursor: "pointer",
           backgroundColor: "var(--color-void)",
-          opacity: overlayOpacity,
-          willChange: "opacity",
+          opacity: curtainOpacity,
         }}
       >
         <motion.div
-          className="absolute inset-0 flex items-center justify-center"
-          style={{
-            scale: cameraScale,
-            transformOrigin: "50% 46%",
-            willChange: "transform",
-          }}
+          className="absolute inset-0 flex flex-col items-center justify-center px-[var(--gutter)]"
+          style={{ opacity: sceneOpacity }}
         >
-          {/* Same field as the Hero — the splash is that scene, shot close. */}
           <motion.div
             className="absolute inset-0"
-            style={{ opacity: bgReveal, x: bgParallaxX, y: bgParallaxY }}
+            style={{ x: bgParallaxX, y: bgParallaxY }}
           >
-            <HeroBackground ready minimal />
+            <HeroBackground ready minimal static />
           </motion.div>
 
-          {/* Underexposed close-up; lifts as the camera recedes into the hero. */}
           <motion.div
             className="pointer-events-none absolute inset-0"
             style={{
@@ -528,65 +362,48 @@ export default function SplashScreen() {
             <circle cx="50" cy="50" r="1" fill="currentColor" opacity="0.7" />
           </motion.svg>
 
-          <div
-            ref={markBoxRef}
-            className="splash-mark-wrap pointer-events-none absolute left-1/2 top-[46%] h-[32vmin] w-[32vmin] max-h-[280px] max-w-[280px] -translate-x-1/2 -translate-y-1/2"
-          >
-            <motion.svg
-              viewBox="0 0 496 495"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-full w-full"
+          <div className="relative flex w-full max-w-[100vw] flex-col items-center">
+            <motion.div
+              className="pointer-events-none h-[32vmin] w-[32vmin] max-h-[280px] max-w-[280px] shrink-0"
               style={{
                 x: markX,
                 y: markY,
                 scale: markScale,
                 opacity: markOpacity,
-                willChange: "transform, opacity",
               }}
             >
-              {PATHS.map((path, i) => (
-                <MarkPath key={i} path={path} progress={progress} />
-              ))}
-            </motion.svg>
-          </div>
-
-          {plan && (
-            <motion.div
-              className="pointer-events-none fixed"
-              style={{
-                left: plan.wordBox.left,
-                top: plan.wordBox.top,
-                width: plan.wordBox.width,
-                height: plan.wordBox.height,
-                opacity: wordOpacity,
-              }}
-            >
-              <motion.div
-                className="h-full w-full origin-center"
-                style={{ x: wordX, y: wordY, scale: wordScale }}
+              <motion.svg
+                viewBox="0 0 496 495"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-full w-full"
               >
-                <div className="h-full w-full overflow-hidden">
-                  <motion.span
-                    className="block whitespace-nowrap text-center font-display font-black leading-[0.85] text-foreground"
-                    style={{
-                      fontSize: "clamp(2.75rem, 14.5vw, 13.5rem)",
-                      y: wordRevealY,
-                    }}
-                  >
-                    FUMEC CRIATIVA
-                  </motion.span>
-                </div>
-              </motion.div>
+                {PATHS.map((path, i) => (
+                  <MarkPath key={i} path={path} progress={progress} />
+                ))}
+              </motion.svg>
             </motion.div>
-          )}
 
-          <motion.p
-            className="pointer-events-none absolute bottom-[13%] text-center text-[10px] font-medium uppercase tracking-[0.3em] text-muted sm:text-xs"
-            style={{ opacity: kickerOpacity }}
-          >
-            Computação Gráfica · Design de Games
-          </motion.p>
+            <motion.div
+              className="mt-[clamp(1.75rem,6vh,3rem)] flex w-full flex-col items-center gap-4 sm:gap-6"
+              style={{ opacity: copyOpacity }}
+            >
+              <motion.p
+                className="text-center text-[0.65rem] font-medium uppercase tracking-[0.18em] text-foreground/55 sm:text-sm sm:tracking-[0.2em]"
+                style={{ opacity: copyReveal }}
+              >
+                Computação Gráfica · Design de Games
+              </motion.p>
+
+              <div className="hero-wordmark w-full max-w-none overflow-visible">
+                <div className="hero-wordmark-reveal">
+                  <motion.div style={{ y: wordRevealY }}>
+                    <HeroWordmark splashMode className="text-center" />
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>,

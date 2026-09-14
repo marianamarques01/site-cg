@@ -27,6 +27,7 @@ type FaqLocationSectionProps = {
   addressLines?: string[];
   contactEmail?: string;
   instagram?: string;
+  compact?: boolean;
 };
 
 export default function FaqLocationSection({
@@ -34,6 +35,7 @@ export default function FaqLocationSection({
   addressLines,
   contactEmail = "criativa@fumec.br",
   instagram = "@fumeccriativa",
+  compact,
 }: FaqLocationSectionProps) {
   const [open, setOpen] = useState<number | null>(0);
   const reduceMotion = useReducedMotion();
@@ -42,8 +44,8 @@ export default function FaqLocationSection({
     : DEFAULT_ADDRESS;
 
   return (
-    <section id="faq" className="py-[var(--section-y)]">
-      <Container className="flex flex-col gap-10 md:gap-12">
+    <section id="faq" className={compact ? "py-6 md:py-8" : "py-[var(--section-y)]"}>
+      <Container className={`flex flex-col ${compact ? "gap-6 md:gap-8" : "gap-10 md:gap-12"}`}>
         <SectionHeading
           kicker="Contato & dúvidas"
           titleLines={["Perguntas", "e campus."]}
@@ -54,7 +56,13 @@ export default function FaqLocationSection({
 
         <SectionRule />
 
-        <div className="grid gap-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-20 xl:gap-24">
+        <div
+          className={
+            compact
+              ? "grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-10 xl:gap-12"
+              : "grid gap-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-20 xl:gap-24"
+          }
+        >
           <div className="flex flex-col">
             {faq.map((item, i) => {
               const isOpen = open === i;
@@ -134,7 +142,10 @@ export default function FaqLocationSection({
             })}
           </div>
 
-          <div id="onde-estamos" className="flex flex-col gap-10 lg:gap-12">
+          <div
+            id="onde-estamos"
+            className={compact ? "flex flex-col gap-6 lg:gap-8" : "flex flex-col gap-10 lg:gap-12"}
+          >
             <RevealPass from="left" className="flex flex-col gap-8">
               <div className="flex flex-col gap-2">
                 <span className="text-xs font-medium uppercase tracking-[0.14em] text-faint">

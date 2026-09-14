@@ -91,7 +91,7 @@ export async function notifyGameSubmissionApproved(game: DbGame): Promise<void> 
   if (!game.student_email || !canSendEmail()) return;
 
   const siteUrl = getSiteUrl();
-  const gameUrl = `${siteUrl}/jogos/${game.slug}`;
+  const gameUrl = `${siteUrl}/producoes/${game.slug}`;
   const replyTo = await contactEmail();
   const team = escapeHtml(game.team);
   const title = escapeHtml(game.title);

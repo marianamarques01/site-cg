@@ -17,14 +17,13 @@ import GridIcon from "@/components/ui/GridIcon";
 import Container from "@/components/ui/Container";
 import { useIntro, useIntroAnchor } from "@/components/ui/IntroProvider";
 import { lockScroll, unlockScroll } from "@/lib/scrollLock";
-import { DUR, EASE_EDITORIAL, EASE_MECH, STAGGER } from "@/lib/motion";
+import { DUR, EASE_EDITORIAL, EASE_MECH, HERO_HOME_ENTRANCE_DELAY, STAGGER } from "@/lib/motion";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
-  { href: "/producoes", label: "Produções" },
-  { href: "/jogos", label: "Jogos" },
+  { href: "/producoes", label: "Projetos" },
   { href: "/blog", label: "Blog" },
-  { href: "/contato", label: "Contato" },
+  { href: "/sobre", label: "Sobre" },
 ];
 
 const BENTO_LINKS = [
@@ -38,7 +37,7 @@ const FUMEC_SITE_URL = "https://www.fumec.br";
 export default function Header() {
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
-  const { homePeek, handoffDone, splashEnabled } = useIntro();
+  const { homePeek, handoffDone, splashEnabled, introPending } = useIntro();
   const brandAnchor = useIntroAnchor("brand-mark");
 
   const [scrolled, setScrolled] = useState(false);
@@ -103,9 +102,21 @@ export default function Header() {
             className="block h-8 w-8 shrink-0"
             initial={{ opacity: splashEnabled ? 0 : 1 }}
             animate={{
-              opacity: handoffDone ? 1 : homePeek ? 0.32 : splashEnabled ? 0 : 1,
+              opacity: introPending
+                ? 0
+                : handoffDone
+                  ? 1
+                  : homePeek
+                    ? 0.32
+                    : splashEnabled
+                      ? 0
+                      : 1,
             }}
-            transition={{ duration: 0.15, ease: EASE_MECH }}
+            transition={{
+              duration: splashEnabled && handoffDone ? DUR.editorial : 0.15,
+              delay: splashEnabled && handoffDone ? HERO_HOME_ENTRANCE_DELAY : 0,
+              ease: splashEnabled && handoffDone ? EASE_EDITORIAL : EASE_MECH,
+            }}
           >
             <Logo
               variant="brand"

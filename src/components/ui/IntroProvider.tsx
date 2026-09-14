@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -28,8 +29,17 @@ const SPLASH_KEY = "fumec-splash-seen";
 /** Nothing should be able to strand the page mid-intro. */
 const FAILSAFE_MS = 5500;
 
+type IntroState = {
+  stage: IntroStage;
+  splashEnabled: boolean;
+  /** False on "/" until sessionStorage + reduced-motion are checked client-side. */
+  resolved: boolean;
+};
+
 type IntroValue = {
   stage: IntroStage;
+  /** Client hasn't decided splash yet — hold a void gate so Home never flashes. */
+  introPending: boolean;
   /** Peripheral Hero elements may enter the frame (camera receding). */
   homePeek: boolean;
   /** The Home may start its own entrance (tiles, robot, copy). */
@@ -45,10 +55,11 @@ type IntroValue = {
   getAnchorRect: (name: AnchorName) => DOMRect | null;
 };
 
-export type AnchorName = "brand-mark" | "wordmark";
+export type AnchorName = "brand-mark" | "wordmark" | "eyebrow";
 
 const IntroContext = createContext<IntroValue>({
   stage: "home",
+  introPending: false,
   homePeek: true,
   homeReady: true,
   handoffDone: true,
@@ -78,14 +89,24 @@ export function useIntroAnchor(name: AnchorName) {
 }
 
 export default function IntroProvider({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
   const reduceMotion = useReducedMotion();
 
-  const [intro, setIntro] = useState<{ stage: IntroStage; splashEnabled: boolean }>({
-    stage: "splash",
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
+  const [intro, setIntro] = useState<IntroState>(() => ({
+    stage: isHome ? "splash" : "home",
     splashEnabled: false,
-  });
-  const { stage, splashEnabled } = intro;
+    resolved: !isHome,
+  }));
+  const { stage, splashEnabled, resolved } = intro;
+  const introPending = isHome && !resolved;
+
+  useLayoutEffect(() => {
+    if (introPending) return;
+    document.getElementById("intro-gate")?.remove();
+  }, [introPending]);
+
   const setStage = useCallback(
     (next: IntroStage | ((current: IntroStage) => IntroStage)) =>
       setIntro((prev) => ({
@@ -101,7 +122,6 @@ export default function IntroProvider({ children }: { children: React.ReactNode 
     if (decided.current) return;
     decided.current = true;
 
-    const isHome = pathname === "/";
     let seen = false;
     try {
       seen = sessionStorage.getItem(SPLASH_KEY) === "1";
@@ -110,12 +130,16 @@ export default function IntroProvider({ children }: { children: React.ReactNode 
     }
 
     const shouldPlay = isHome && !seen && !reduceMotion;
-    setIntro({ stage: shouldPlay ? "splash" : "home", splashEnabled: shouldPlay });
+    setIntro({
+      stage: shouldPlay ? "splash" : "home",
+      splashEnabled: shouldPlay,
+      resolved: true,
+    });
     if (!shouldPlay) return;
 
     const failsafe = setTimeout(() => setStage("home"), FAILSAFE_MS);
     return () => clearTimeout(failsafe);
-  }, [pathname, reduceMotion, setStage]);
+  }, [isHome, reduceMotion, setStage]);
 
   const beginHomePeek = useCallback(
     () => setStage((s) => (s === "splash" ? "peek" : s)),
@@ -149,6 +173,7 @@ export default function IntroProvider({ children }: { children: React.ReactNode 
   const value = useMemo<IntroValue>(
     () => ({
       stage,
+      introPending,
       homePeek: stage !== "splash",
       homeReady: stage === "handoff" || stage === "home",
       handoffDone: stage === "home",
@@ -161,6 +186,7 @@ export default function IntroProvider({ children }: { children: React.ReactNode 
     }),
     [
       stage,
+      introPending,
       splashEnabled,
       beginHomePeek,
       beginHandoff,

@@ -28,20 +28,20 @@ export function revalidateProjects(slug?: string) {
 export function revalidateGames(slug?: string) {
   invalidate(CACHE_TAGS.games);
   revalidatePath("/");
-  revalidatePath("/jogos");
-  if (slug) revalidatePath(`/jogos/${slug}`);
+  revalidatePath("/producoes");
+  if (slug) revalidatePath(`/producoes/${slug}`);
   revalidatePath("/admin/jogos");
 }
 
 export function revalidateFaq() {
   invalidate(CACHE_TAGS.faq);
-  revalidatePath("/");
+  revalidatePath("/sobre");
   revalidatePath("/admin/faq");
 }
 
 export function revalidateCourses() {
   invalidate(CACHE_TAGS.courses);
-  revalidatePath("/");
+  revalidatePath("/sobre");
   revalidatePath("/cursos/computacao-grafica");
   revalidatePath("/cursos/design-de-games");
   revalidatePath("/admin/cursos");
@@ -55,7 +55,7 @@ export function revalidateHero() {
 
 export function revalidateSettings() {
   invalidate(CACHE_TAGS.settings);
-  revalidatePath("/");
+  revalidatePath("/sobre");
   revalidatePath("/contato");
   revalidatePath("/admin/configuracoes");
 }

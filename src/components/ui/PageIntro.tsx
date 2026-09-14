@@ -7,6 +7,7 @@ type PageIntroProps = {
   /** One string per visual line. */
   titleLines: string[];
   description?: string;
+  compact?: boolean;
 };
 
 /**
@@ -14,9 +15,13 @@ type PageIntroProps = {
  * whole of src/app — so every click out of the Home landed on something inert.
  * They now share the Home's vocabulary: kicker wiped in, title uncovered.
  */
-export default function PageIntro({ kicker, titleLines, description }: PageIntroProps) {
+export default function PageIntro({ kicker, titleLines, description, compact }: PageIntroProps) {
   return (
-    <div className="pb-16 pt-40 sm:pt-48 md:pb-24">
+    <div
+      className={
+        compact ? "pb-6 pt-36 sm:pt-40 md:pb-8" : "pb-16 pt-40 sm:pt-48 md:pb-24"
+      }
+    >
       <Container className="flex flex-col gap-6">
         <RevealPass from="left">
           <span className="text-xs font-medium uppercase tracking-[0.2em] text-brand">
