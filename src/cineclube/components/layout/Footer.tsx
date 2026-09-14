@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { site } from "@/cineclube/data/site";
 import { Marquee } from "@/cineclube/components/ui/Marquee";
+import { withBasePath } from "@/lib/base-path";
 
 /**
  * Rodapé: marquise final + créditos, como a última cartela de um filme.
@@ -15,7 +16,7 @@ export function Footer() {
 
       <div className="mx-auto mt-12 flex max-w-5xl flex-col items-center gap-6 px-6 text-center">
         <Image
-          src="/cineclube/brand/lockup-vertical.png"
+          src={withBasePath("/cineclube/brand/lockup-vertical.png")}
           alt="Cineclube Méliès"
           width={140}
           height={225}

@@ -20,6 +20,7 @@ import { HERO_CATEGORIES } from "@/lib/mock/categories";
 import type { HeroCategory } from "@/lib/mock/categories";
 import { useIntro, useIntroAnchor } from "@/components/ui/IntroProvider";
 import { useVisualMode } from "@/components/ui/VisualModeProvider";
+import { withBasePath } from "@/lib/base-path";
 import { DUR, EASE_EDITORIAL, SPRING_POINTER, STAGGER } from "@/lib/motion";
 
 type HeroProps = {
@@ -157,7 +158,7 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
             <motion.div style={{ rotateY: robotRotateY, rotateX: robotRotateX, y: robotPointerY }}>
               <div className="hero-robot-wrap relative">
                 <Image
-                  src="/1.png"
+                  src={withBasePath("/1.png")}
                   alt="Obra em destaque — personagem 3D produzido por aluno"
                   width={500}
                   height={500}

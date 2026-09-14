@@ -10,6 +10,7 @@ import {
 } from "framer-motion";
 import Fireflies from "@/components/ui/Fireflies";
 import HeroSceneLines from "@/components/home/HeroSceneLines";
+import { withBasePath } from "@/lib/base-path";
 
 type HeroBackgroundProps = {
   pointerX?: MotionValue<number>;
@@ -44,7 +45,7 @@ export default function HeroBackground({
         style={{ x: bgX, y: bgY }}
       >
         <Image
-          src="/hero-bg.png"
+          src={withBasePath("/hero-bg.png")}
           alt=""
           fill
           priority

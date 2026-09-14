@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
+import { withBasePath } from "@/lib/base-path";
 
 /** Âncoras das seções da página única. */
 const links: { href: string; label: string }[] = [
@@ -31,7 +32,7 @@ export function Navbar() {
           aria-label="Voltar ao topo"
         >
           <Image
-            src="/cineclube/brand/mascot.png"
+            src={withBasePath("/cineclube/brand/mascot.png")}
             alt=""
             width={34}
             height={37}
@@ -39,7 +40,7 @@ export function Navbar() {
           />
           <span className="flex max-w-0 overflow-x-hidden overflow-y-visible opacity-0 transition-[max-width,opacity] duration-300 ease-out group-hover:max-w-[5.5rem] group-hover:opacity-100 group-focus-visible:max-w-[5.5rem] group-focus-visible:opacity-100 md:group-hover:max-w-[6.5rem] md:group-focus-visible:max-w-[6.5rem]">
             <Image
-              src="/cineclube/brand/logo-branca.png"
+              src={withBasePath("/cineclube/brand/logo-branca.png")}
               alt=""
               width={200}
               height={90}

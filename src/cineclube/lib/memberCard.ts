@@ -1,5 +1,6 @@
 import QRCode from "qrcode";
 import type { MemberCardData } from "@/cineclube/types";
+import { withBasePath } from "@/lib/base-path";
 
 /**
  * Desenha a carteirinha de membro num <canvas> (1050×600) seguindo a
@@ -87,7 +88,7 @@ export async function drawMemberCard(
 
   /* mascote */
   try {
-    const mascot = await loadImage("/cineclube/brand/mascot.png");
+    const mascot = await loadImage(withBasePath("/cineclube/brand/mascot.png"));
     ctx.drawImage(mascot, 58, 64, 170, 185);
   } catch {
     /* sem mascote, segue o baile */
@@ -122,7 +123,7 @@ export async function drawMemberCard(
   ctx.fill();
   ctx.clip();
   try {
-    const photo = await loadImage(data.photoDataUrl || "/cineclube/brand/mascot.png");
+    const photo = await loadImage(data.photoDataUrl || withBasePath("/cineclube/brand/mascot.png"));
     /* cover: preenche o círculo mantendo proporção */
     const scale = Math.max((photoR * 2) / photo.width, (photoR * 2) / photo.height);
     const pw = photo.width * scale;

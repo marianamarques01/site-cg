@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { films } from "@/cineclube/data/films";
 import { SectionTitle } from "@/cineclube/components/ui/SectionTitle";
+import { withBasePath } from "@/lib/base-path";
 
 /**
  * SOBRE — página de zine sobre papel kraft.
@@ -149,7 +150,7 @@ export function Sobre() {
             <span className="tape -right-8 -top-3 rotate-[28deg]" aria-hidden />
             <div className="bg-melies-purple p-6">
               <Image
-                src="/cineclube/brand/mascot.png"
+                src={withBasePath("/cineclube/brand/mascot.png")}
                 alt="A lua de cartola do Cineclube Méliès"
                 width={230}
                 height={250}

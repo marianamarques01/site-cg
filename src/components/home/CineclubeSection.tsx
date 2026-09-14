@@ -16,6 +16,7 @@ import PrimaryButton from "@/components/ui/PrimaryButton";
 import ActionLink from "@/components/ui/ActionLink";
 import Magnetic from "@/components/ui/Magnetic";
 import { site as cineclubeSite } from "@/cineclube/data/site";
+import { withBasePath } from "@/lib/base-path";
 
 /** Paleta do Cineclube Méliès — acento dentro do site FUMEC Criativa. */
 const M = {
@@ -165,7 +166,7 @@ export default function CineclubeSection() {
                     style={reduceMotion ? undefined : { x: moonX, y: moonY }}
                   >
                     <Image
-                      src="/cineclube/brand/mascot.png"
+                      src={withBasePath("/cineclube/brand/mascot.png")}
                       alt="Mascote do Cineclube Méliès — lua de cartola"
                       fill
                       className="object-contain drop-shadow-[0_20px_50px_rgba(33,23,53,0.55)]"

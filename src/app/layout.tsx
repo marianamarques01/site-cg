@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import { VisualModeProvider } from "@/components/ui/VisualModeProvider";
 import ThemeScript from "@/components/ui/ThemeScript";
 import VisualModeScript from "@/components/ui/VisualModeScript";
+import { withBasePath } from "@/lib/base-path";
 import "./globals.css";
 
 const bigShoulders = Big_Shoulders({
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
   description:
     "Portfólio dos cursos de Computação Gráfica e Design de Games da FUMEC: modelagem 3D, jogos, concept art, animação e produções dos alunos.",
   icons: {
-    icon: "/logo-fumec.svg",
+    icon: withBasePath("/logo-fumec.svg"),
   },
 };
 

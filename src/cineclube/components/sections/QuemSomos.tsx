@@ -6,6 +6,7 @@ import { team } from "@/cineclube/data/team";
 import type { TeamMember } from "@/cineclube/types";
 import { SectionTitle } from "@/cineclube/components/ui/SectionTitle";
 import { letterboxdProfileUrl } from "@/cineclube/lib/letterboxd";
+import { withBasePath } from "@/lib/base-path";
 
 /**
  * QUEM SOMOS — carrossel de polaroids que VIRAM.
@@ -49,7 +50,7 @@ function Foto({ member }: { member: TeamMember }) {
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/cineclube/brand/mascot.png" alt="" className="w-2/5 opacity-50" />
+        <img src={withBasePath("/cineclube/brand/mascot.png")} alt="" className="w-2/5 opacity-50" />
         <span className="font-melies-typewriter text-[9px] uppercase tracking-[0.3em] text-melies-ink/45">
           sua foto aqui
         </span>
@@ -60,7 +61,7 @@ function Foto({ member }: { member: TeamMember }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={`/cineclube/team/${member.id}.jpg`}
+      src={withBasePath(`/cineclube/team/${member.id}.jpg`)}
       alt={member.name}
       onError={() => setFailed(true)}
       className="h-full w-full object-cover grayscale contrast-[1.08] transition-all duration-500 group-hover:grayscale-0"

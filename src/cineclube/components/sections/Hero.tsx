@@ -11,6 +11,7 @@ import {
 } from "framer-motion";
 import { CurvedHeroTitle } from "@/cineclube/components/ui/CurvedHeroTitle";
 import { Marquee } from "@/cineclube/components/ui/Marquee";
+import { withBasePath } from "@/lib/base-path";
 
 /**
  * HERO — um pôster vivo.
@@ -128,7 +129,7 @@ export function Hero() {
                 transition={{ duration: 6, delay: 1.4, repeat: Infinity, ease: "easeInOut" }}
               >
                 <Image
-                  src="/cineclube/brand/mascot.png"
+                  src={withBasePath("/cineclube/brand/mascot.png")}
                   alt="Lua de cartola, mascote do Cineclube Méliès"
                   width={210}
                   height={228}

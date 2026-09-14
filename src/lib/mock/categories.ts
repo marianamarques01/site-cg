@@ -1,4 +1,5 @@
 import type { PlaceholderTone } from "@/components/ui/PlaceholderMedia";
+import { withBasePath } from "@/lib/base-path";
 
 export type HeroCategory = {
   id: string;
@@ -41,7 +42,7 @@ export const HERO_CATEGORIES: HeroCategory[] = [
     driftX: -140,
     driftY: 40,
     order: 1,
-    src: "/categories/modelagem-3d.png",
+    src: withBasePath("/categories/modelagem-3d.png"),
     legacyMotion: true,
   },
   {
@@ -60,7 +61,7 @@ export const HERO_CATEGORIES: HeroCategory[] = [
     driftX: -65,
     driftY: 60,
     order: 0,
-    src: "/categories/concept-art.png",
+    src: withBasePath("/categories/concept-art.png"),
     legacyMotion: true,
   },
   {
@@ -79,7 +80,7 @@ export const HERO_CATEGORIES: HeroCategory[] = [
     driftX: 70,
     driftY: 55,
     order: 0,
-    src: "/categories/posters.png",
+    src: withBasePath("/categories/posters.png"),
     legacyMotion: true,
   },
   {
@@ -99,7 +100,7 @@ export const HERO_CATEGORIES: HeroCategory[] = [
     driftY: -40,
     order: 2,
     front: true,
-    src: "/categories/animacao.png",
+    src: withBasePath("/categories/animacao.png"),
     legacyMotion: true,
   },
   {
@@ -119,7 +120,7 @@ export const HERO_CATEGORIES: HeroCategory[] = [
     driftY: 35,
     order: 1,
     front: true,
-    src: "/categories/jogos.png",
+    src: withBasePath("/categories/jogos.png"),
     legacyMotion: true,
   },
 ];
