@@ -180,7 +180,7 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
             transition={{ duration: DUR.editorial, delay: STAGGER * 6, ease: EASE_EDITORIAL }}
             className="mx-auto max-w-md text-center"
           >
-            <HeroHeadline className="font-display text-[clamp(1.35rem,5.5vw,1.75rem)] font-black uppercase leading-[0.92] tracking-tight text-foreground" />
+            <HeroHeadline className="flex flex-col gap-1.5 font-display text-[clamp(1.35rem,5.5vw,1.75rem)] font-black uppercase leading-[0.92] tracking-tight text-foreground sm:gap-2" />
             <p className="mt-2.5 text-pretty text-[0.8125rem] leading-relaxed text-muted">{HERO_COPY}</p>
             <HeroCta active={homeReady} className="mt-4 flex justify-center" />
           </motion.div>

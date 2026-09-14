@@ -12,6 +12,7 @@ import {
 } from "framer-motion";
 import clsx from "clsx";
 import Logo from "@/components/ui/Logo";
+import ExternalLinkIcon from "@/components/ui/ExternalLinkIcon";
 import GridIcon from "@/components/ui/GridIcon";
 import Container from "@/components/ui/Container";
 import { useIntro, useIntroAnchor } from "@/components/ui/IntroProvider";
@@ -271,9 +272,7 @@ export default function Header() {
                     className="inline-flex items-center gap-2 py-2 font-display text-4xl tracking-tight text-foreground"
                   >
                     FUMEC.br
-                    <span aria-hidden="true" className="text-xl text-magenta">
-                      ↗
-                    </span>
+                    <ExternalLinkIcon className="text-magenta" />
                   </a>
                 </motion.span>
               </span>
