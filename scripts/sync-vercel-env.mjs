@@ -46,7 +46,7 @@ function parseEnvFile(path) {
   return vars;
 }
 
-function runVercel(args, input) {
+function runVercel(args, input = undefined) {
   const result = spawnSync("npx", ["vercel", ...args], {
     cwd: root,
     input,
