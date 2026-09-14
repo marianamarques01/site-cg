@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Container from "@/components/ui/Container";
 import PageTransition from "@/components/ui/PageTransition";
 import RevealPass from "@/components/ui/RevealPass";
-import ActionLink from "@/components/ui/ActionLink";
+import SubmissionForm from "@/components/submissions/SubmissionForm";
+import { submitWorkAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Enviar trabalho",
@@ -26,12 +27,12 @@ export default function EnviarProducaoPage() {
             </RevealPass>
             <RevealPass delay={0.08}>
               <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">
-                O formulário de envio online está disponível na versão completa do site. Nesta
-                publicação estática, entre em contato com a equipe para submeter produções ou jogos.
+                Preencha o formulário abaixo para submeter uma produção ou jogo. A equipe revisa cada
+                envio antes de publicar no site.
               </p>
             </RevealPass>
-            <RevealPass delay={0.12} className="mt-8">
-              <ActionLink href="/contato">Ir para contato</ActionLink>
+            <RevealPass delay={0.12} className="mt-10">
+              <SubmissionForm action={submitWorkAction} />
             </RevealPass>
           </div>
         </Container>

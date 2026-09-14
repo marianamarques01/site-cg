@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FUMEC Criativa — site CG
 
-## Getting Started
+Site do curso de Computação Gráfica e Design de Games (FUMEC), com painel admin, conteúdo no Supabase e formulário de submissão para alunos.
 
-First, run the development server:
+## Desenvolvimento local
 
 ```bash
+cp .env.example .env.local   # preencha as chaves do Supabase
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Site: [http://localhost:3000](http://localhost:3000)
+- Admin: [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Setup do banco: veja [`supabase/README.md`](supabase/README.md).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deploy na Vercel (recomendado)
 
-## Learn More
+A Vercel roda o site **completo**: admin, Supabase em tempo real, formulário de alunos e revalidação de cache.
 
-To learn more about Next.js, take a look at the following resources:
+### 1. Login e link do projeto
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm install
+npm run vercel:login
+npm run vercel:link
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Conecte o repositório GitHub `marianamarques01/site-cg` quando solicitado.
 
-## Deploy on Vercel
+### 2. Variáveis de ambiente
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Preencha `.env.local` com as chaves do projeto Supabase **fumec-criativa** e sincronize:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run vercel:env
+```
+
+| Variável | Obrigatória | Uso |
+|----------|-------------|-----|
+| `NEXT_PUBLIC_SUPABASE_URL` | Sim | URL pública do Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Sim | Chave anon/publishable |
+| `SUPABASE_SERVICE_ROLE_KEY` | Sim | Submissões de alunos (server-side) |
+| `DATABASE_URL` | Não | Scripts/migrations locais |
+| `RESEND_API_KEY` | Não | E-mail ao receber submissão |
+| `EMAIL_FROM` | Não | Remetente dos e-mails |
+| `NEXT_PUBLIC_SITE_URL` | Não | URL canônica (fallback: `VERCEL_URL`) |
+
+### 3. Deploy
+
+```bash
+npm run deploy          # produção
+npm run deploy:preview  # preview de branch
+```
+
+Ou conecte o repo na [Vercel Dashboard](https://vercel.com/new) — cada push em `main` faz deploy automático **desde que** as variáveis acima estejam configuradas em **Settings → Environment Variables**.
+
+> **Importante:** use `npm run build` (padrão). **Não** use `npm run build:pages` na Vercel — esse comando é só para GitHub Pages estático.
+
+## GitHub Pages (legado / espelho estático)
+
+O workflow `.github/workflows/deploy.yml` publica uma versão **estática** em GitHub Pages:
+
+- Sem admin
+- Sem Supabase (dados mock)
+- Sem formulário de alunos
+
+Use apenas como espelho estático. Para o site oficial com conteúdo editável, prefira a Vercel.
+
+## Scripts úteis
+
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev` | Servidor local |
+| `npm run build` | Build de produção (Vercel) |
+| `npm run build:pages` | Build estático para GitHub Pages |
+| `npm run vercel:env` | Sincroniza `.env.local` → Vercel |
+| `npm run deploy` | Deploy de produção na Vercel |
