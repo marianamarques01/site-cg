@@ -1,0 +1,197 @@
+/* ============================================================
+   CINECLUBE MÉLIÈS — estilos scoped (Tailwind v4)
+   ============================================================ */
+
+@theme {
+  --color-melies-purple: #614582;
+  --color-melies-grape: #4a3266;
+  --color-melies-ink: #211735;
+  --color-melies-peach: #ffc585;
+  --color-melies-teal: #089baf;
+  --color-melies-paper: #f2e7d5;
+  --color-melies-kraft: #e0be92;
+  --color-melies-cream: #fbf4e8;
+  --color-melies-navy: #333268;
+  --color-melies-blush: #e8a9a0;
+  --color-melies-moon: #c3cedf;
+
+  --font-melies-display: var(--font-girassol), serif;
+  --font-melies-body: var(--font-josefin), sans-serif;
+  --font-melies-typewriter: var(--font-typewriter), monospace;
+
+  --shadow-poster: 6px 8px 0 rgba(33, 23, 53, 0.55);
+  --shadow-poster-peach: 6px 8px 0 rgba(255, 197, 133, 0.9);
+  --shadow-sticker: 3px 4px 0 rgba(33, 23, 53, 0.35);
+
+  --animate-grain: grain 8s steps(10) infinite;
+  --animate-marquee: marquee 28s linear infinite;
+  --animate-sway: sway 5s ease-in-out infinite;
+  --animate-float-slow: float-slow 7s ease-in-out infinite;
+  --animate-flicker: flicker 6s linear infinite;
+  --animate-spin-slow: spin-slow 24s linear infinite;
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-3%, -5%); }
+  30% { transform: translate(4%, 2%); }
+  50% { transform: translate(-4%, 5%); }
+  70% { transform: translate(5%, -3%); }
+  90% { transform: translate(-2%, 4%); }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-14px) rotate(2deg); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  41% { opacity: 1; }
+  42% { opacity: 0.75; }
+  43% { opacity: 1; }
+  78% { opacity: 1; }
+  79% { opacity: 0.85; }
+  80% { opacity: 1; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.cineclube-root {
+  --font-girassol: "Girassol";
+  --font-josefin: "Josefin Sans";
+  --font-typewriter: "Special Elite";
+  --purple: #614582;
+  --grape: #4a3266;
+  --ink: #211735;
+  --peach: #ffc585;
+  --teal: #089baf;
+  --paper: #f2e7d5;
+  --kraft: #e0be92;
+  --cream: #fbf4e8;
+
+  background-color: var(--color-melies-ink);
+  color: var(--color-melies-cream);
+  font-family: var(--font-melies-body);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+.cineclube-root ::selection {
+  background: var(--peach);
+  color: var(--ink);
+}
+
+@media (pointer: fine) {
+  .cineclube-root.has-custom-cursor,
+  .cineclube-root.has-custom-cursor a,
+  .cineclube-root.has-custom-cursor button {
+    cursor: none;
+  }
+}
+
+.cineclube-root ::-webkit-scrollbar {
+  width: 12px;
+}
+.cineclube-root ::-webkit-scrollbar-track {
+  background: var(--ink);
+}
+.cineclube-root ::-webkit-scrollbar-thumb {
+  background: var(--purple);
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+}
+
+.texture-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 250 250' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.texture-paper {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.02' numOctaves='4' seed='7'/%3E%3CfeDiffuseLighting lighting-color='white' surfaceScale='1.4'%3E%3CfeDistantLight azimuth='45' elevation='62'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  background-size: 400px 400px;
+}
+
+.texture-halftone {
+  background-image: radial-gradient(currentColor 1px, transparent 1.6px);
+  background-size: 12px 12px;
+}
+
+.torn-edge {
+  clip-path: polygon(
+    0% 1.2%, 3% 0.2%, 7% 1.4%, 12% 0.4%, 18% 1.6%, 24% 0.3%, 30% 1.2%,
+    37% 0.2%, 44% 1.5%, 51% 0.4%, 58% 1.3%, 65% 0.3%, 72% 1.4%, 79% 0.5%,
+    86% 1.5%, 92% 0.4%, 97% 1.2%, 100% 0.5%,
+    100% 99%, 96% 99.8%, 91% 98.8%, 85% 99.7%, 78% 98.6%, 71% 99.6%,
+    63% 98.7%, 55% 99.8%, 47% 98.7%, 39% 99.6%, 31% 98.6%, 23% 99.7%,
+    16% 98.8%, 9% 99.7%, 4% 98.8%, 0% 99.5%
+  );
+}
+
+.tape {
+  position: absolute;
+  height: 1.75rem;
+  width: 6rem;
+  opacity: 0.8;
+  background: linear-gradient(
+    105deg,
+    rgba(251, 244, 232, 0.75),
+    rgba(251, 244, 232, 0.55) 40%,
+    rgba(251, 244, 232, 0.8)
+  );
+  box-shadow: 0 1px 3px rgba(33, 23, 53, 0.25);
+}
+
+.stamp {
+  font-family: var(--font-melies-typewriter);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 2px solid currentColor;
+  padding: 0.25rem 0.75rem;
+  display: inline-block;
+  border-radius: 4px;
+  mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.18' numOctaves='2' seed='3'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='0 .4 .7 1 1 1 1 1 1 1'/%3E%3C/feComponentTransfer%3E%3CfeComposite operator='in' in2='SourceGraphic'/%3E%3C/filter%3E%3Crect width='200' height='60' filter='url(%23r)'/%3E%3C/svg%3E");
+  mask-size: cover;
+}
+
+.scribble-underline {
+  background-image: linear-gradient(100deg, transparent 2%, var(--peach) 2.5%, var(--peach) 97%, transparent 98%);
+  background-size: 100% 0.35em;
+  background-position: 0 92%;
+  background-repeat: no-repeat;
+}
+
+.text-outline {
+  -webkit-text-stroke: 2px currentColor;
+  -webkit-text-fill-color: transparent;
+  paint-order: stroke;
+}
+
+.film-holes {
+  background-image: radial-gradient(var(--ink) 42%, transparent 46%);
+  background-size: 22px 22px;
+  background-position: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cineclube-root *,
+  .cineclube-root *::before,
+  .cineclube-root *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

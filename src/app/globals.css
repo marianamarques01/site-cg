@@ -1,26 +1,1067 @@
 @import "tailwindcss";
+@source "../cineclube/**/*.{ts,tsx}";
+@import "../cineclube/cineclube.css";
+
+/* ---------------------------------------------------------------------- */
+/* Design tokens — FUMEC Criativa (dark default + light via data-theme)    */
+/* ---------------------------------------------------------------------- */
+@theme {
+  /* --- color: ground — minimal near-black --- */
+  --color-void: #121212;
+  --color-navy: #121212;
+  --color-indigo: #161616;
+  --color-surface: #181818;
+  --color-surface-raised: #1f1f1f;
+
+  /* --- color: ink --- */
+  --color-foreground: #f4f5f3;
+  --color-muted: #8a9bab;
+  --color-faint: #5c7082;
+  --color-border: rgba(244, 245, 243, 0.1);
+  --color-border-strong: rgba(244, 245, 243, 0.2);
+
+  /* --- color: brand / accent — FUMEC blue only (magenta token remapped) --- */
+  --color-brand: #008cd2;
+  --color-electric: #2ec4e8;
+  --color-violet: #004d73;
+  --color-magenta: #008cd2;
+  --color-neon-cyan: #2ec4e8;
+
+  /* --- type --- */
+  --font-display: var(--font-big-shoulders), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+
+  /* --- motion: two registers, never one. See src/lib/motion.ts --- */
+  --ease-out-editorial: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-mech: cubic-bezier(0.65, 0.05, 0, 1);
+
+  /* --- radius: deliberately restrained — see brief: no rounded-card look --- */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --gutter: clamp(1.25rem, 4vw, 4.5rem);
+  --section-y: clamp(3.25rem, 7vw, 5.5rem);
+  --header-h: clamp(3.75rem, 5vw, 4.5rem);
+  /* minimal (default) */
+  --color-depth: #0e0e0e;
+  --hero-mark-opacity: 0.04;
+  --hero-vignette: #0e0e0e;
+  --grain-opacity: 0;
+  --hero-tint: rgba(18, 18, 18, 0.92);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Maximal / cinematic — restores the pre-minimal palette and atmosphere */
+:root[data-visual="maximal"] {
+  --color-void: #020c16;
+  --color-navy: #031525;
+  --color-indigo: #0a2844;
+  --color-surface: #041c30;
+  --color-surface-raised: #062640;
+  --color-violet: #b83dff;
+  --color-magenta: #ff2d8d;
+  --color-depth: #010810;
+  --hero-mark-opacity: 0.08;
+  --hero-vignette: #010810;
+  --grain-opacity: 0.028;
+  --hero-tint: rgba(1, 8, 16, 0.44);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --color-void: #f5f8fa;
+  --color-navy: #e2eaf0;
+  --color-indigo: #cce8f5;
+  --color-surface: #ffffff;
+  --color-surface-raised: #edf4f9;
+
+  --color-foreground: #002746;
+  --color-muted: #4a7289;
+  --color-faint: #6a9bb8;
+  --color-border: rgba(0, 39, 70, 0.12);
+  --color-border-strong: rgba(0, 39, 70, 0.22);
+
+  --color-depth: #cce8f5;
+  --hero-mark-opacity: 0.06;
+  --hero-vignette: #e8f2f8;
+  --grain-opacity: 0.025;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  background: var(--color-void);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-void);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-magenta);
+  color: var(--color-foreground);
+}
+
+/* Ambient background field: fixed, sits behind all routes.
+   Deep navy base with very slow, very soft color masses — depth without noise.
+
+   The masses are real elements rather than pseudo-elements so their opacity
+   can be driven by scroll position (see AmbientField.tsx): the page shifts
+   temperature as it descends. Only opacity moves. Translating or scaling a
+   120px-blurred 70vw surface would re-rasterize it every frame, which is
+   exactly the cost this site could least afford. */
+.ambient-field {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--color-void);
+  pointer-events: none;
+}
+
+.ambient-mass {
+  display: none;
+}
+
+:root[data-visual="maximal"] .ambient-mass {
+  display: block;
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+}
+
+.ambient-mass-violet {
+  width: 65vw;
+  height: 65vw;
+  top: -22vw;
+  left: -18vw;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-brand) 70%, var(--color-indigo)) 0%,
+    color-mix(in srgb, var(--color-indigo) 45%, var(--color-navy)) 55%,
+    transparent 75%
+  );
+}
+
+.ambient-mass-electric {
+  width: 55vw;
+  height: 55vw;
+  bottom: -26vw;
+  right: -14vw;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-brand) 55%, var(--color-navy)) 0%,
+    color-mix(in srgb, var(--color-indigo) 35%, transparent) 55%,
+    transparent 75%
+  );
+}
+
+/* Hero editorial scene — dark field + FUMEC mark watermark. */
+.hero-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--color-void);
+}
+
+.hero-scene-base {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-scene-tint {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--hero-tint);
+  pointer-events: none;
+}
+
+:root[data-theme="light"] .hero-scene-tint {
+  background: rgba(2, 12, 22, 0.32);
+}
+
+:root[data-theme="light"] .hero-scene-base {
+  opacity: 0.72;
+}
+
+:root[data-theme="light"] .hero-blob-a {
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-magenta) 45%, transparent) 0%,
+    transparent 70%
+  );
+}
+
+:root[data-theme="light"] .hero-blob-b {
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-brand) 50%, transparent) 0%,
+    transparent 70%
+  );
+}
+
+:root[data-theme="light"] .hero-blob-c {
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-violet) 40%, transparent) 0%,
+    transparent 72%
+  );
+}
+
+.hero-scene-blobs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-scene-mark {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hero-scene-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-depth) 48%, transparent) 0%,
+    transparent 32%,
+    transparent 58%,
+    color-mix(in srgb, var(--color-depth) 36%, transparent) 100%
+  );
+  pointer-events: none;
+}
+
+.hero-scene-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: radial-gradient(
+    ellipse 120% 90% at 50% 42%,
+    transparent 38%,
+    color-mix(in srgb, var(--color-depth) 88%, transparent) 100%
+  );
+  pointer-events: none;
+}
+
+.hero-scene-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.hero-scene-line {
+  stroke: color-mix(in srgb, var(--color-brand) 28%, var(--color-foreground));
+  stroke-width: 0.06;
+  vector-effect: non-scaling-stroke;
+}
+
+.hero-scene-line-accent {
+  stroke: color-mix(in srgb, var(--color-magenta) 22%, transparent);
+  stroke-width: 0.05;
+  opacity: 0.65;
+}
+
+.hero-scene-line-tick {
+  stroke: color-mix(in srgb, var(--color-neon-cyan) 35%, var(--color-foreground));
+  stroke-width: 0.08;
+  opacity: 0.75;
+}
+
+:root[data-theme="light"] .hero-scene-lines {
+  opacity: 0.38;
+}
+
+:root[data-theme="light"] .hero-scene-line {
+  stroke: color-mix(in srgb, var(--color-brand) 35%, var(--color-foreground));
+}
+
+.hero-scene-watermark {
+  opacity: var(--hero-mark-opacity);
+}
+
+:root[data-theme="light"] .hero-scene-watermark path {
+  fill: var(--color-brand);
+}
+
+.hero-robot-wrap {
+  isolation: isolate;
+}
+
+.hero-robot-glow {
+  position: absolute;
+  inset: 12% 8% -4%;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse 70% 55% at 50% 65%,
+    color-mix(in srgb, var(--color-neon-cyan) 14%, transparent) 0%,
+    color-mix(in srgb, var(--color-magenta) 8%, transparent) 42%,
+    transparent 72%
+  );
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.hero-robot {
+  filter: drop-shadow(0 32px 48px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 32px color-mix(in srgb, var(--color-neon-cyan) 12%, transparent));
+}
+
+:root[data-theme="light"] .hero-robot {
+  filter: drop-shadow(0 20px 32px rgba(12, 13, 20, 0.18))
+    drop-shadow(0 0 40px color-mix(in srgb, var(--color-brand) 18%, transparent));
+}
+
+:root[data-theme="light"] .hero-texture {
+  opacity: 0.06;
+}
+
+:root[data-theme="light"] .grain-overlay {
+  opacity: var(--grain-opacity);
+}
+
+:root[data-theme="light"] ::selection {
+  color: #ffffff;
+}
+
+/* Hero editorial composition — monumental wordmark */
+.hero-wordmark-text {
+  --wordmark-ink: #f4f4f2;
+  --wordmark-stroke: rgba(244, 244, 242, 0.85);
+  --wordmark-cyan-a: #28b8e8;
+  --wordmark-cyan-b: #00a8e8;
+  --wordmark-stroke-w: 1.25px;
+
+  width: min(93vw, 100vw);
+  margin-inline: auto;
+  /* ~13 glifos condensados → ~11.8vw encaixa em 93vw sem overflow */
+  font-size: clamp(3rem, 11.8vw, 16.5rem);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  font-variation-settings: "wght" 900;
+}
+
+.hero-wordmark {
+  /* Full-bleed dentro do container com gutter — evita corte horizontal. */
+  width: 100vw;
+  max-width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  overflow: visible;
+}
+
+.hero-wordmark-reveal {
+  overflow: hidden;
+  /* Reserva dentro do clip para ascenders + stroke não serem cortados. */
+  padding-top: 0.18em;
+  padding-bottom: 0.14em;
+}
+
+.hero-wordmark-fumec {
+  color: var(--wordmark-ink);
+  -webkit-text-fill-color: var(--wordmark-ink);
+}
+
+.hero-wordmark-criativa {
+  position: relative;
+  display: inline-block;
+}
+
+.hero-wordmark-criativa-stroke {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: var(--wordmark-stroke-w) var(--wordmark-stroke);
+  paint-order: stroke fill;
+}
+
+.hero-wordmark-criativa-fill {
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    var(--wordmark-cyan-a) 0%,
+    var(--wordmark-cyan-b) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 16%,
+    rgba(0, 0, 0, 0.06) 24%,
+    rgba(0, 0, 0, 0.22) 34%,
+    rgba(0, 0, 0, 0.48) 46%,
+    rgba(0, 0, 0, 0.72) 58%,
+    rgba(0, 0, 0, 0.9) 70%,
+    black 82%,
+    black 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 16%,
+    rgba(0, 0, 0, 0.06) 24%,
+    rgba(0, 0, 0, 0.22) 34%,
+    rgba(0, 0, 0, 0.48) 46%,
+    rgba(0, 0, 0, 0.72) 58%,
+    rgba(0, 0, 0, 0.9) 70%,
+    black 82%,
+    black 100%
+  );
+}
+
+.hero-composition {
+  isolation: isolate;
+}
+
+.hero-project-frame {
+  background: color-mix(in srgb, var(--color-depth) 40%, transparent);
+  box-shadow: 0 24px 48px -28px rgba(0, 0, 0, 0.75);
+  isolation: isolate;
+}
+
+.hero-project-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: rgba(1, 8, 16, 0.24);
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease-out-editorial);
+}
+
+.hero-project:hover .hero-project-frame::after,
+.hero-project:focus-visible .hero-project-frame::after {
+  opacity: 0.45;
+}
+
+:root[data-theme="light"] .hero-project-frame::after {
+  background: rgba(0, 20, 36, 0.14);
+}
+
+/* HUD-style tech frame on hero project tiles */
+.hero-tech-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  overflow: hidden;
+}
+
+.hero-tech-frame-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-tech-inner {
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-electric) 28%, transparent);
+  stroke-width: 1;
+  transition: stroke 0.5s var(--ease-out-editorial);
+}
+
+.hero-tech-corner {
+  fill: none;
+  stroke-width: 1.5;
+  transition:
+    stroke 0.5s var(--ease-out-editorial),
+    stroke-width 0.5s var(--ease-out-editorial);
+}
+
+.hero-tech-corner--magenta {
+  stroke: color-mix(in srgb, var(--color-magenta) 72%, transparent);
+}
+
+.hero-tech-corner--cyan {
+  stroke: color-mix(in srgb, var(--color-electric) 55%, transparent);
+  stroke-width: 1;
+}
+
+.hero-tech-node {
+  fill: color-mix(in srgb, var(--color-electric) 65%, transparent);
+  stroke: none;
+  opacity: 0.85;
+  transition: opacity 0.5s var(--ease-out-editorial);
+}
+
+.hero-tech-tick {
+  stroke: color-mix(in srgb, var(--color-foreground) 22%, transparent);
+  stroke-width: 1;
+}
+
+.hero-tech-cross {
+  stroke: color-mix(in srgb, var(--color-electric) 38%, transparent);
+  stroke-width: 1;
+  opacity: 0.55;
+  transition: opacity 0.5s var(--ease-out-editorial);
+}
+
+.hero-tech-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -40%;
+  height: 28%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-electric) 14%, transparent) 45%,
+    color-mix(in srgb, var(--color-magenta) 10%, transparent) 55%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: translateY(-120%);
+  pointer-events: none;
+}
+
+.hero-tech-glow {
+  position: absolute;
+  inset: 0;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--color-electric) 0%, transparent),
+    inset 0 0 18px color-mix(in srgb, var(--color-electric) 0%, transparent);
+  transition: box-shadow 0.55s var(--ease-out-editorial);
+  pointer-events: none;
+}
+
+.hero-tech-frame.is-expanded .hero-tech-inner {
+  stroke: color-mix(in srgb, var(--color-magenta) 45%, var(--color-electric));
+}
+
+.hero-tech-frame.is-expanded .hero-tech-corner--magenta {
+  stroke: color-mix(in srgb, var(--color-magenta) 95%, white);
+  stroke-width: 1.75;
+}
+
+.hero-tech-frame.is-expanded .hero-tech-corner--cyan {
+  stroke: color-mix(in srgb, var(--color-electric) 88%, white);
+}
+
+.hero-tech-frame.is-expanded .hero-tech-node {
+  opacity: 1;
+}
+
+.hero-tech-frame.is-expanded .hero-tech-cross {
+  opacity: 1;
+}
+
+.hero-tech-frame.is-expanded .hero-tech-glow {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--color-electric) 35%, transparent),
+    inset 0 0 22px color-mix(in srgb, var(--color-electric) 12%, transparent),
+    inset 0 0 40px color-mix(in srgb, var(--color-magenta) 6%, transparent);
+}
+
+.hero-tech-frame.is-expanded .hero-tech-scan {
+  opacity: 1;
+  animation: hero-tech-scan 1.1s var(--ease-out-editorial) forwards;
+}
+
+@keyframes hero-tech-scan {
+  0% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(420%);
+    opacity: 0;
+  }
+}
+
+:root[data-theme="light"] .hero-tech-inner {
+  stroke: color-mix(in srgb, var(--color-brand) 35%, transparent);
+}
+
+:root[data-theme="light"] .hero-tech-corner--magenta {
+  stroke: color-mix(in srgb, var(--color-magenta) 65%, transparent);
+}
+
+:root[data-theme="light"] .hero-tech-corner--cyan {
+  stroke: color-mix(in srgb, var(--color-brand) 50%, transparent);
+}
+
+:root[data-theme="light"] .hero-tech-cross {
+  stroke: color-mix(in srgb, var(--color-brand) 45%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-tech-frame.is-expanded .hero-tech-scan {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+.hero-project-index {
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  z-index: 10;
+  font-family: var(--font-sans);
+  font-size: 0.58rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--color-magenta) 88%, white);
+}
+
+.hero-project-label {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  z-index: 10;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.hero-project-bracket {
+  font-size: 0.65rem;
+  line-height: 1;
+  color: color-mix(in srgb, var(--color-magenta) 75%, transparent);
+}
+
+.hero-project-name {
+  max-width: 8rem;
+  text-align: right;
+  font-family: var(--font-sans);
+  font-size: 0.52rem;
+  font-weight: 500;
+  line-height: 1.25;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: color-mix(in srgb, var(--color-foreground) 82%, transparent);
+}
+
+.hero-project:focus-visible .hero-project-frame {
+  outline: 2px solid var(--color-magenta);
+  outline-offset: 3px;
+}
+
+.category-card {
+  position: relative;
+  transition: transform 0.35s var(--ease-out-editorial);
+}
+
+/* Legacy hero gradient — kept for other routes if needed */
+.hero-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: linear-gradient(
+    160deg,
+    var(--color-void) 0%,
+    color-mix(in srgb, var(--color-violet) 48%, var(--color-void)) 34%,
+    color-mix(in srgb, var(--color-brand) 42%, var(--color-navy)) 62%,
+    var(--color-navy) 100%
+  );
+}
+
+/* No `will-change` here: it used to be permanent, which kept two large
+   blurred layers promoted for the entire life of the page whether or not
+   anything was moving. The drift below is a plain translate — the old
+   keyframes also scaled, and scaling a 90px-blurred surface forces the
+   browser to re-rasterize the whole blur on every single frame, forever. */
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+}
+
+.hero-blob-a {
+  top: -10%;
+  left: -6%;
+  width: 62%;
+  height: 56%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-magenta) 82%, transparent) 0%, transparent 70%);
+  animation: hero-drift-a 24s ease-in-out infinite alternate;
+}
+
+.hero-blob-b {
+  bottom: -14%;
+  right: -10%;
+  width: 68%;
+  height: 64%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-brand) 88%, transparent) 0%, transparent 70%);
+  animation: hero-drift-b 28s ease-in-out infinite alternate;
+}
+
+.hero-blob-c {
+  top: 8%;
+  right: 18%;
+  width: 48%;
+  height: 44%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-violet) 75%, transparent) 0%,
+    transparent 72%
+  );
+  animation: hero-drift-c 32s ease-in-out infinite alternate;
+}
+
+/* Texture on the hero field: fine film grain, nothing else.
+
+   The gradient below is smooth to the point of looking like a gradient, which
+   on a computer-graphics course's own site is the wrong tell. High-frequency
+   grain breaks that up and stops the violet-to-blue ramp banding on wide
+   displays. A first pass used coarse fractal clouds and a blueprint grid —
+   both read as smoke and moire behind 14vw type, so this is deliberately the
+   quiet version: uniform, desaturated, no structure of its own.
+
+   Denser than the site-wide .grain-overlay, which stays on top of it: the hero
+   is the one section allowed to look like film.
+
+   Static, and no `mix-blend-mode` — blending here would make the compositor
+   read back the blurred blobs behind it on every scroll frame, for the tallest
+   section on the page. Plain alpha costs one paint. */
+.hero-texture {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.12;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* Splash mark halo — static radial wash on the wrapper, not a filter on the
+   animated SVG (drop-shadow re-rasterizes every frame during scale/transform). */
+.splash-mark-wrap::after {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-brand) 18%, transparent) 0%,
+    transparent 68%
+  );
+  opacity: 0.85;
+}
+
+/* Fireflies. Two nested elements on purpose: drift writes `transform` on the
+   outer one and the blink writes `transform`/`opacity` on the inner, and a
+   single element cannot run two animations that both touch transform.
+
+   Every value that varies per insect is a custom property set inline, so all
+   24 share these two keyframe blocks instead of generating 24 of their own. */
+.firefly-field {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.firefly {
+  position: absolute;
+  animation: firefly-drift var(--ff-drift-dur) ease-in-out infinite alternate;
+  animation-delay: var(--ff-drift-delay);
+}
+
+.firefly-dot {
+  display: block;
+  width: var(--ff-size);
+  height: var(--ff-size);
+  border-radius: 50%;
+  background: var(--ff-color);
+  /* Two rings: a tight core and a wide, much fainter halo. One shadow at a
+     large radius just looks like a blurred dot. */
+  box-shadow:
+    0 0 5px 1.5px color-mix(in srgb, var(--ff-color) 80%, transparent),
+    0 0 16px 5px color-mix(in srgb, var(--ff-color) 32%, transparent);
+  opacity: var(--ff-max);
+  animation: firefly-pulse var(--ff-pulse-dur) ease-in-out infinite;
+  animation-delay: var(--ff-pulse-delay);
+}
+
+@keyframes firefly-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(var(--ff-dx), var(--ff-dy), 0);
+  }
+}
+
+@keyframes firefly-pulse {
+  0%,
+  100% {
+    opacity: var(--ff-min);
+    transform: scale(0.5);
+  }
+  45%,
+  55% {
+    opacity: var(--ff-max);
+    transform: scale(1);
+  }
+}
+
+/* With motion off, the global reduce rule freezes every animation on its last
+   keyframe — which for the blink is the dim end, i.e. an empty sky. Hold them
+   lit and still instead. */
+@media (prefers-reduced-motion: reduce) {
+  .firefly-dot {
+    opacity: var(--ff-max);
+    transform: none;
+  }
+}
+
+.hero-fade {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    color-mix(in srgb, var(--color-void) 35%, transparent) 82%,
+    var(--color-void) 100%
+  );
+}
+
+@keyframes hero-drift-a {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(7%, 9%);
+  }
+}
+
+@keyframes hero-drift-b {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-9%, -7%);
+  }
+}
+
+@keyframes hero-drift-c {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-6%, 8%);
+  }
+}
+
+/* Cinematic grain — fixed, full-viewport, barely-there texture.
+
+   Plain alpha, no `mix-blend-mode`. A fixed blended layer across the whole
+   viewport makes the compositor reprocess what's behind it on every scroll
+   frame; at this opacity the blend was buying a difference nobody could see
+   for a cost every visitor paid continuously. */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+/* Outlined ticker type fills with brand blue on contact — the same
+   "only the accent lights up" rule the rest of the site follows. */
+.marquee-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--color-foreground);
+  transition: color 0.32s var(--ease-mech), -webkit-text-stroke-color 0.32s var(--ease-mech);
+}
+
+.marquee-outline:hover,
+.marquee-outline:focus-visible {
+  color: var(--color-brand);
+  -webkit-text-stroke-color: var(--color-brand);
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-slow {
+  animation: spin-slow 90s linear infinite;
+}
+
+/* The chromatic-aberration glitch that used to live here has been removed.
+   It was the most generic effect on the site and it argued with an identity
+   that is architectural, not cyberpunk. Its two call sites now use the
+   course-colour bleed and the neighbour-displacement in their place. */
+
+/* The grid that drifts under a course card on hover — warmth, not noise. */
+@keyframes course-grid-drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 41px 41px;
+  }
+}
+
+/* Utility: condensed display type, tuned tight for huge headline sizes */
+.font-display {
+  font-family: var(--font-display);
+  font-stretch: condensed;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+/* Focus visibility — kept crisp and on-brand, never suppressed */
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom cursor is opt-in via JS (fine pointer + motion allowed only) —
+   only then do we hide the system cursor. */
+html.custom-cursor-active,
+html.custom-cursor-active * {
+  cursor: none !important;
+}
+
+/* …except where the native cursor is carrying information the custom one
+   can't. The contact form has two inputs and a textarea, and taking the
+   I-beam away there cost real usability for no design gain. */
+html.custom-cursor-active input,
+html.custom-cursor-active textarea,
+html.custom-cursor-active select,
+html.custom-cursor-active [contenteditable="true"] {
+  cursor: auto !important;
+}
+
+/* ---------------------------------------------------------------------- */
+/* View transitions — React 19.2 / Next 16, no config required.            */
+/* Replaces the old template.tsx fade, which remounted the whole tree on   */
+/* every navigation and threw away its state.                             */
+/* ---------------------------------------------------------------------- */
+
+/* Going deeper slides left; coming back slides right. Before this, forward
+   and back looked identical and carried no spatial information at all. */
+::view-transition-old(.nav-forward) {
+  --slide-offset: -60px;
+  animation:
+    150ms ease-in both vt-fade reverse,
+    400ms ease-in-out both vt-slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide-offset: 60px;
+  animation:
+    210ms ease-out 150ms both vt-fade,
+    400ms ease-in-out both vt-slide;
+}
+::view-transition-old(.nav-back) {
+  --slide-offset: 60px;
+  animation:
+    150ms ease-in both vt-fade reverse,
+    400ms ease-in-out both vt-slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide-offset: -60px;
+  animation:
+    210ms ease-out 150ms both vt-fade,
+    400ms ease-in-out both vt-slide;
+}
+
+/* A card's image grows into the detail hero rather than the page swapping.
+   The blur mid-flight hides pixel interpolation and reads as a focus pull. */
+::view-transition-group(.morph) {
+  animation-duration: 420ms;
+  animation-timing-function: var(--ease-out-editorial);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: vt-blur;
+}
+
+@keyframes vt-slide {
+  from {
+    translate: var(--slide-offset);
+  }
+  to {
+    translate: 0;
+  }
+}
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes vt-blur {
+  30% {
+    filter: blur(3px);
+  }
+}
+
+/* The header is the one fixed reference point: if it slides too, the user
+   reads the whole viewport as moving rather than the content. */
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+/* The transition overlay otherwise swallows clicks mid-animation. */
+::view-transition {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
 }
