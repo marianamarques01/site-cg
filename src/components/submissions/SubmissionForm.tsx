@@ -4,6 +4,7 @@ import {
   useActionState,
   useEffect,
   useId,
+  useRef,
   useState,
   type ChangeEvent,
   type FormEvent,
@@ -13,7 +14,11 @@ import clsx from "clsx";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import { PROJECT_CATEGORIES, STUDENT_COURSES } from "@/lib/admin/constants";
 import type { SubmissionActionState } from "@/lib/submissions/action-state";
-import type { SubmissionType } from "@/lib/submissions/validate";
+import {
+  parseSubmissionFormData,
+  validateSubmissionFiles,
+} from "@/lib/submissions/parse-form";
+import { validateSubmissionInput, type SubmissionType } from "@/lib/submissions/validate";
 
 const MAX_GALLERY = 4;
 
@@ -186,13 +191,21 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
   const [galleryPreviews, setGalleryPreviews] = useState<ImagePreview[]>([]);
   const coverInputId = useId();
   const galleryInputId = useId();
+  const feedbackRef = useRef<HTMLDivElement>(null);
+  const [clientError, setClientError] = useState<string | null>(null);
   const isGame = submissionType === "jogo";
   const formKey = state.restoreKey ?? "initial";
+  const visibleError = clientError ?? state.error ?? null;
 
   useEffect(() => {
     if (!state.restoreKey || !state.values) return;
     setSubmissionType(state.values.submission_type);
   }, [state.restoreKey, state.values]);
+
+  useEffect(() => {
+    if (!visibleError) return;
+    feedbackRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [visibleError, state.restoreKey]);
 
   useEffect(() => {
     return () => {
@@ -203,6 +216,8 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setClientError(null);
+
     const formData = new FormData(event.currentTarget);
     formData.delete("cover_file");
     formData.delete("gallery_files");
@@ -210,6 +225,22 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
     for (const file of galleryFiles) {
       formData.append("gallery_files", file);
     }
+
+    const { input, coverFile: parsedCover, galleryFiles: parsedGallery } =
+      parseSubmissionFormData(formData);
+
+    const validationError = validateSubmissionInput(input);
+    if (validationError) {
+      setClientError(validationError);
+      return;
+    }
+
+    const fileError = validateSubmissionFiles(input.submission_type, parsedCover, parsedGallery);
+    if (fileError) {
+      setClientError(fileError);
+      return;
+    }
+
     formAction(formData);
   }
 
@@ -250,17 +281,25 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
   }
 
   return (
-    <form key={formKey} onSubmit={handleSubmit} className="flex flex-col gap-14 sm:gap-16">
+    <form
+      key={formKey}
+      noValidate
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-14 sm:gap-16"
+    >
       <input type="hidden" name="submission_type" value={submissionType} />
 
-      {state.error ? (
+      {visibleError ? (
         <p
+          ref={feedbackRef}
           role="alert"
           className="border border-red-500/35 bg-red-500/[0.08] px-4 py-3 text-sm leading-relaxed text-red-300"
         >
-          {state.error}
+          {visibleError}
         </p>
-      ) : null}
+      ) : (
+        <div ref={feedbackRef} />
+      )}
 
       <FieldGroup step="01" title="Tipo de trabalho" description="Escolha o que você quer enviar para revisão.">
         <div className="grid gap-3 sm:grid-cols-2">
@@ -449,8 +488,10 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
         <label className="flex flex-col gap-2">
           <span className={fieldLabel}>Link externo</span>
           <input
-            type="url"
+            type="text"
             name="external_url"
+            inputMode="url"
+            autoComplete="url"
             placeholder={isGame ? "itch.io, Google Drive, vídeo de gameplay…" : "YouTube, Google Drive, ArtStation…"}
             defaultValue={restored?.external_url ?? ""}
             className={inputClassName}
@@ -520,7 +561,9 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
         </label>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-faint">Campos marcados são obrigatórios.</p>
+          <p className="text-xs text-faint">
+            Campos marcados são obrigatórios. E-mail deve ser @fumec.br.
+          </p>
           <PrimaryButton type="submit" disabled={pending} className="w-full sm:w-auto">
             {pending ? "Enviando…" : isGame ? "Enviar jogo" : "Enviar produção"}
           </PrimaryButton>
