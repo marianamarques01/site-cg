@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  startTransition,
   useActionState,
   useEffect,
   useId,
@@ -179,6 +178,15 @@ function revokePreviews(previews: ImagePreview[]) {
   }
 }
 
+function assignInputFiles(input: HTMLInputElement | null, files: File[]) {
+  if (!input) return;
+  const dataTransfer = new DataTransfer();
+  for (const file of files) {
+    dataTransfer.items.add(file);
+  }
+  input.files = dataTransfer.files;
+}
+
 export default function SubmissionForm({ action }: SubmissionFormProps) {
   const [state, formAction, pending] = useActionState(action, {});
   const currentYear = new Date().getFullYear();
@@ -193,6 +201,7 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
   const coverInputId = useId();
   const galleryInputId = useId();
   const feedbackRef = useRef<HTMLDivElement>(null);
+  const allowNativeSubmitRef = useRef(false);
   const [clientError, setClientError] = useState<string | null>(null);
   const isGame = submissionType === "jogo";
   const formKey = state.restoreKey ?? "initial";
@@ -216,17 +225,28 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
   }, [coverPreview, galleryPreviews]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    if (allowNativeSubmitRef.current) {
+      allowNativeSubmitRef.current = false;
+      return;
+    }
+
     event.preventDefault();
     setClientError(null);
 
-    const formData = new FormData(event.currentTarget);
-    formData.delete("cover_file");
-    formData.delete("gallery_files");
-    if (coverFile) formData.set("cover_file", coverFile);
-    for (const file of galleryFiles) {
-      formData.append("gallery_files", file);
-    }
+    const form = event.currentTarget;
+    const coverInput = form.elements.namedItem("cover_file");
+    const galleryInput = form.elements.namedItem("gallery_files");
 
+    assignInputFiles(
+      coverInput instanceof HTMLInputElement ? coverInput : null,
+      coverFile ? [coverFile] : [],
+    );
+    assignInputFiles(
+      galleryInput instanceof HTMLInputElement ? galleryInput : null,
+      galleryFiles,
+    );
+
+    const formData = new FormData(form);
     const { input, coverFile: parsedCover, galleryFiles: parsedGallery } =
       parseSubmissionFormData(formData);
 
@@ -242,9 +262,8 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
       return;
     }
 
-    startTransition(() => {
-      formAction(formData);
-    });
+    allowNativeSubmitRef.current = true;
+    form.requestSubmit();
   }
 
   function handleCoverChange(event: ChangeEvent<HTMLInputElement>) {
@@ -286,6 +305,8 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
   return (
     <form
       key={formKey}
+      action={formAction}
+      encType="multipart/form-data"
       noValidate
       onSubmit={handleSubmit}
       className="flex flex-col gap-14 sm:gap-16"
