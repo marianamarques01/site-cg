@@ -201,7 +201,6 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
   const coverInputId = useId();
   const galleryInputId = useId();
   const feedbackRef = useRef<HTMLDivElement>(null);
-  const allowNativeSubmitRef = useRef(false);
   const [clientError, setClientError] = useState<string | null>(null);
   const isGame = submissionType === "jogo";
   const formKey = state.restoreKey ?? "initial";
@@ -225,12 +224,6 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
   }, [coverPreview, galleryPreviews]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    if (allowNativeSubmitRef.current) {
-      allowNativeSubmitRef.current = false;
-      return;
-    }
-
-    event.preventDefault();
     setClientError(null);
 
     const form = event.currentTarget;
@@ -252,18 +245,17 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
 
     const validationError = validateSubmissionInput(input);
     if (validationError) {
+      event.preventDefault();
       setClientError(validationError);
       return;
     }
 
     const fileError = validateSubmissionFiles(input.submission_type, parsedCover, parsedGallery);
     if (fileError) {
+      event.preventDefault();
       setClientError(fileError);
       return;
     }
-
-    allowNativeSubmitRef.current = true;
-    form.requestSubmit();
   }
 
   function handleCoverChange(event: ChangeEvent<HTMLInputElement>) {
