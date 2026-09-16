@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  startTransition,
   useActionState,
   useEffect,
   useId,
@@ -241,7 +242,9 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
       return;
     }
 
-    formAction(formData);
+    startTransition(() => {
+      formAction(formData);
+    });
   }
 
   function handleCoverChange(event: ChangeEvent<HTMLInputElement>) {
