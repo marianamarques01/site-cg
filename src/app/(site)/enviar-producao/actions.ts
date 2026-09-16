@@ -12,7 +12,10 @@ import {
   type SubmissionType,
 } from "@/lib/submissions/validate";
 
-import type { SubmissionActionState } from "@/lib/submissions/action-state";
+import {
+  submissionActionError,
+  type SubmissionActionState,
+} from "@/lib/submissions/action-state";
 
 export type { SubmissionActionState };
 
@@ -98,13 +101,13 @@ export async function submitWorkAction(
   const { input, coverFile, galleryFiles } = parseSubmissionForm(formData);
 
   const validationError = validateSubmissionInput(input);
-  if (validationError) return { error: validationError };
+  if (validationError) return submissionActionError(validationError, input);
 
   const fileError = validateFiles(input.submission_type, coverFile, galleryFiles);
-  if (fileError) return { error: fileError };
+  if (fileError) return submissionActionError(fileError, input);
 
   if (!STUDENT_COURSES.includes(input.student_course as (typeof STUDENT_COURSES)[number])) {
-    return { error: "Curso inválido." };
+    return submissionActionError("Curso inválido.", input);
   }
 
   try {
@@ -118,7 +121,7 @@ export async function submitWorkAction(
     }
 
     if (!PROJECT_CATEGORIES.includes((input as ProjectSubmissionInput).category as (typeof PROJECT_CATEGORIES)[number])) {
-      return { error: "Categoria inválida." };
+      return submissionActionError("Categoria inválida.", input);
     }
 
     await submitStudentProject(input as ProjectSubmissionInput, coverFile!, galleryFiles);
@@ -129,7 +132,8 @@ export async function submitWorkAction(
     };
   } catch (error) {
     const label = input.submission_type === "jogo" ? "jogo" : "produção";
-    return { error: error instanceof Error ? error.message : `Erro ao enviar ${label}.` };
+    const message = error instanceof Error ? error.message : `Erro ao enviar ${label}.`;
+    return submissionActionError(message, input);
   }
 }
 

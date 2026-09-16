@@ -5,7 +5,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -101,11 +100,6 @@ export default function IntroProvider({ children }: { children: React.ReactNode 
   }));
   const { stage, splashEnabled, resolved } = intro;
   const introPending = isHome && !resolved;
-
-  useLayoutEffect(() => {
-    if (introPending) return;
-    document.getElementById("intro-gate")?.remove();
-  }, [introPending]);
 
   const setStage = useCallback(
     (next: IntroStage | ((current: IntroStage) => IntroStage)) =>

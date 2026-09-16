@@ -49,8 +49,8 @@ function validateBase(input: BaseSubmissionInput): string | null {
     return "Informe um ano válido.";
   }
   if (!input.description.trim()) return "Descreva o trabalho.";
-  if (input.description.trim().length < 40) {
-    return "A descrição precisa ter pelo menos 40 caracteres.";
+  if (input.description.trim().length < 10) {
+    return "A descrição precisa ter pelo menos 10 caracteres.";
   }
   const linkError = validateExternalUrl(input.external_url);
   if (linkError) return linkError;

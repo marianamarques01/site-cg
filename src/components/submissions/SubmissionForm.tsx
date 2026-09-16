@@ -1,6 +1,14 @@
 "use client";
 
-import { useActionState, useEffect, useId, useState, type ChangeEvent, type ReactNode } from "react";
+import {
+  useActionState,
+  useEffect,
+  useId,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import clsx from "clsx";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import { PROJECT_CATEGORIES, STUDENT_COURSES } from "@/lib/admin/constants";
@@ -168,12 +176,23 @@ function revokePreviews(previews: ImagePreview[]) {
 export default function SubmissionForm({ action }: SubmissionFormProps) {
   const [state, formAction, pending] = useActionState(action, {});
   const currentYear = new Date().getFullYear();
-  const [submissionType, setSubmissionType] = useState<SubmissionType>("producao");
+  const restored = state.values;
+  const [submissionType, setSubmissionType] = useState<SubmissionType>(
+    restored?.submission_type ?? "producao",
+  );
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [coverPreview, setCoverPreview] = useState<ImagePreview | null>(null);
   const [galleryPreviews, setGalleryPreviews] = useState<ImagePreview[]>([]);
   const coverInputId = useId();
   const galleryInputId = useId();
   const isGame = submissionType === "jogo";
+  const formKey = state.restoreKey ?? "initial";
+
+  useEffect(() => {
+    if (!state.restoreKey || !state.values) return;
+    setSubmissionType(state.values.submission_type);
+  }, [state.restoreKey, state.values]);
 
   useEffect(() => {
     return () => {
@@ -182,19 +201,34 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
     };
   }, [coverPreview, galleryPreviews]);
 
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    formData.delete("cover_file");
+    formData.delete("gallery_files");
+    if (coverFile) formData.set("cover_file", coverFile);
+    for (const file of galleryFiles) {
+      formData.append("gallery_files", file);
+    }
+    formAction(formData);
+  }
+
   function handleCoverChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (coverPreview) revokePreviews([coverPreview]);
     if (!file) {
+      setCoverFile(null);
       setCoverPreview(null);
       return;
     }
+    setCoverFile(file);
     setCoverPreview({ url: URL.createObjectURL(file), name: file.name });
   }
 
   function handleGalleryChange(event: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files ?? []).slice(0, MAX_GALLERY);
     revokePreviews(galleryPreviews);
+    setGalleryFiles(files);
     setGalleryPreviews(files.map((file) => ({ url: URL.createObjectURL(file), name: file.name })));
   }
 
@@ -216,7 +250,7 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-14 sm:gap-16">
+    <form key={formKey} onSubmit={handleSubmit} className="flex flex-col gap-14 sm:gap-16">
       <input type="hidden" name="submission_type" value={submissionType} />
 
       {state.error ? (
@@ -256,7 +290,14 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
         <div className="grid gap-8 sm:grid-cols-2">
           <label className="flex flex-col gap-2">
             <span className={fieldLabel}>Nome completo</span>
-            <input type="text" name="student" required autoComplete="name" className={inputClassName} />
+            <input
+              type="text"
+              name="student"
+              required
+              autoComplete="name"
+              defaultValue={restored?.student ?? ""}
+              className={inputClassName}
+            />
           </label>
           <label className="flex flex-col gap-2">
             <span className={fieldLabel}>E-mail</span>
@@ -266,13 +307,19 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
               required
               autoComplete="email"
               placeholder="seu.nome@fumec.br"
+              defaultValue={restored?.student_email ?? ""}
               className={inputClassName}
             />
           </label>
         </div>
         <label className="flex flex-col gap-2">
           <span className={fieldLabel}>Curso</span>
-          <select name="student_course" required defaultValue="" className={selectClassName}>
+          <select
+            name="student_course"
+            required
+            defaultValue={restored?.student_course ?? ""}
+            className={selectClassName}
+          >
             <option value="" disabled>
               Selecione seu curso
             </option>
@@ -292,7 +339,13 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
       >
         <label className="flex flex-col gap-2">
           <span className={fieldLabel}>Título</span>
-          <input type="text" name="title" required className={inputClassName} />
+          <input
+            type="text"
+            name="title"
+            required
+            defaultValue={restored?.title ?? ""}
+            className={inputClassName}
+          />
         </label>
 
         {isGame ? (
@@ -303,6 +356,7 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
                 type="text"
                 name="team"
                 placeholder="Nome do time ou deixe em branco se for solo"
+                defaultValue={restored?.team ?? ""}
                 className={inputClassName}
               />
               <span className="text-xs text-faint">Se estiver sozinho, usamos seu nome como equipe.</span>
@@ -315,6 +369,7 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
                   name="genre"
                   required
                   placeholder="Puzzle, plataforma…"
+                  defaultValue={restored?.genre ?? ""}
                   className={inputClassName}
                 />
               </label>
@@ -325,6 +380,7 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
                   name="platform"
                   required
                   placeholder="PC, Web, Android…"
+                  defaultValue={restored?.platform ?? ""}
                   className={inputClassName}
                 />
               </label>
@@ -336,7 +392,7 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
                   required
                   min={2000}
                   max={2100}
-                  defaultValue={currentYear}
+                  defaultValue={restored?.year ?? currentYear}
                   className={inputClassName}
                 />
               </label>
@@ -346,7 +402,12 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
           <div className="grid gap-8 sm:grid-cols-2">
             <label className="flex flex-col gap-2">
               <span className={fieldLabel}>Categoria</span>
-              <select name="category" required defaultValue={PROJECT_CATEGORIES[0]} className={selectClassName}>
+              <select
+                name="category"
+                required
+                defaultValue={restored?.category ?? PROJECT_CATEGORIES[0]}
+                className={selectClassName}
+              >
                 {PROJECT_CATEGORIES.map((category) => (
                   <option key={category} value={category}>
                     {category}
@@ -362,7 +423,7 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
                 required
                 min={2000}
                 max={2100}
-                defaultValue={currentYear}
+                defaultValue={restored?.year ?? currentYear}
                 className={inputClassName}
               />
             </label>
@@ -380,6 +441,7 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
                 ? "Pitch do jogo, mecânicas principais, ferramentas usadas e o que você quer destacar."
                 : "Contexto do trabalho, técnicas usadas e o que você quer destacar."
             }
+            defaultValue={restored?.description ?? ""}
             className={textareaClassName}
           />
         </label>
@@ -390,6 +452,7 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
             type="url"
             name="external_url"
             placeholder={isGame ? "itch.io, Google Drive, vídeo de gameplay…" : "YouTube, Google Drive, ArtStation…"}
+            defaultValue={restored?.external_url ?? ""}
             className={inputClassName}
           />
           <span className="text-xs text-faint">
@@ -409,7 +472,6 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
             id={coverInputId}
             name="cover_file"
             accept="image/jpeg,image/png,image/webp"
-            required
             title="Imagem de capa"
             hint="JPG, PNG ou WebP · até 10 MB"
             variant="primary"
@@ -448,6 +510,7 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
             type="checkbox"
             name="authorization"
             required
+            defaultChecked={restored?.authorization ?? false}
             className="mt-0.5 h-4 w-4 shrink-0 appearance-none border border-border bg-transparent checked:border-brand checked:bg-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           />
           <span className="text-sm leading-relaxed text-muted">

@@ -6,6 +6,7 @@ import GamesShowcase from "@/components/home/GamesShowcase";
 import CineclubeSection from "@/components/home/CineclubeSection";
 import CtaSection from "@/components/home/CtaSection";
 import PageTransition from "@/components/ui/PageTransition";
+import IntroGate from "@/components/ui/IntroGate";
 import { getHeroCategories } from "@/lib/data/categories";
 import { getFeaturedProjects } from "@/lib/data/projects";
 import { getGames } from "@/lib/data/games";
@@ -28,12 +29,7 @@ export default async function Home() {
 
   return (
     <PageTransition>
-      <div
-        id="intro-gate"
-        className="fixed inset-0 z-[200] bg-void"
-        aria-hidden="true"
-        suppressHydrationWarning
-      />
+      <IntroGate />
       <SplashScreen />
       <Hero categories={heroCategories} />
       <Marquee items={marqueeItems} />
