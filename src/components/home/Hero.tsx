@@ -245,8 +245,8 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
                     }
                   />
                   <Image
-                    src={withBasePath("/1.png")}
-                    alt="Obra em destaque — personagem 3D produzido por aluno"
+                    src={withBasePath("/render.png")}
+                    alt="Obra em destaque — render 3D produzido por aluno"
                     width={500}
                     height={500}
                     className="hero-robot relative z-10 w-full"

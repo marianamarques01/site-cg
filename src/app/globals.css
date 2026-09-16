@@ -313,26 +313,35 @@ body {
 
 .hero-robot-glow {
   position: absolute;
-  inset: 12% 8% -4%;
+  inset: 10% 8% -4%;
   z-index: 0;
   background: radial-gradient(
-    ellipse 70% 55% at 50% 65%,
-    color-mix(in srgb, var(--color-neon-cyan) 14%, transparent) 0%,
-    color-mix(in srgb, var(--color-magenta) 8%, transparent) 42%,
-    transparent 72%
+    ellipse 68% 52% at 50% 62%,
+    rgba(255, 255, 255, 0.09) 0%,
+    rgba(255, 255, 255, 0.04) 38%,
+    transparent 68%
   );
-  filter: blur(18px);
+  filter: blur(14px);
   pointer-events: none;
 }
 
 .hero-robot {
   filter: drop-shadow(0 32px 48px rgba(0, 0, 0, 0.55))
-    drop-shadow(0 0 32px color-mix(in srgb, var(--color-neon-cyan) 12%, transparent));
+    drop-shadow(0 0 22px rgba(255, 255, 255, 0.07));
+}
+
+:root[data-theme="light"] .hero-robot-glow {
+  background: radial-gradient(
+    ellipse 68% 52% at 50% 62%,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.08) 38%,
+    transparent 68%
+  );
 }
 
 :root[data-theme="light"] .hero-robot {
   filter: drop-shadow(0 20px 32px rgba(12, 13, 20, 0.18))
-    drop-shadow(0 0 40px color-mix(in srgb, var(--color-brand) 18%, transparent));
+    drop-shadow(0 0 22px rgba(255, 255, 255, 0.12));
 }
 
 :root[data-theme="light"] .hero-texture {
@@ -498,10 +507,25 @@ html {
   }
 }
 
+.hero-project {
+  transition: opacity 0.32s var(--ease-out-editorial);
+}
+
+.hero-project--dimmed {
+  opacity: 0.68;
+}
+
 .hero-project-frame {
   background: color-mix(in srgb, var(--color-depth) 40%, transparent);
   box-shadow: 0 24px 48px -28px rgba(0, 0, 0, 0.75);
   isolation: isolate;
+  transition: transform 0.32s var(--ease-out-editorial);
+  transform: rotate(var(--hero-tile-rotate, 0deg));
+}
+
+.hero-project:hover .hero-project-frame,
+.hero-project:focus-visible .hero-project-frame {
+  transform: scale(1.035) rotate(0deg);
 }
 
 .hero-project-frame::after {

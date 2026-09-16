@@ -1,12 +1,12 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useTransform, type MotionValue } from "framer-motion";
 import clsx from "clsx";
 import type { HeroCategory } from "@/lib/mock/categories";
 import {
-  DUR,
   EASE_EDITORIAL,
   HERO_TILE_REVEAL_DELAY,
   HERO_TILE_REVEAL_DUR,
@@ -120,7 +120,7 @@ function LegacyProjectTile({
             animate={
               active
                 ? {
-                    opacity: isDimmed ? 0.68 : 1,
+                    opacity: 1,
                     scale: 1,
                     x: "0vw",
                     y: "0vw",
@@ -141,17 +141,16 @@ function LegacyProjectTile({
               href={category.href}
               transitionTypes={["nav-forward"]}
               data-cursor-label="ver"
-              className="hero-project group pointer-events-auto block w-full transition-transform duration-500 hover:-translate-y-1 focus-visible:outline-none"
+              className={clsx(
+                "hero-project group pointer-events-auto block w-full transition-transform duration-500 hover:-translate-y-1 focus-visible:outline-none",
+                isDimmed && "hero-project--dimmed",
+              )}
               onPointerEnter={() => onHover(category.id)}
               onPointerLeave={() => onHover(null)}
               onFocus={() => onHover(category.id)}
               onBlur={() => onHover(null)}
             >
-              <motion.div
-                className={clsx("hero-project-frame relative overflow-hidden", category.aspect)}
-                animate={{ scale: isHovered ? 1.035 : 1 }}
-                transition={{ duration: DUR.mech, ease: EASE_EDITORIAL }}
-              >
+              <div className={clsx("hero-project-frame relative overflow-hidden", category.aspect)}>
                 {category.src ? (
                   <Image
                     src={category.src}
@@ -182,7 +181,7 @@ function LegacyProjectTile({
                     {category.label}
                   </span>
                 </div>
-              </motion.div>
+              </div>
             </Link>
           </motion.div>
         </motion.div>
@@ -243,7 +242,7 @@ function EditorialProjectTile({
             animate={
               active
                 ? {
-                    opacity: isDimmed ? 0.68 : 1,
+                    opacity: 1,
                     scale: 1,
                     clipPath: "inset(0% 0% 0% 0%)",
                     filter: "blur(0px)",
@@ -289,19 +288,18 @@ function EditorialProjectTile({
                 href={category.href}
                 transitionTypes={["nav-forward"]}
                 data-cursor-label="ver"
-                className="hero-project group pointer-events-auto block w-full focus-visible:outline-none"
+                className={clsx(
+                  "hero-project group pointer-events-auto block w-full focus-visible:outline-none",
+                  isDimmed && "hero-project--dimmed",
+                )}
                 onPointerEnter={() => onHover(category.id)}
                 onPointerLeave={() => onHover(null)}
                 onFocus={() => onHover(category.id)}
                 onBlur={() => onHover(null)}
               >
-                <motion.div
+                <div
                   className={clsx("hero-project-frame relative overflow-hidden", category.aspect)}
-                  animate={{
-                    scale: isHovered ? 1.035 : 1,
-                    rotate: isHovered ? 0 : category.rotate,
-                  }}
-                  transition={{ duration: DUR.mech, ease: EASE_EDITORIAL }}
+                  style={{ "--hero-tile-rotate": `${category.rotate}deg` } as CSSProperties}
                 >
                   {category.src ? (
                     <Image
@@ -333,7 +331,7 @@ function EditorialProjectTile({
                       {category.label}
                     </span>
                   </div>
-                </motion.div>
+                </div>
               </Link>
             </motion.div>
           </motion.div>

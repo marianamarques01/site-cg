@@ -7,6 +7,10 @@ import clsx from "clsx";
 import type { HeroCategory } from "@/lib/mock/categories";
 import { DUR, EASE_EDITORIAL, STAGGER } from "@/lib/motion";
 
+function isDimmed(hoveredId: string | null, categoryId: string) {
+  return hoveredId !== null && hoveredId !== categoryId;
+}
+
 type HeroCategoryCarouselProps = {
   categories: HeroCategory[];
   active: boolean;
@@ -46,24 +50,20 @@ export default function HeroCategoryCarousel({
         className="flex gap-3 overflow-x-auto px-[var(--gutter)] pb-1 snap-x snap-mandatory scrollbar-none sm:gap-4"
         aria-label="Categorias de produção"
       >
-        {categories.map((category) => {
-          const isHovered = hoveredId === category.id;
-
-          return (
+        {categories.map((category) => (
             <Link
               key={category.id}
               href={category.href}
               transitionTypes={["nav-forward"]}
               data-cursor-label="ver"
-              className="hero-project w-[min(68vw,220px)] shrink-0 snap-center transition-transform duration-500 active:scale-[0.98] sm:w-[min(72vw,240px)]"
+              className={clsx(
+                "hero-project w-[min(68vw,220px)] shrink-0 snap-center transition-transform duration-500 active:scale-[0.98] sm:w-[min(72vw,240px)]",
+                isDimmed(hoveredId, category.id) && "hero-project--dimmed",
+              )}
               onPointerEnter={() => onHover(category.id)}
               onPointerLeave={() => onHover(null)}
             >
-              <motion.div
-                className={clsx("hero-project-frame relative aspect-[4/5] w-full overflow-hidden")}
-                animate={{ scale: isHovered ? 1.03 : 1 }}
-                transition={{ duration: DUR.mech, ease: EASE_EDITORIAL }}
-              >
+              <div className="hero-project-frame relative aspect-[4/5] w-full overflow-hidden">
                 {category.src && (
                   <Image
                     src={category.src}
@@ -77,10 +77,9 @@ export default function HeroCategoryCarousel({
                 <div className="hero-project-label">
                   <span className="hero-project-name">{category.label}</span>
                 </div>
-              </motion.div>
+              </div>
             </Link>
-          );
-        })}
+        ))}
       </div>
       <p className="mt-2 px-[var(--gutter)] text-center text-[0.6rem] uppercase tracking-[0.16em] text-foreground/35 sm:mt-3 sm:text-[0.65rem] sm:tracking-[0.18em]">
         Deslize para explorar
