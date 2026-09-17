@@ -1,7 +1,8 @@
 import { PROJECT_CATEGORIES, STUDENT_COURSES } from "@/lib/admin/constants";
 import { validateExternalUrl } from "@/lib/submissions/external-url";
 
-const FUMEC_EMAIL = /@fumec\.br$/i;
+/** Checagem básica de formato (usuário@dominio.tld) — sem restrição de domínio. */
+const EMAIL_FORMAT = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export type SubmissionType = "producao" | "jogo";
 
@@ -31,15 +32,15 @@ export type GameSubmissionInput = BaseSubmissionInput & {
 
 export type SubmissionInput = ProjectSubmissionInput | GameSubmissionInput;
 
-export function isFumecEmail(email: string): boolean {
-  return FUMEC_EMAIL.test(email.trim().toLowerCase());
+export function isValidEmail(email: string): boolean {
+  return EMAIL_FORMAT.test(email.trim());
 }
 
 function validateBase(input: BaseSubmissionInput): string | null {
   if (!input.student.trim()) return "Informe seu nome.";
-  if (!input.student_email.trim()) return "Informe seu e-mail institucional.";
-  if (!isFumecEmail(input.student_email)) {
-    return "Use um e-mail @fumec.br.";
+  if (!input.student_email.trim()) return "Informe seu e-mail.";
+  if (!isValidEmail(input.student_email)) {
+    return "Informe um e-mail válido.";
   }
   if (!STUDENT_COURSES.includes(input.student_course as (typeof STUDENT_COURSES)[number])) {
     return "Selecione seu curso.";

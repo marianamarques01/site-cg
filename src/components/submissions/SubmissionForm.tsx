@@ -20,7 +20,10 @@ import {
   parseSubmissionFormData,
   validateSubmissionFiles,
 } from "@/lib/submissions/parse-form";
-import { validateSubmissionInput, type SubmissionType } from "@/lib/submissions/validate";
+import {
+  validateSubmissionInput,
+  type SubmissionType,
+} from "@/lib/submissions/validate";
 
 const MAX_GALLERY = 4;
 
@@ -322,7 +325,11 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
         </div>
       </FieldGroup>
 
-      <FieldGroup step="02" title="Quem envia" description="Use seu e-mail institucional @fumec.br.">
+      <FieldGroup
+        step="02"
+        title="Quem envia"
+        description="Use um e-mail válido — vamos avisar você por ele sobre o andamento do envio."
+      >
         <div className="grid gap-8 sm:grid-cols-2">
           <label className="flex flex-col gap-2">
             <span className={fieldLabel}>Nome completo</span>
@@ -342,7 +349,7 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
               name="student_email"
               required
               autoComplete="email"
-              placeholder="seu.nome@fumec.br"
+              placeholder="seu.nome@email.com"
               defaultValue={restored?.student_email ?? ""}
               className={inputClassName}
             />
@@ -559,7 +566,7 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-faint">
-            Campos marcados são obrigatórios. E-mail deve ser @fumec.br.
+            Campos marcados são obrigatórios.
           </p>
           <PrimaryButton type="submit" disabled={pending} className="w-full sm:w-auto">
             {pending ? "Enviando…" : isGame ? "Enviar jogo" : "Enviar produção"}

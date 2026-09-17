@@ -2,6 +2,7 @@
 
 import { revalidateGames, revalidateProjects } from "@/lib/cache/revalidate";
 import { PROJECT_CATEGORIES, STUDENT_COURSES } from "@/lib/admin/constants";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { submitStudentGame } from "@/lib/submissions/submit-game";
 import { submitStudentProject } from "@/lib/submissions/submit-project";
 import {
@@ -25,8 +26,8 @@ export async function submitWorkAction(
   _prev: SubmissionActionState,
   formData: FormData,
 ): Promise<SubmissionActionState> {
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    return { error: "Envios temporariamente indisponíveis. Tente mais tarde." };
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY || !isSupabaseConfigured()) {
+    return { error: "Envios temporariamente indisponíveis. Tente novamente mais tarde." };
   }
 
   const { input, coverFile, galleryFiles } = parseSubmissionFormData(formData);

@@ -1,12 +1,17 @@
 export function normalizeExternalUrl(raw: string): string | null {
   const trimmed = raw.trim();
   if (!trimmed) return null;
+  // `new URL()` silently percent/punycode-encodes free text (ex.: "não é
+  // uma url") into a bogus hostname instead of rejecting it — URLs de
+  // verdade não têm espaço, então isso barra esse caso antes do parse.
+  if (/\s/.test(trimmed)) return null;
 
   const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
 
   try {
     const url = new URL(withProtocol);
     if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    if (!url.hostname.includes(".")) return null;
     return url.toString();
   } catch {
     return null;
