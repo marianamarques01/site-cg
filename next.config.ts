@@ -9,6 +9,13 @@ const nextConfig: NextConfig = {
   basePath: basePath || undefined,
   assetPrefix: basePath ? `${basePath}/` : undefined,
   trailingSlash: isGitHubPages ? true : undefined,
+  experimental: {
+    serverActions: {
+      // Cover (10MB) + up to 4 gallery images (10MB each) can exceed the
+      // 1MB default limit for Server Action request bodies.
+      bodySizeLimit: "50mb",
+    },
+  },
   async redirects() {
     return [
       { source: "/jogos", destination: "/producoes#jogos", permanent: true },
