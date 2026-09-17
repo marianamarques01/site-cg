@@ -43,6 +43,6 @@ export async function submitStudentGame(
     .select("*")
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(error.message || "Falha ao salvar o jogo.");
   return game as DbGame;
 }

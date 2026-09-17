@@ -49,7 +49,7 @@ export async function submitStudentProject(
     .select("*")
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(error.message || "Falha ao salvar a produção.");
 
   if (galleryMedia.length > 0) {
     const rows = galleryMedia.map((media, sort_order) => ({
@@ -59,7 +59,7 @@ export async function submitStudentProject(
     }));
 
     const { error: galleryError } = await supabase.from("project_gallery").insert(rows);
-    if (galleryError) throw new Error(galleryError.message);
+    if (galleryError) throw new Error(galleryError.message || "Falha ao salvar a galeria da produção.");
   }
 
   return project as DbProject;

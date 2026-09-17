@@ -14,7 +14,7 @@ export async function uploadMediaFileAdmin(file: File, alt: string): Promise<DbM
     upsert: false,
   });
 
-  if (uploadError) throw new Error(uploadError.message);
+  if (uploadError) throw new Error(uploadError.message || "Falha ao enviar o arquivo para o storage.");
 
   const {
     data: { publicUrl },
@@ -32,7 +32,7 @@ export async function uploadMediaFileAdmin(file: File, alt: string): Promise<DbM
     .select("*")
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(error.message || "Falha ao registrar o arquivo enviado.");
   return data as DbMedia;
 }
 
@@ -59,8 +59,8 @@ export async function assertSubmissionRateLimit(email: string): Promise<void> {
       .gte("submitted_at", since),
   ]);
 
-  if (projects.error) throw new Error(projects.error.message);
-  if (games.error) throw new Error(games.error.message);
+  if (projects.error) throw new Error(projects.error.message || "Falha ao verificar limite de envios (produções).");
+  if (games.error) throw new Error(games.error.message || "Falha ao verificar limite de envios (jogos).");
 
   const total = (projects.count ?? 0) + (games.count ?? 0);
   if (total >= 3) {

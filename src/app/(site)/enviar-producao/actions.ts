@@ -63,7 +63,9 @@ export async function submitWorkAction(
     };
   } catch (error) {
     const label = input.submission_type === "jogo" ? "jogo" : "produção";
-    const message = error instanceof Error ? error.message : `Erro ao enviar ${label}.`;
+    const fallback = `Erro ao enviar ${label}. Tente novamente em alguns minutos.`;
+    const message = error instanceof Error && error.message.trim() ? error.message : fallback;
+    console.error(`[submitWorkAction] ${label} submission failed:`, error);
     return submissionActionError(message, input);
   }
 }

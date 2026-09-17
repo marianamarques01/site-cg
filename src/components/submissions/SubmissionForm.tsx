@@ -7,13 +7,15 @@ import {
   useRef,
   useState,
   type ChangeEvent,
-  type FormEvent,
   type ReactNode,
 } from "react";
 import clsx from "clsx";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import { PROJECT_CATEGORIES, STUDENT_COURSES } from "@/lib/admin/constants";
-import type { SubmissionActionState } from "@/lib/submissions/action-state";
+import {
+  submissionActionError,
+  type SubmissionActionState,
+} from "@/lib/submissions/action-state";
 import {
   parseSubmissionFormData,
   validateSubmissionFiles,
@@ -178,33 +180,49 @@ function revokePreviews(previews: ImagePreview[]) {
   }
 }
 
-function assignInputFiles(input: HTMLInputElement | null, files: File[]) {
-  if (!input) return;
-  const dataTransfer = new DataTransfer();
-  for (const file of files) {
-    dataTransfer.items.add(file);
-  }
-  input.files = dataTransfer.files;
-}
-
 export default function SubmissionForm({ action }: SubmissionFormProps) {
-  const [state, formAction, pending] = useActionState(action, {});
   const currentYear = new Date().getFullYear();
-  const restored = state.values;
-  const [submissionType, setSubmissionType] = useState<SubmissionType>(
-    restored?.submission_type ?? "producao",
-  );
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [coverPreview, setCoverPreview] = useState<ImagePreview | null>(null);
   const [galleryPreviews, setGalleryPreviews] = useState<ImagePreview[]>([]);
+
+  // Runs inside the transition React starts for the native <form action>
+  // submit, so useActionState's dispatch is never called outside a
+  // transition. Files live in state (not the DOM input) because the file
+  // input is emptied whenever the form remounts after a server error.
+  async function handleAction(
+    prevState: SubmissionActionState,
+    formData: FormData,
+  ): Promise<SubmissionActionState> {
+    formData.delete("cover_file");
+    if (coverFile) formData.set("cover_file", coverFile);
+    formData.delete("gallery_files");
+    for (const file of galleryFiles) formData.append("gallery_files", file);
+
+    const { input, coverFile: parsedCover, galleryFiles: parsedGallery } =
+      parseSubmissionFormData(formData);
+
+    const validationError = validateSubmissionInput(input);
+    if (validationError) return submissionActionError(validationError, input);
+
+    const fileError = validateSubmissionFiles(input.submission_type, parsedCover, parsedGallery);
+    if (fileError) return submissionActionError(fileError, input);
+
+    return action(prevState, formData);
+  }
+
+  const [state, formAction, pending] = useActionState(handleAction, {});
+  const restored = state.values;
+  const [submissionType, setSubmissionType] = useState<SubmissionType>(
+    restored?.submission_type ?? "producao",
+  );
   const coverInputId = useId();
   const galleryInputId = useId();
   const feedbackRef = useRef<HTMLDivElement>(null);
-  const [clientError, setClientError] = useState<string | null>(null);
   const isGame = submissionType === "jogo";
   const formKey = state.restoreKey ?? "initial";
-  const visibleError = clientError ?? state.error ?? null;
+  const visibleError = state.error?.trim() ? state.error : null;
 
   useEffect(() => {
     if (!state.restoreKey || !state.values) return;
@@ -222,41 +240,6 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
       revokePreviews(galleryPreviews);
     };
   }, [coverPreview, galleryPreviews]);
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    setClientError(null);
-
-    const form = event.currentTarget;
-    const coverInput = form.elements.namedItem("cover_file");
-    const galleryInput = form.elements.namedItem("gallery_files");
-
-    assignInputFiles(
-      coverInput instanceof HTMLInputElement ? coverInput : null,
-      coverFile ? [coverFile] : [],
-    );
-    assignInputFiles(
-      galleryInput instanceof HTMLInputElement ? galleryInput : null,
-      galleryFiles,
-    );
-
-    const formData = new FormData(form);
-    const { input, coverFile: parsedCover, galleryFiles: parsedGallery } =
-      parseSubmissionFormData(formData);
-
-    const validationError = validateSubmissionInput(input);
-    if (validationError) {
-      event.preventDefault();
-      setClientError(validationError);
-      return;
-    }
-
-    const fileError = validateSubmissionFiles(input.submission_type, parsedCover, parsedGallery);
-    if (fileError) {
-      event.preventDefault();
-      setClientError(fileError);
-      return;
-    }
-  }
 
   function handleCoverChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -298,9 +281,7 @@ export default function SubmissionForm({ action }: SubmissionFormProps) {
     <form
       key={formKey}
       action={formAction}
-      encType="multipart/form-data"
       noValidate
-      onSubmit={handleSubmit}
       className="flex flex-col gap-14 sm:gap-16"
     >
       <input type="hidden" name="submission_type" value={submissionType} />
