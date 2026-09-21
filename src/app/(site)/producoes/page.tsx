@@ -13,6 +13,7 @@ import ActionLink from "@/components/ui/ActionLink";
 import SectionRule from "@/components/ui/SectionRule";
 import ProjectsTrackOverview from "@/components/producoes/ProjectsTrackOverview";
 import ProjectsCourseBadge from "@/components/producoes/ProjectsCourseBadge";
+import ProjectsIntroFigure from "@/components/producoes/ProjectsIntroFigure";
 import { getProjects } from "@/lib/data/projects";
 import { getGames } from "@/lib/data/games";
 import { COURSE_TONE } from "@/lib/mock/courses";
@@ -35,11 +36,14 @@ export default async function ProducoesPage() {
 
   return (
     <PageTransition>
-      <PageIntro
-        kicker="Galeria"
-        titleLines={["Projetos"]}
-        description="Dois cursos, uma vitrine: produções visuais de Computação Gráfica e jogos de Design de Games."
-      />
+      <div className="relative isolate">
+        <ProjectsIntroFigure />
+        <PageIntro
+          kicker="Galeria"
+          titleLines={["Projetos"]}
+          description="Dois cursos, uma vitrine: produções visuais de Computação Gráfica e jogos de Design de Games."
+        />
+      </div>
 
       <Container className="flex flex-col gap-10 pb-12 md:gap-12">
         <div className="flex flex-wrap items-center justify-between gap-4 border border-border px-6 py-5">
