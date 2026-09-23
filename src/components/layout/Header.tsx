@@ -22,7 +22,6 @@ import { DUR, EASE_EDITORIAL, EASE_MECH, HERO_HOME_ENTRANCE_DELAY, STAGGER } fro
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/producoes", label: "Projetos" },
-  { href: "/enviar-producao", label: "Enviar trabalho" },
   { href: "/blog", label: "Blog" },
   { href: "/sobre", label: "Sobre" },
 ];

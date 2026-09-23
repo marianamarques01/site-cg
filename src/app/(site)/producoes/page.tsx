@@ -7,7 +7,6 @@ import RevealPass from "@/components/ui/RevealPass";
 import TiltCard from "@/components/ui/TiltCard";
 import MediaMorph from "@/components/ui/MediaMorph";
 import PageTransition from "@/components/ui/PageTransition";
-import PrimaryButton from "@/components/ui/PrimaryButton";
 import MaskedLines from "@/components/ui/MaskedLines";
 import ActionLink from "@/components/ui/ActionLink";
 import SectionRule from "@/components/ui/SectionRule";
@@ -46,16 +45,6 @@ export default async function ProducoesPage() {
       </div>
 
       <Container className="flex flex-col gap-10 pb-12 md:gap-12">
-        <div className="flex flex-wrap items-center justify-between gap-4 border border-border px-6 py-5">
-          <p className="max-w-xl text-sm text-muted">
-            É aluno dos cursos? Envie sua produção ou jogo para revisão — pode entrar na galeria ou no
-            showcase.
-          </p>
-          <PrimaryButton href="/enviar-producao" cursorLabel="enviar">
-            Enviar trabalho
-          </PrimaryButton>
-        </div>
-
         <ProjectsTrackOverview projectCount={projects.length} gameCount={games.length} />
       </Container>
 
