@@ -34,7 +34,7 @@ async function fetchSettingsFromDb(): Promise<DbSiteSettings | null> {
   return data as DbSiteSettings;
 }
 
-const getCachedSettings = unstable_cache(fetchSettingsFromDb, ["site-settings-v2"], {
+const getCachedSettings = unstable_cache(fetchSettingsFromDb, ["site-settings-v3"], {
   tags: [CACHE_TAGS.settings],
 });
 
