@@ -46,14 +46,18 @@ export default function SettingsForm({ settings, action }: SettingsFormProps) {
           <textarea id="contact_address" name="contact_address" rows={3} defaultValue={settings.contact_address ?? ""} className={adminTextareaClassName} />
         </AdminField>
 
-        <AdminField label="Instagram" htmlFor="instagram">
+        <AdminField label="Instagram" htmlFor="instagram" hint="@usuario ou link completo.">
           <input id="instagram" name="instagram" defaultValue={settings.social_links?.instagram ?? ""} className={adminInputClassName} />
         </AdminField>
 
+        <AdminField label="YouTube" htmlFor="youtube" hint="Link do canal, ex.: https://www.youtube.com/@canal">
+          <input id="youtube" name="youtube" defaultValue={settings.social_links?.youtube ?? ""} className={adminInputClassName} />
+        </AdminField>
+
         <AdminField
-          label="Título do CTA (home)"
+          label="Título da chamada final (home)"
           htmlFor="cta_title"
-          hint="Use Enter para quebrar linhas no headline."
+          hint="Bloco de convite no fim da home. Use Enter para quebrar linhas."
         >
           <textarea
             id="cta_title"
@@ -64,7 +68,7 @@ export default function SettingsForm({ settings, action }: SettingsFormProps) {
           />
         </AdminField>
 
-        <AdminField label="Descrição do CTA" htmlFor="cta_description">
+        <AdminField label="Texto da chamada final" htmlFor="cta_description">
           <textarea id="cta_description" name="cta_description" rows={3} defaultValue={settings.cta_description ?? ""} className={adminTextareaClassName} />
         </AdminField>
 

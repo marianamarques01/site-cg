@@ -26,7 +26,7 @@ export default function HeroForm({ category, mediaItems, action }: HeroFormProps
         <input type="hidden" name="id" value={category.id} />
 
         <div className="grid gap-8 md:grid-cols-2">
-          <AdminField label="Label" htmlFor="label">
+          <AdminField label="Texto" htmlFor="label">
             <input id="label" name="label" required defaultValue={category.label} className={adminInputClassName} />
           </AdminField>
           <AdminField label="Link" htmlFor="href">

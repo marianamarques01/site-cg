@@ -1002,8 +1002,13 @@ html {
   background-color: var(--color-surface);
 }
 
+/* Fields get a light tint so they read as inputs on top of the panels. */
 .admin-portal :where(input, textarea, select).border-border {
-  background-color: transparent;
+  background-color: color-mix(in srgb, var(--color-foreground) 7%, transparent);
+}
+
+.admin-portal select.border-border option {
+  background-color: var(--color-surface);
 }
 
 .admin-portal thead {

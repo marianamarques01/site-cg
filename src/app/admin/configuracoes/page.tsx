@@ -15,7 +15,7 @@ export default async function AdminSettingsPage({ searchParams }: PageProps) {
   const settings = await ensureSettingsExist();
 
   return (
-    <AdminShell title="Configurações" description="Contato, CTA e marquee da home.">
+    <AdminShell title="Configurações" description="Contato, chamada final e marquee da home.">
       <SavedNotice show={Boolean(saved)} />
       <SettingsForm settings={settings} action={updateSettingsAction} />
     </AdminShell>

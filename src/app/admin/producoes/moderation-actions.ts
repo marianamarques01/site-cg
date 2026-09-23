@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidateProjects } from "@/lib/cache/revalidate";
 import { requireEditorProfile } from "@/lib/data/auth";
 import { getAdminProjectById } from "@/lib/admin/projects";
+import { deleteProjectMedia } from "@/lib/admin/media";
 import {
   notifySubmissionApproved,
   notifySubmissionRejected,
@@ -51,6 +52,8 @@ export async function rejectProjectAction(formData: FormData) {
   if (error) throw new Error(error.message);
 
   await notifySubmissionRejected({ ...project, status: "rejected", rejection_reason: reason }, reason);
+  // Só guardamos imagens de envios aprovados.
+  await deleteProjectMedia(id, project.cover_image_id);
   revalidateProjects(project.slug);
   redirect("/admin/producoes?tab=rejected");
 }

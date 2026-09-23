@@ -15,7 +15,7 @@ export default async function ContatoPage() {
   const settings = await getSiteSettings();
   const email = settings.contact_email ?? "criativa@fumec.br";
   const addressLines = (settings.contact_address ?? "Universidade FUMEC\nBelo Horizonte, MG").split("\n");
-  const instagram = settings.social_links?.instagram ?? "@fumeccriativa";
+  const instagram = settings.social_links?.instagram ?? "@computacaograficabh";
 
   return (
     <PageTransition>

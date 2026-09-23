@@ -9,7 +9,7 @@ const LINKS = [
   { href: "/admin/jogos", label: "Jogos" },
   { href: "/admin/cursos", label: "Cursos" },
   { href: "/admin/faq", label: "FAQ" },
-  { href: "/admin/hero", label: "Hero" },
+  { href: "/admin/hero", label: "Página principal" },
   { href: "/admin/midia", label: "Mídia" },
   { href: "/admin/configuracoes", label: "Config" },
 ] as const;

@@ -56,7 +56,7 @@ export default function GameSubmissionReviewBanner({ game }: GameSubmissionRevie
               name="rejection_reason"
               required
               placeholder="Ex.: build não roda ou falta documentação"
-              className="border-b border-border bg-transparent py-2 text-sm text-foreground outline-none focus:border-brand"
+              className="border-b border-border bg-transparent px-3 py-2 text-sm text-foreground outline-none focus:border-brand"
             />
           </label>
           <button

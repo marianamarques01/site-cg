@@ -23,6 +23,7 @@ export async function updateSettingsAction(_prev: ActionState, formData: FormDat
   const contact_email = String(formData.get("contact_email") ?? "").trim() || null;
   const contact_address = String(formData.get("contact_address") ?? "").trim() || null;
   const instagram = String(formData.get("instagram") ?? "").trim();
+  const youtube = String(formData.get("youtube") ?? "").trim();
   const cta_title = String(formData.get("cta_title") ?? "").trim() || null;
   const cta_description = String(formData.get("cta_description") ?? "").trim() || null;
   const marquee_items = parseMarquee(String(formData.get("marquee_items") ?? "[]"));
@@ -31,7 +32,10 @@ export async function updateSettingsAction(_prev: ActionState, formData: FormDat
     await upsertSiteSettings({
       contact_email,
       contact_address,
-      social_links: instagram ? { instagram } : {},
+      social_links: {
+        ...(instagram ? { instagram } : {}),
+        ...(youtube ? { youtube } : {}),
+      },
       marquee_items,
       cta_title,
       cta_description,
@@ -51,7 +55,7 @@ export async function ensureSettingsExist() {
   return upsertSiteSettings({
     contact_email: "criativa@fumec.br",
     contact_address: "Universidade FUMEC\nRua Cobre, 200 — Cruzeiro\nBelo Horizonte, MG — CEP 30310-190",
-    social_links: { instagram: "@fumeccriativa" },
+    social_links: { instagram: "@computacaograficabh", youtube: "https://www.youtube.com/@producoescgdg" },
     marquee_items: DEFAULT_MARQUEE_ITEMS,
     cta_title: null,
     cta_description: null,

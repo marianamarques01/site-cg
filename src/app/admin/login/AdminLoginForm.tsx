@@ -51,7 +51,7 @@ export default function AdminLoginForm() {
               required
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="border-b border-border bg-transparent py-3 text-foreground outline-none transition-colors focus:border-brand"
+              className="border-b border-border bg-transparent px-3 py-3 text-foreground outline-none transition-colors focus:border-brand"
               autoComplete="email"
             />
           </label>
@@ -63,7 +63,7 @@ export default function AdminLoginForm() {
               required
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="border-b border-border bg-transparent py-3 text-foreground outline-none transition-colors focus:border-brand"
+              className="border-b border-border bg-transparent px-3 py-3 text-foreground outline-none transition-colors focus:border-brand"
               autoComplete="current-password"
             />
           </label>

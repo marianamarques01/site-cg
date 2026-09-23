@@ -18,7 +18,7 @@ const DEFAULT_SETTINGS: DbSiteSettings = {
   id: 1,
   contact_email: "criativa@fumec.br",
   contact_address: "Universidade FUMEC\nRua Cobre, 200 — Cruzeiro\nBelo Horizonte, MG — CEP 30310-190",
-  social_links: { instagram: "@fumeccriativa" },
+  social_links: { instagram: "@computacaograficabh", youtube: "https://www.youtube.com/@producoescgdg" },
   marquee_items: DEFAULT_MARQUEE_ITEMS,
   cta_title: "Pronto para\nentrar em cena?",
   cta_description:

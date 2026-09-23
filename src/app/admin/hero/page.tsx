@@ -9,7 +9,7 @@ export default async function AdminHeroPage() {
   const categories = await listAdminHeroCategories();
 
   return (
-    <AdminShell title="Hero" description="Categorias flutuantes do hero da home.">
+    <AdminShell title="Página principal" description="Categorias flutuantes do topo da home.">
       <div className="grid gap-4 sm:grid-cols-2">
         {categories.map((cat) => (
           <Link key={cat.id} href={`/admin/hero/${cat.id}`} className="flex gap-4 border border-border p-4 transition-colors hover:border-brand">

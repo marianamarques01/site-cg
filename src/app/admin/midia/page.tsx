@@ -2,12 +2,12 @@ import Image from "next/image";
 import AdminShell from "@/components/admin/AdminShell";
 import MediaUploadForm from "@/components/admin/MediaUploadForm";
 import { requireEditorPage } from "@/lib/admin/guard";
-import { listMedia } from "@/lib/admin/media";
+import { listApprovedMedia } from "@/lib/admin/media";
 import { deleteMediaAction } from "@/app/admin/midia/actions";
 
 export default async function AdminMediaPage() {
   await requireEditorPage();
-  const items = await listMedia();
+  const items = await listApprovedMedia();
 
   return (
     <AdminShell

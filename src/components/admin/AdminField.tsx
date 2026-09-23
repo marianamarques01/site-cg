@@ -18,10 +18,10 @@ export default function AdminField({ label, htmlFor, hint, children }: AdminFiel
 }
 
 export const adminInputClassName =
-  "border-b border-border bg-transparent py-3 text-foreground outline-none transition-colors focus:border-brand";
+  "border-b border-border bg-transparent px-3 py-3 text-foreground outline-none transition-colors focus:border-brand";
 
 export const adminTextareaClassName =
   "min-h-32 resize-y border border-border bg-transparent px-3 py-3 text-foreground outline-none transition-colors focus:border-brand";
 
 export const adminSelectClassName =
-  "border-b border-border bg-transparent py-3 text-foreground outline-none transition-colors focus:border-brand";
+  "border-b border-border bg-transparent px-3 py-3 text-foreground outline-none transition-colors focus:border-brand";

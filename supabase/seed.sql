@@ -81,7 +81,7 @@ INSERT INTO public.faq_items (question, answer, sort_order) VALUES
 ('Como faço para ter um projeto aqui?', 'Se você é aluno da FUMEC de Computação Gráfica ou Design de Games, envia pelo contato. A curadoria entra na próxima leva do site.', 2),
 ('Computação Gráfica ou Design de Games?', 'Computação Gráfica é imagem: modelagem, concept, animação, render. Design de Games é jogável: sistemas, protótipo, playtest. Os dois se cruzam o tempo todo.', 3),
 ('Posso usar um trabalho que vi aqui?', 'Os direitos são dos alunos. Para divulgação, parceria ou qualquer uso, fala com a gente antes.', 4),
-('Como falo com o curso?', 'Pelo formulário de contato, pelo e-mail criativa@fumec.br ou nas redes @fumeccriativa. Universidade FUMEC, Belo Horizonte.', 5);
+('Como falo com o curso?', 'Pelo formulário de contato, pelo e-mail criativa@fumec.br ou nas redes @computacaograficabh. Universidade FUMEC, Belo Horizonte.', 5);
 
 -- Hero categories
 INSERT INTO public.hero_categories (id, label, href, tone, aspect, image_url, sort_order, layout) VALUES
@@ -96,7 +96,7 @@ INSERT INTO public.site_settings (id, contact_email, contact_address, social_lin
   1,
   'criativa@fumec.br',
   E'Universidade FUMEC\nBelo Horizonte, MG',
-  '{"instagram":"@fumeccriativa"}'::jsonb,
+  '{"instagram":"@computacaograficabh","youtube":"https://www.youtube.com/@producoescgdg"}'::jsonb,
   '[{"label":"MODELAGEM 3D","href":"/producoes"},{"label":"DESIGN DE GAMES","href":"/cursos/design-de-games"},{"label":"CONCEPT ART","href":"/producoes"},{"label":"JOGOS","href":"/jogos"},{"label":"COMPUTAÇÃO GRÁFICA","href":"/cursos/computacao-grafica"},{"label":"ANIMAÇÃO","href":"/producoes"},{"label":"POSTERS","href":"/producoes"},{"label":"PRODUÇÕES DOS ALUNOS","href":"/producoes"}]'::jsonb,
   E'Pronto para\nentrar em cena?',
   'Imagem ou jogo: duas formações na FUMEC, um estúdio compartilhado. Escolhe a tua e vê de perto como a turma produz.'

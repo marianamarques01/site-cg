@@ -13,6 +13,36 @@ export async function listMedia(): Promise<DbMedia[]> {
   return (data ?? []) as DbMedia[];
 }
 
+/** Biblioteca: esconde imagens de envios de alunos que ainda não foram aprovados. */
+export async function listApprovedMedia(): Promise<DbMedia[]> {
+  const supabase = await createClient();
+  const [media, pendingProjects, pendingGames] = await Promise.all([
+    listMedia(),
+    supabase.from("projects").select("id, cover_image_id").eq("status", "pending"),
+    supabase.from("games").select("cover_image_id").eq("status", "pending"),
+  ]);
+
+  if (pendingProjects.error) throw new Error(pendingProjects.error.message);
+  if (pendingGames.error) throw new Error(pendingGames.error.message);
+
+  const hidden = new Set<string>();
+  for (const row of [...(pendingProjects.data ?? []), ...(pendingGames.data ?? [])]) {
+    if (row.cover_image_id) hidden.add(row.cover_image_id);
+  }
+
+  const projectIds = (pendingProjects.data ?? []).map((row) => row.id);
+  if (projectIds.length > 0) {
+    const { data, error } = await supabase
+      .from("project_gallery")
+      .select("media_id")
+      .in("project_id", projectIds);
+    if (error) throw new Error(error.message);
+    for (const row of data ?? []) hidden.add(row.media_id);
+  }
+
+  return media.filter((item) => !hidden.has(item.id));
+}
+
 export async function getMediaById(id: string): Promise<DbMedia | null> {
   const supabase = await createClient();
   const { data, error } = await supabase.from("media").select("*").eq("id", id).maybeSingle();
@@ -74,6 +104,22 @@ export async function deleteMediaById(id: string): Promise<void> {
 
   const { error } = await supabase.from("media").delete().eq("id", id);
   if (error) throw new Error(error.message);
+}
+
+export async function deleteMediaByIds(ids: (string | null | undefined)[]): Promise<void> {
+  const unique = [...new Set(ids.filter((id): id is string => Boolean(id)))];
+  for (const id of unique) await deleteMediaById(id);
+}
+
+/** Remove capa e galeria de uma produção (usado ao recusar envios). */
+export async function deleteProjectMedia(projectId: string, coverImageId: string | null): Promise<void> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("project_gallery")
+    .select("media_id")
+    .eq("project_id", projectId);
+  if (error) throw new Error(error.message);
+  await deleteMediaByIds([coverImageId, ...(data ?? []).map((row) => row.media_id)]);
 }
 
 export async function resolveCoverImageId(

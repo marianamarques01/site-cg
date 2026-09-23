@@ -20,7 +20,7 @@ export default async function AdminEditHeroPage({ params, searchParams }: PagePr
   if (!category) notFound();
 
   return (
-    <AdminShell title={`Hero · ${category.label}`}>
+    <AdminShell title={`Página principal · ${category.label}`}>
       <SavedNotice show={Boolean(saved)} />
       <HeroForm category={category} mediaItems={mediaItems} action={updateHeroAction} />
     </AdminShell>

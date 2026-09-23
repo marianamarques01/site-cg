@@ -34,7 +34,7 @@ export default function FaqLocationSection({
   items: faq,
   addressLines,
   contactEmail = "criativa@fumec.br",
-  instagram = "@fumeccriativa",
+  instagram = "@computacaograficabh",
   compact,
 }: FaqLocationSectionProps) {
   const [open, setOpen] = useState<number | null>(0);

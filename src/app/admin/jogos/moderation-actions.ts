@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidateGames } from "@/lib/cache/revalidate";
 import { requireEditorProfile } from "@/lib/data/auth";
 import { getAdminGameById } from "@/lib/admin/games";
+import { deleteMediaByIds } from "@/lib/admin/media";
 import {
   notifyGameSubmissionApproved,
   notifyGameSubmissionRejected,
@@ -51,6 +52,8 @@ export async function rejectGameAction(formData: FormData) {
   if (error) throw new Error(error.message);
 
   await notifyGameSubmissionRejected({ ...game, status: "rejected", rejection_reason: reason }, reason);
+  // Só guardamos imagens de envios aprovados.
+  await deleteMediaByIds([game.cover_image_id]);
   revalidateGames(game.slug);
   redirect("/admin/jogos?tab=rejected");
 }

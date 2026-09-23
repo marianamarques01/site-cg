@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Logo from "@/components/ui/Logo";
 import Container from "@/components/ui/Container";
+import { getSiteSettings } from "@/lib/data/settings";
+import { instagramUrl, youtubeUrl } from "@/lib/social-links";
 
 const COLUMNS: { title: string; links: { href: string; label: string }[] }[] = [
   {
@@ -27,7 +29,13 @@ const COLUMNS: { title: string; links: { href: string; label: string }[] }[] = [
   },
 ];
 
-export default function Footer() {
+export default async function Footer() {
+  const settings = await getSiteSettings();
+  const socialLinks = [
+    { href: instagramUrl(settings.social_links?.instagram), label: "Instagram" },
+    { href: youtubeUrl(settings.social_links?.youtube), label: "YouTube" },
+  ].filter((link): link is { href: string; label: string } => Boolean(link.href));
+
   return (
     <footer className="relative border-t border-border">
       <Container className="grid gap-16 py-20 md:grid-cols-[1.2fr_2fr] md:py-28">
@@ -36,6 +44,22 @@ export default function Footer() {
           <p className="max-w-xs font-display text-3xl leading-[0.95] tracking-tight text-foreground">
             Produções dos cursos de Computação Gráfica e Design de Games.
           </p>
+          {socialLinks.length > 0 ? (
+            <ul className="flex flex-wrap gap-5">
+              {socialLinks.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-muted transition-colors hover:text-foreground"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
 
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-3">

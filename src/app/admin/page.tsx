@@ -12,9 +12,9 @@ const SECTIONS = [
   { href: "/admin/jogos", label: "Jogos", description: "Jogos estudantis", statKey: "games" as const },
   { href: "/admin/cursos", label: "Cursos", description: "Textos dos cursos" },
   { href: "/admin/faq", label: "FAQ", description: "Perguntas da home" },
-  { href: "/admin/hero", label: "Hero", description: "Categorias do hero" },
+  { href: "/admin/hero", label: "Página principal", description: "Categorias do topo da home" },
   { href: "/admin/midia", label: "Mídia", description: "Biblioteca de imagens", statKey: "media" as const },
-  { href: "/admin/configuracoes", label: "Configurações", description: "Contato, CTA, marquee" },
+  { href: "/admin/configuracoes", label: "Configurações", description: "Contato, chamada final, marquee" },
 ] as const;
 
 export default async function AdminDashboardPage() {

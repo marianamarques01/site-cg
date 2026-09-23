@@ -32,6 +32,6 @@ export const faq: FaqItem[] = [
   {
     question: "Como falo com o curso?",
     answer:
-      "Pelo formulário de contato, pelo e-mail criativa@fumec.br ou nas redes @fumeccriativa. Universidade FUMEC, Belo Horizonte.",
+      "Pelo formulário de contato, pelo e-mail criativa@fumec.br ou nas redes @computacaograficabh. Universidade FUMEC, Belo Horizonte.",
   },
 ];
