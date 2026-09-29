@@ -16,6 +16,7 @@ import {
   type ProjectInput,
 } from "@/lib/admin/projects";
 import { PROJECT_STATUS_OPTIONS, TONE_OPTIONS } from "@/lib/admin/constants";
+import { validateVideoUrl } from "@/lib/video";
 import { normalizeExternalUrl, validateExternalUrl } from "@/lib/submissions/external-url";
 import type { ActionState } from "@/lib/admin/types";
 import type { ContentStatus } from "@/lib/supabase/database.types";
@@ -43,6 +44,7 @@ function parseProjectForm(formData: FormData) {
   const featuredOrderRaw = String(formData.get("featured_order") ?? "").trim();
   const featured_order = featuredOrderRaw ? Number(featuredOrderRaw) : null;
   const external_url_raw = String(formData.get("external_url") ?? "");
+  const video_url_raw = String(formData.get("video_url") ?? "");
 
   return {
     title,
@@ -57,6 +59,7 @@ function parseProjectForm(formData: FormData) {
     featured,
     featured_order,
     external_url_raw,
+    video_url_raw,
   };
 }
 
@@ -71,14 +74,21 @@ function validate(input: ReturnType<typeof parseProjectForm>): string | null {
   if (!PROJECT_STATUS_OPTIONS.some((option) => option.value === input.status)) return "Status inválido.";
   const linkError = validateExternalUrl(input.external_url_raw);
   if (linkError) return linkError;
+  const videoError = validateVideoUrl(input.video_url_raw);
+  if (videoError) return videoError;
   return null;
 }
 
 async function buildInput(formData: FormData, currentCoverId: string | null): Promise<ProjectInput> {
   const parsed = parseProjectForm(formData);
   const cover_image_id = await resolveCoverImageId(formData, currentCoverId);
-  const { external_url_raw, ...rest } = parsed;
-  return { ...rest, cover_image_id, external_url: normalizeExternalUrl(external_url_raw) };
+  const { external_url_raw, video_url_raw, ...rest } = parsed;
+  return {
+    ...rest,
+    cover_image_id,
+    external_url: normalizeExternalUrl(external_url_raw),
+    video_url: video_url_raw.trim() || null,
+  };
 }
 
 export async function createProjectAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -89,15 +99,18 @@ export async function createProjectAction(_prev: ActionState, formData: FormData
   if (err) return { error: err };
   if (await isProjectSlugTaken(parsed.slug)) return { error: "Slug já em uso." };
 
+  let redirectTo: string;
   try {
     const input = await buildInput(formData, null);
     const project = await insertProject(input);
     await syncProjectGallery(project.id, parseGalleryIds(formData));
     revalidateProjects(project.slug);
-    redirect(`/admin/producoes/${project.id}?saved=1`);
+    redirectTo = `/admin/producoes/${project.id}?saved=1`;
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Erro ao criar." };
   }
+
+  redirect(redirectTo);
 }
 
 export async function updateProjectAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -127,7 +140,7 @@ export async function updateProjectAction(_prev: ActionState, formData: FormData
 
     revalidateProjects(project.slug);
     if (existing.slug !== project.slug) revalidateProjects(existing.slug);
-    redirect(`/admin/producoes/${project.id}?saved=1`);
+    return { success: "Alterações salvas com sucesso." };
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Erro ao salvar." };
   }

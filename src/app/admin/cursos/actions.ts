@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidateCourses } from "@/lib/cache/revalidate";
 import { requireEditorProfile } from "@/lib/data/auth";
 import { getAdminCourseBySlug, updateCourseBySlug } from "@/lib/admin/courses";
@@ -40,7 +39,7 @@ export async function updateCourseAction(_prev: ActionState, formData: FormData)
   try {
     await updateCourseBySlug(slug, { name, tagline, description, modules, faq });
     revalidateCourses();
-    redirect(`/admin/cursos/${slug}?saved=1`);
+    return { success: "Alterações salvas com sucesso." };
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Erro ao salvar." };
   }

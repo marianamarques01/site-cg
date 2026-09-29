@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import PrimaryButton from "@/components/ui/PrimaryButton";
+import AdminFileInput from "@/components/admin/AdminFileInput";
 import AdminField, { adminInputClassName } from "@/components/admin/AdminField";
 import { uploadMediaAction } from "@/app/admin/midia/actions";
 
@@ -14,7 +15,7 @@ export default function MediaUploadForm() {
       {state.success ? <p className="text-sm text-brand">{state.success}</p> : null}
 
       <AdminField label="Arquivo" htmlFor="file">
-        <input id="file" name="file" type="file" accept="image/*" required className={adminInputClassName} />
+        <AdminFileInput id="file" name="file" required />
       </AdminField>
 
       <AdminField label="Texto alternativo" htmlFor="alt">

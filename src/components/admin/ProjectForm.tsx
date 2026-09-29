@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useCallback, useEffect, useState } from "react";
+import SaveStatus from "@/components/admin/SaveStatus";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import AdminField, {
   adminInputClassName,
@@ -126,6 +127,17 @@ export default function ProjectForm({
           />
         </AdminField>
 
+        <AdminField label="Vídeo (trailer / curta)" htmlFor="video_url" hint="Link do YouTube ou Vimeo — aparece na página do trabalho">
+          <input
+            id="video_url"
+            name="video_url"
+            type="url"
+            defaultValue={project?.video_url ?? ""}
+            placeholder="https://youtube.com/watch?v=…"
+            className={adminInputClassName}
+          />
+        </AdminField>
+
         <CoverImageField
           mediaItems={mediaItems}
           currentCoverId={project?.cover_image_id}
@@ -177,6 +189,7 @@ export default function ProjectForm({
           <PrimaryButton type="submit" disabled={pending}>
             {pending ? "Salvando…" : isEditing ? "Salvar" : "Criar produção"}
           </PrimaryButton>
+          <SaveStatus message={state.success} pending={pending} />
           {project ? (
             <a
               href={`/admin/preview/producoes/${project.id}`}

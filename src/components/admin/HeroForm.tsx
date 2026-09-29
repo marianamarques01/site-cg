@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import { useActionState } from "react";
+import SaveStatus from "@/components/admin/SaveStatus";
 import PrimaryButton from "@/components/ui/PrimaryButton";
+import AdminFileInput from "@/components/admin/AdminFileInput";
 import AdminField, { adminInputClassName, adminSelectClassName } from "@/components/admin/AdminField";
 import { TONE_OPTIONS } from "@/lib/admin/constants";
 import type { ActionState } from "@/lib/admin/types";
@@ -70,7 +72,7 @@ export default function HeroForm({ category, mediaItems, action }: HeroFormProps
           </AdminField>
 
           <AdminField label="Upload" htmlFor="image_file">
-            <input id="image_file" name="image_file" type="file" accept="image/*" className={adminInputClassName} />
+            <AdminFileInput id="image_file" name="image_file" />
           </AdminField>
 
           {category.image_url ? (
@@ -82,6 +84,7 @@ export default function HeroForm({ category, mediaItems, action }: HeroFormProps
         </div>
 
         <PrimaryButton type="submit" disabled={pending}>{pending ? "Salvando…" : "Salvar"}</PrimaryButton>
+        <SaveStatus message={state.success} pending={pending} />
       </form>
     </div>
   );

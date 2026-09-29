@@ -60,6 +60,7 @@ function validatePostInput(input: ReturnType<typeof parsePostForm>): string | nu
 
 export type PostActionState = {
   error?: string;
+  success?: string;
 };
 
 async function buildPostInput(
@@ -86,13 +87,16 @@ export async function createPostAction(
     return { error: "Este slug já está em uso. Escolha outro." };
   }
 
+  let redirectTo: string;
   try {
     const post = await insertPost(await buildPostInput(formData, null));
     revalidatePosts(post.slug);
-    redirect(`/admin/posts/${post.id}?saved=1`);
+    redirectTo = `/admin/posts/${post.id}?saved=1`;
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Erro ao criar post." };
   }
+
+  redirect(redirectTo);
 }
 
 export async function updatePostAction(
@@ -120,7 +124,7 @@ export async function updatePostAction(
     const post = await updatePost(id, await buildPostInput(formData, existing.cover_image_id));
     revalidatePosts(post.slug);
     if (existing.slug !== post.slug) revalidatePosts(existing.slug);
-    redirect(`/admin/posts/${post.id}?saved=1`);
+    return { success: "Alterações salvas com sucesso." };
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Erro ao salvar post." };
   }

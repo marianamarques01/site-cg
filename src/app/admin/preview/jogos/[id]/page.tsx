@@ -32,7 +32,7 @@ export default async function PreviewGamePage({ params }: PageProps) {
       <Container className="flex flex-col gap-10 pb-[var(--section-y)] pt-24 sm:pt-28 md:gap-14">
         <RevealPass from="left">
           <span className="text-xs font-medium uppercase tracking-[0.2em] text-brand">
-            {game.genre} · {game.platform} · {game.year}
+            {game.genre} · {game.year}
           </span>
         </RevealPass>
 

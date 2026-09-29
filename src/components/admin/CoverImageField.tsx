@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import AdminFileInput from "@/components/admin/AdminFileInput";
 import AdminField, { adminInputClassName, adminSelectClassName } from "@/components/admin/AdminField";
 import type { DbMedia } from "@/lib/supabase/database.types";
 
@@ -108,15 +109,8 @@ export default function CoverImageField({
         </select>
       </AdminField>
 
-      <AdminField label="Ou enviar arquivo" htmlFor="cover_file" hint="JPG, PNG ou WebP até 10 MB">
-        <input
-          id="cover_file"
-          name="cover_file"
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className={adminInputClassName}
-        />
+      <AdminField label="Ou enviar arquivo" htmlFor="cover_file" hint="Tamanho recomendado: 1280x720 px (16:9). JPG, PNG ou WebP até 10 MB">
+        <AdminFileInput id="cover_file" name="cover_file" onChange={handleFileChange} />
       </AdminField>
 
       <AdminField label="Texto alternativo (upload)" htmlFor="cover_alt">

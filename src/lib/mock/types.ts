@@ -21,6 +21,7 @@ export type Project = {
   coverUrl?: string;
   galleryUrls?: string[];
   externalUrl?: string;
+  videoUrl?: string;
 };
 
 export type Game = {
@@ -34,6 +35,8 @@ export type Game = {
   description: string;
   coverUrl?: string;
   externalUrl?: string;
+  videoUrl?: string;
+  playEmbedUrl?: string;
 };
 
 export type CourseSlug = "computacao-grafica" | "design-de-games";

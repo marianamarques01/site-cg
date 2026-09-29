@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidateSettings } from "@/lib/cache/revalidate";
 import { requireEditorProfile } from "@/lib/data/auth";
 import { DEFAULT_MARQUEE_ITEMS } from "@/lib/data/settings";
@@ -42,7 +41,7 @@ export async function updateSettingsAction(_prev: ActionState, formData: FormDat
     });
 
     revalidateSettings();
-    redirect("/admin/configuracoes?saved=1");
+    return { success: "Alterações salvas com sucesso." };
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Erro ao salvar." };
   }

@@ -4,7 +4,6 @@ import SectionRule from "@/components/ui/SectionRule";
 type GameInlinePreviewProps = {
   title: string;
   genre: string;
-  platform: string;
   year: number | string;
   team: string;
   tone: PlaceholderTone;
@@ -15,7 +14,6 @@ type GameInlinePreviewProps = {
 export default function GameInlinePreview({
   title,
   genre,
-  platform,
   year,
   team,
   tone,
@@ -25,7 +23,7 @@ export default function GameInlinePreview({
   return (
     <div className="flex flex-col gap-8">
       <span className="text-xs font-medium uppercase tracking-[0.2em] text-brand">
-        {genre || "Gênero"} · {platform || "Plataforma"} · {year || "—"}
+        {genre || "Gênero"} · {year || "—"}
       </span>
 
       <h2 className="font-display text-4xl leading-[0.9] text-foreground sm:text-5xl">

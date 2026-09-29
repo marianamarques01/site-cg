@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useCallback, useEffect, useState } from "react";
+import SaveStatus from "@/components/admin/SaveStatus";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import AdminField, {
   adminInputClassName,
@@ -93,6 +94,32 @@ export default function GameForm({ game, mediaItems, currentCoverUrl, action, de
           />
         </AdminField>
 
+        <AdminField label="Vídeo (trailer / curta)" htmlFor="video_url" hint="Link do YouTube ou Vimeo — aparece na página do trabalho">
+          <input
+            id="video_url"
+            name="video_url"
+            type="url"
+            defaultValue={game?.video_url ?? ""}
+            placeholder="https://youtube.com/watch?v=…"
+            className={adminInputClassName}
+          />
+        </AdminField>
+
+        <AdminField
+          label="Jogo jogável (itch.io)"
+          htmlFor="play_embed_url"
+          hint="Só para jogos de navegador (HTML5). No itch.io ative “Embed in page” e cole o endereço embed-upload ou o código <iframe>."
+        >
+          <textarea
+            id="play_embed_url"
+            name="play_embed_url"
+            rows={2}
+            defaultValue={game?.play_embed_url ?? ""}
+            placeholder="https://itch.io/embed-upload/123456"
+            className={adminTextareaClassName}
+          />
+        </AdminField>
+
         <CoverImageField
           mediaItems={mediaItems}
           currentCoverId={game?.cover_image_id}
@@ -112,7 +139,6 @@ export default function GameForm({ game, mediaItems, currentCoverUrl, action, de
           <GameInlinePreview
             title={title}
             genre={genre}
-            platform={platform}
             year={year}
             team={team}
             tone={tone}
@@ -125,6 +151,7 @@ export default function GameForm({ game, mediaItems, currentCoverUrl, action, de
           <PrimaryButton type="submit" disabled={pending}>
             {pending ? "Salvando…" : isEditing ? "Salvar" : "Criar jogo"}
           </PrimaryButton>
+          <SaveStatus message={state.success} pending={pending} />
           {game ? (
             <>
               <a

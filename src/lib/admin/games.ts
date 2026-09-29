@@ -17,6 +17,8 @@ export type GameInput = {
   cover_image_id: string | null;
   status: ContentStatus;
   external_url: string | null;
+  video_url: string | null;
+  play_embed_url: string | null;
 };
 
 export async function listAdminGames(tab: GameListTab = "all"): Promise<AdminGame[]> {

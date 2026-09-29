@@ -15,6 +15,7 @@ import {
 } from "@/lib/admin/games";
 import { CONTENT_STATUS_OPTIONS } from "@/lib/admin/constants";
 import { notifyGameSubmissionApproved } from "@/lib/email/submission-notifications";
+import { getItchEmbedUrl, validatePlayEmbedUrl, validateVideoUrl } from "@/lib/video";
 import { normalizeExternalUrl, validateExternalUrl } from "@/lib/submissions/external-url";
 import type { ActionState } from "@/lib/admin/types";
 import type { ContentStatus } from "@/lib/supabase/database.types";
@@ -30,7 +31,9 @@ function parseGameForm(formData: FormData) {
   const description = String(formData.get("description") ?? "").trim();
   const status = String(formData.get("status") ?? "draft") as ContentStatus;
   const external_url_raw = String(formData.get("external_url") ?? "");
-  return { title, slug, team, genre, platform, year, tone, description, status, external_url_raw };
+  const video_url_raw = String(formData.get("video_url") ?? "");
+  const play_embed_raw = String(formData.get("play_embed_url") ?? "");
+  return { title, slug, team, genre, platform, year, tone, description, status, external_url_raw, video_url_raw, play_embed_raw };
 }
 
 function validate(input: ReturnType<typeof parseGameForm>): string | null {
@@ -43,14 +46,24 @@ function validate(input: ReturnType<typeof parseGameForm>): string | null {
   if (!CONTENT_STATUS_OPTIONS.some((s) => s.value === input.status)) return "Status inválido.";
   const linkError = validateExternalUrl(input.external_url_raw);
   if (linkError) return linkError;
+  const videoError = validateVideoUrl(input.video_url_raw);
+  if (videoError) return videoError;
+  const playError = validatePlayEmbedUrl(input.play_embed_raw);
+  if (playError) return playError;
   return null;
 }
 
 async function buildInput(formData: FormData, currentCoverId: string | null): Promise<GameInput> {
   const parsed = parseGameForm(formData);
   const cover_image_id = await resolveCoverImageId(formData, currentCoverId);
-  const { external_url_raw, ...rest } = parsed;
-  return { ...rest, cover_image_id, external_url: normalizeExternalUrl(external_url_raw) };
+  const { external_url_raw, video_url_raw, play_embed_raw, ...rest } = parsed;
+  return {
+    ...rest,
+    cover_image_id,
+    external_url: normalizeExternalUrl(external_url_raw),
+    video_url: video_url_raw.trim() || null,
+    play_embed_url: getItchEmbedUrl(play_embed_raw),
+  };
 }
 
 export async function createGameAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -61,14 +74,17 @@ export async function createGameAction(_prev: ActionState, formData: FormData): 
   if (err) return { error: err };
   if (await isGameSlugTaken(parsed.slug)) return { error: "Slug já em uso." };
 
+  let redirectTo: string;
   try {
     const input = await buildInput(formData, null);
     const game = await insertGame(input);
     revalidateGames(game.slug);
-    redirect(`/admin/jogos/${game.id}?saved=1`);
+    redirectTo = `/admin/jogos/${game.id}?saved=1`;
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Erro ao criar." };
   }
+
+  redirect(redirectTo);
 }
 
 export async function updateGameAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -97,7 +113,7 @@ export async function updateGameAction(_prev: ActionState, formData: FormData): 
 
     revalidateGames(game.slug);
     if (existing.slug !== game.slug) revalidateGames(existing.slug);
-    redirect(`/admin/jogos/${game.id}?saved=1`);
+    return { success: "Alterações salvas com sucesso." };
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Erro ao salvar." };
   }

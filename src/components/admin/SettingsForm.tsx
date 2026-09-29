@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import SaveStatus from "@/components/admin/SaveStatus";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import AdminField, { adminInputClassName, adminTextareaClassName } from "@/components/admin/AdminField";
 import type { ActionState } from "@/lib/admin/types";
@@ -91,6 +92,7 @@ export default function SettingsForm({ settings, action }: SettingsFormProps) {
         </div>
 
         <PrimaryButton type="submit" disabled={pending}>{pending ? "Salvando…" : "Salvar configurações"}</PrimaryButton>
+        <SaveStatus message={state.success} pending={pending} />
       </form>
     </div>
   );

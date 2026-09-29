@@ -42,6 +42,7 @@ export type DbProject = {
   student_email?: string | null;
   student_course?: string | null;
   external_url?: string | null;
+  video_url?: string | null;
   submitted_at?: string | null;
   rejection_reason?: string | null;
   created_at?: string;
@@ -63,6 +64,8 @@ export type DbGame = {
   student_email?: string | null;
   student_course?: string | null;
   external_url?: string | null;
+  video_url?: string | null;
+  play_embed_url?: string | null;
   sort_order?: number | null;
   submitted_at?: string | null;
   rejection_reason?: string | null;

@@ -29,13 +29,16 @@ export async function createFaqAction(_prev: ActionState, formData: FormData): P
     input.sort_order = await getNextFaqSortOrder();
   }
 
+  let redirectTo: string;
   try {
     const item = await insertFaqItem(input);
     revalidateFaq();
-    redirect(`/admin/faq/${item.id}?saved=1`);
+    redirectTo = `/admin/faq/${item.id}?saved=1`;
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Erro ao criar." };
   }
+
+  redirect(redirectTo);
 }
 
 export async function updateFaqAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -50,7 +53,7 @@ export async function updateFaqAction(_prev: ActionState, formData: FormData): P
   try {
     await updateFaqItem(id, input);
     revalidateFaq();
-    redirect(`/admin/faq/${id}?saved=1`);
+    return { success: "Alterações salvas com sucesso." };
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Erro ao salvar." };
   }

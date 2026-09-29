@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidateHero } from "@/lib/cache/revalidate";
 import { requireEditorProfile } from "@/lib/data/auth";
 import { uploadMediaFile } from "@/lib/admin/media";
@@ -52,7 +51,7 @@ export async function updateHeroAction(_prev: ActionState, formData: FormData): 
       layout: existing.layout,
     });
     revalidateHero();
-    redirect(`/admin/hero/${id}?saved=1`);
+    return { success: "Alterações salvas com sucesso." };
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Erro ao salvar." };
   }

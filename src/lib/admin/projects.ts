@@ -18,6 +18,7 @@ export type ProjectInput = {
   featured_order: number | null;
   status: ContentStatus;
   external_url: string | null;
+  video_url: string | null;
 };
 
 export async function listAdminProjects(tab: ProjectListTab = "all"): Promise<AdminProject[]> {

@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { useActionState, useEffect, useMemo, useRef, useState } from "react";
-import AdminField, { adminInputClassName, adminSelectClassName } from "@/components/admin/AdminField";
+import AdminFileInput from "@/components/admin/AdminFileInput";
+import AdminField, { adminSelectClassName } from "@/components/admin/AdminField";
 import SortableList from "@/components/admin/SortableList";
 import { uploadGalleryMediaAction } from "@/app/admin/midia/actions";
 import type { DbMedia } from "@/lib/supabase/database.types";
@@ -19,6 +20,7 @@ export default function GalleryField({ mediaItems, initialIds, onChange }: Galle
   const [pickerId, setPickerId] = useState("");
   const [uploadState, uploadAction, uploadPending] = useActionState(uploadGalleryMediaAction, {});
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileResetKey, setFileResetKey] = useState(0);
 
   const allMedia = useMemo(() => {
     const map = new Map(mediaItems.map((item) => [item.id, item]));
@@ -52,7 +54,7 @@ export default function GalleryField({ mediaItems, initialIds, onChange }: Galle
       });
       return next;
     });
-    if (fileInputRef.current) fileInputRef.current.value = "";
+    setFileResetKey((key) => key + 1);
   }, [uploadState.items]);
 
   function addFromPicker() {
@@ -113,15 +115,7 @@ export default function GalleryField({ mediaItems, initialIds, onChange }: Galle
         {uploadState.success ? <p className="text-sm text-brand">{uploadState.success}</p> : null}
 
         <AdminField label="Enviar imagens" htmlFor="gallery_files" hint="JPG, PNG ou WebP — selecione várias de uma vez">
-          <input
-            ref={fileInputRef}
-            id="gallery_files"
-            name="files"
-            type="file"
-            accept="image/*"
-            multiple
-            className={adminInputClassName}
-          />
+          <AdminFileInput key={fileResetKey} inputRef={fileInputRef} id="gallery_files" name="files" multiple />
         </AdminField>
 
         <button

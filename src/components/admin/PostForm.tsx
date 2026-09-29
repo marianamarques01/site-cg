@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useCallback, useEffect, useState } from "react";
+import SaveStatus from "@/components/admin/SaveStatus";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import AdminField, {
   adminInputClassName,
@@ -202,6 +203,7 @@ export default function PostForm({
           <PrimaryButton type="submit" disabled={pending}>
             {pending ? "Salvando…" : isEditing ? "Salvar alterações" : "Criar post"}
           </PrimaryButton>
+          <SaveStatus message={state.success} pending={pending} />
 
           {post ? (
             <>

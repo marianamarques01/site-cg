@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import SaveStatus from "@/components/admin/SaveStatus";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import AdminField, { adminInputClassName, adminTextareaClassName } from "@/components/admin/AdminField";
 import type { ActionState } from "@/lib/admin/types";
@@ -37,6 +38,7 @@ export default function FaqForm({ item, action, deleteAction }: FaqFormProps) {
         <PrimaryButton type="submit" disabled={pending}>
           {pending ? "Salvando…" : item ? "Salvar" : "Criar pergunta"}
         </PrimaryButton>
+        <SaveStatus message={state.success} pending={pending} />
       </form>
 
       {item && deleteAction ? (

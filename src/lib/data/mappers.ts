@@ -44,6 +44,7 @@ export function mapProject(row: DbProject, coverUrl?: string, galleryUrls?: stri
     coverUrl,
     galleryUrls,
     externalUrl: row.external_url ?? undefined,
+    videoUrl: row.video_url ?? undefined,
   };
 }
 
@@ -59,6 +60,8 @@ export function mapGame(row: DbGame, coverUrl?: string): Game {
     description: row.description,
     coverUrl,
     externalUrl: row.external_url ?? undefined,
+    videoUrl: row.video_url ?? undefined,
+    playEmbedUrl: row.play_embed_url ?? undefined,
   };
 }
 

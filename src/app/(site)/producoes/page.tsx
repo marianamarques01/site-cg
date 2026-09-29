@@ -153,7 +153,6 @@ export default async function ProducoesPage() {
                 <MediaMorph name={`game-${game.slug}`}>
                   <PlaceholderMedia
                     label={game.genre}
-                    index={game.platform}
                     tone={game.tone}
                     kind="tilemap"
                     src={game.coverUrl}
