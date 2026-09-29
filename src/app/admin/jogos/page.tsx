@@ -1,6 +1,7 @@
 import AdminShell from "@/components/admin/AdminShell";
 import GameListTabs from "@/components/admin/GameListTabs";
 import GameTable from "@/components/admin/GameTable";
+import { deleteGameAction } from "@/app/admin/jogos/actions";
 import { reorderGamesAction } from "@/app/admin/jogos/reorder-actions";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import { requireEditorPage } from "@/lib/admin/guard";
@@ -15,7 +16,7 @@ const VALID_TABS = new Set<GameListTab>(["pending", "published", "draft", "rejec
 function resolveTab(raw: string | undefined, pendingCount: number): GameListTab {
   if (raw && VALID_TABS.has(raw as GameListTab)) return raw as GameListTab;
   if (pendingCount > 0) return "pending";
-  return "all";
+  return "published";
 }
 
 export default async function AdminGamesPage({ searchParams }: PageProps) {
@@ -54,6 +55,7 @@ export default async function AdminGamesPage({ searchParams }: PageProps) {
           games={games}
           sortable={activeTab === "published"}
           onReorder={reorderGamesAction}
+          onDelete={deleteGameAction}
         />
       )}
     </AdminShell>

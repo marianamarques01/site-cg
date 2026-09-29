@@ -1,8 +1,10 @@
 import Link from "next/link";
 import AdminShell from "@/components/admin/AdminShell";
 import ProjectListTabs from "@/components/admin/ProjectListTabs";
+import DeleteRowButton from "@/components/admin/DeleteRowButton";
 import StatusBadge from "@/components/admin/StatusBadge";
 import PrimaryButton from "@/components/ui/PrimaryButton";
+import { deleteProjectAction } from "@/app/admin/producoes/actions";
 import { requireEditorPage } from "@/lib/admin/guard";
 import { countProjectsByStatus, listAdminProjects, type ProjectListTab } from "@/lib/admin/projects";
 
@@ -90,9 +92,12 @@ export default async function AdminProjectsPage({ searchParams }: PageProps) {
                   </td>
                   <td className="px-4 py-4 text-muted">{project.featured ? "Sim" : "—"}</td>
                   <td className="px-4 py-4">
-                    <Link href={`/admin/producoes/${project.id}`} className="text-brand hover:underline">
-                      {project.status === "pending" ? "Revisar" : "Editar"}
-                    </Link>
+                    <div className="flex items-center gap-5">
+                      <Link href={`/admin/producoes/${project.id}`} className="text-brand hover:underline">
+                        {project.status === "pending" ? "Revisar" : "Editar"}
+                      </Link>
+                      <DeleteRowButton id={project.id} title={project.title} action={deleteProjectAction} />
+                    </div>
                   </td>
                 </tr>
               ))}

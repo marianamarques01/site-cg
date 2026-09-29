@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
+import DeleteRowButton from "@/components/admin/DeleteRowButton";
 import StatusBadge from "@/components/admin/StatusBadge";
 import type { DbGame } from "@/lib/supabase/database.types";
 
@@ -9,9 +10,10 @@ type GameTableProps = {
   games: DbGame[];
   sortable?: boolean;
   onReorder?: (ids: string[]) => Promise<void>;
+  onDelete: (formData: FormData) => void | Promise<void>;
 };
 
-export default function GameTable({ games, sortable = false, onReorder }: GameTableProps) {
+export default function GameTable({ games, sortable = false, onReorder, onDelete }: GameTableProps) {
   const [order, setOrder] = useState(games);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -89,9 +91,12 @@ export default function GameTable({ games, sortable = false, onReorder }: GameTa
                   <StatusBadge status={game.status} />
                 </td>
                 <td className="px-4 py-4">
-                  <Link href={`/admin/jogos/${game.id}`} className="text-brand hover:underline">
-                    {game.status === "pending" ? "Revisar" : "Editar"}
-                  </Link>
+                  <div className="flex items-center gap-5">
+                    <Link href={`/admin/jogos/${game.id}`} className="text-brand hover:underline">
+                      {game.status === "pending" ? "Revisar" : "Editar"}
+                    </Link>
+                    <DeleteRowButton id={game.id} title={game.title} action={onDelete} />
+                  </div>
                 </td>
               </tr>
             ))}
