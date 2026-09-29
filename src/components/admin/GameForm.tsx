@@ -11,7 +11,7 @@ import CoverImageField from "@/components/admin/CoverImageField";
 import InlinePreviewPanel from "@/components/admin/InlinePreviewPanel";
 import GameInlinePreview from "@/components/admin/GameInlinePreview";
 import { slugify } from "@/lib/admin/slug";
-import { CONTENT_STATUS_OPTIONS, TONE_OPTIONS } from "@/lib/admin/constants";
+import { CONTENT_STATUS_OPTIONS } from "@/lib/admin/constants";
 import type { ActionState } from "@/lib/admin/types";
 import type { AdminGame } from "@/lib/admin/games";
 import type { DbMedia } from "@/lib/supabase/database.types";
@@ -30,12 +30,12 @@ export default function GameForm({ game, mediaItems, currentCoverUrl, action, de
   const [state, formAction, pending] = useActionState(action, {});
   const [title, setTitle] = useState(game?.title ?? "");
   const [slug, setSlug] = useState(game?.slug ?? "");
-  const [slugTouched, setSlugTouched] = useState(isEditing);
+  const [slugTouched] = useState(isEditing);
   const [team, setTeam] = useState(game?.team ?? "");
   const [year, setYear] = useState(String(game?.year ?? new Date().getFullYear()));
   const [genre, setGenre] = useState(game?.genre ?? "");
-  const [platform, setPlatform] = useState(game?.platform ?? "");
-  const [tone, setTone] = useState<PlaceholderTone>((game?.tone as PlaceholderTone) ?? "blue");
+  const platform = game?.platform ?? "";
+  const tone = (game?.tone as PlaceholderTone) ?? "blue";
   const [description, setDescription] = useState(game?.description ?? "");
   const [externalUrl, setExternalUrl] = useState(game?.external_url ?? "");
   const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(currentCoverUrl ?? null);
@@ -57,14 +57,12 @@ export default function GameForm({ game, mediaItems, currentCoverUrl, action, de
       <form action={formAction} className="flex flex-col gap-8">
         {game ? <input type="hidden" name="id" value={game.id} /> : null}
 
-        <div className="grid gap-8 md:grid-cols-2">
-          <AdminField label="Título" htmlFor="title">
-            <input id="title" name="title" required value={title} onChange={(e) => setTitle(e.target.value)} className={adminInputClassName} />
-          </AdminField>
-          <AdminField label="Slug" htmlFor="slug">
-            <input id="slug" name="slug" required value={slug} onChange={(e) => { setSlugTouched(true); setSlug(e.target.value); }} className={adminInputClassName} />
-          </AdminField>
-        </div>
+        <AdminField label="Título" htmlFor="title">
+          <input id="title" name="title" required value={title} onChange={(e) => setTitle(e.target.value)} className={adminInputClassName} />
+        </AdminField>
+        <input type="hidden" name="slug" value={slug} />
+        <input type="hidden" name="platform" value={platform} />
+        <input type="hidden" name="tone" value={tone} />
 
         <div className="grid gap-8 md:grid-cols-2">
           <AdminField label="Equipe / Aluno" htmlFor="team">
@@ -75,21 +73,9 @@ export default function GameForm({ game, mediaItems, currentCoverUrl, action, de
           </AdminField>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-3">
-          <AdminField label="Gênero" htmlFor="genre">
-            <input id="genre" name="genre" required value={genre} onChange={(e) => setGenre(e.target.value)} className={adminInputClassName} />
-          </AdminField>
-          <AdminField label="Plataforma" htmlFor="platform">
-            <input id="platform" name="platform" required value={platform} onChange={(e) => setPlatform(e.target.value)} className={adminInputClassName} />
-          </AdminField>
-          <AdminField label="Tom" htmlFor="tone">
-            <select id="tone" name="tone" value={tone} onChange={(e) => setTone(e.target.value as PlaceholderTone)} className={adminSelectClassName}>
-              {TONE_OPTIONS.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
-              ))}
-            </select>
-          </AdminField>
-        </div>
+        <AdminField label="Gênero" htmlFor="genre">
+          <input id="genre" name="genre" required value={genre} onChange={(e) => setGenre(e.target.value)} className={adminInputClassName} />
+        </AdminField>
 
         <AdminField label="Descrição" htmlFor="description">
           <textarea id="description" name="description" required rows={5} value={description} onChange={(e) => setDescription(e.target.value)} className={adminTextareaClassName} />

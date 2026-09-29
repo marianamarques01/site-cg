@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { sortGameRows } from "@/lib/data/games";
 import type { ContentStatus, DbGame } from "@/lib/supabase/database.types";
 
 export type AdminGame = DbGame;
@@ -32,7 +33,17 @@ export async function listAdminGames(tab: GameListTab = "all"): Promise<AdminGam
 
   const { data, error } = await query;
   if (error) throw new Error(error.message);
-  return (data ?? []) as AdminGame[];
+  const rows = (data ?? []) as AdminGame[];
+  return tab === "published" ? sortGameRows(rows) : rows;
+}
+
+export async function reorderGames(ids: string[]): Promise<void> {
+  const supabase = await createClient();
+  const results = await Promise.all(
+    ids.map((id, sort_order) => supabase.from("games").update({ sort_order }).eq("id", id)),
+  );
+  const failed = results.find((result) => result.error);
+  if (failed?.error) throw new Error(failed.error.message);
 }
 
 export async function countGamesByStatus(status: ContentStatus): Promise<number> {

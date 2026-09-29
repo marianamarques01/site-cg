@@ -1,7 +1,7 @@
-import Link from "next/link";
 import AdminShell from "@/components/admin/AdminShell";
 import GameListTabs from "@/components/admin/GameListTabs";
-import StatusBadge from "@/components/admin/StatusBadge";
+import GameTable from "@/components/admin/GameTable";
+import { reorderGamesAction } from "@/app/admin/jogos/reorder-actions";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import { requireEditorPage } from "@/lib/admin/guard";
 import { countGamesByStatus, listAdminGames, type GameListTab } from "@/lib/admin/games";
@@ -50,43 +50,11 @@ export default async function AdminGamesPage({ searchParams }: PageProps) {
       {games.length === 0 ? (
         <p className="text-muted">Nenhum jogo nesta aba.</p>
       ) : (
-        <div className="overflow-x-auto border border-border">
-          <table className="w-full min-w-[640px] text-left text-sm">
-            <thead className="border-b border-border text-xs uppercase tracking-[0.12em] text-faint">
-              <tr>
-                <th className="px-4 py-3">Título</th>
-                <th className="px-4 py-3">Gênero</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {games.map((game) => (
-                <tr key={game.id} className="border-b border-border last:border-b-0">
-                  <td className="px-4 py-4">
-                    <p className="font-medium">{game.title}</p>
-                    <p className="text-xs text-faint">{game.team}</p>
-                    {game.student_course ? (
-                      <p className="text-xs text-faint">{game.student_course}</p>
-                    ) : null}
-                    {game.student_email ? (
-                      <p className="text-xs text-faint">{game.student_email}</p>
-                    ) : null}
-                  </td>
-                  <td className="px-4 py-4 text-muted">{game.genre}</td>
-                  <td className="px-4 py-4">
-                    <StatusBadge status={game.status} />
-                  </td>
-                  <td className="px-4 py-4">
-                    <Link href={`/admin/jogos/${game.id}`} className="text-brand hover:underline">
-                      {game.status === "pending" ? "Revisar" : "Editar"}
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <GameTable
+          games={games}
+          sortable={activeTab === "published"}
+          onReorder={reorderGamesAction}
+        />
       )}
     </AdminShell>
   );

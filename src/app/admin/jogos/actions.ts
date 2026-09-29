@@ -13,7 +13,7 @@ import {
   updateGame,
   type GameInput,
 } from "@/lib/admin/games";
-import { CONTENT_STATUS_OPTIONS, TONE_OPTIONS } from "@/lib/admin/constants";
+import { CONTENT_STATUS_OPTIONS } from "@/lib/admin/constants";
 import { notifyGameSubmissionApproved } from "@/lib/email/submission-notifications";
 import { normalizeExternalUrl, validateExternalUrl } from "@/lib/submissions/external-url";
 import type { ActionState } from "@/lib/admin/types";
@@ -38,10 +38,8 @@ function validate(input: ReturnType<typeof parseGameForm>): string | null {
   if (!input.slug) return "Slug é obrigatório.";
   if (!input.team) return "Equipe é obrigatória.";
   if (!input.genre) return "Gênero é obrigatório.";
-  if (!input.platform) return "Plataforma é obrigatória.";
   if (!Number.isFinite(input.year)) return "Ano inválido.";
   if (!input.description) return "Descrição é obrigatória.";
-  if (!TONE_OPTIONS.some((t) => t.value === input.tone)) return "Tom inválido.";
   if (!CONTENT_STATUS_OPTIONS.some((s) => s.value === input.status)) return "Status inválido.";
   const linkError = validateExternalUrl(input.external_url_raw);
   if (linkError) return linkError;

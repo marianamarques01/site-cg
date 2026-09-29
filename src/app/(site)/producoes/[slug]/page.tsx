@@ -67,7 +67,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
                 tone={project.tone}
                 src={project.coverUrl}
                 alt={project.title}
-                className="aspect-[16/9] w-full"
+                className="aspect-[16/9] w-full max-w-xl"
                 showCaption={false}
                 interactive={false}
               />
@@ -144,7 +144,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
 
         <RevealPass delay={0.06}>
           <p className="text-sm text-muted sm:text-base">
-            {game.team} — {game.platform}
+            {game.platform ? `${game.team} — ${game.platform}` : game.team}
           </p>
         </RevealPass>
 
@@ -156,7 +156,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
               kind="tilemap"
               src={game.coverUrl}
               alt={game.title}
-              className="aspect-[16/9] w-full"
+              className="aspect-[16/9] w-full max-w-xl"
               showCaption={false}
               interactive={false}
             />

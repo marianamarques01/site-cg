@@ -10,6 +10,18 @@ async function mapGamesWithCovers(rows: DbGame[]): Promise<Game[]> {
   return rows.map((row) => mapGame(row, pickCoverUrl(mediaMap, row.cover_image_id)));
 }
 
+// Ordem manual (sort_order) primeiro; jogos sem posição vêm antes, do ano mais novo ao mais antigo.
+export function sortGameRows<T extends { sort_order?: number | null; year: number }>(rows: T[]): T[] {
+  return [...rows].sort((a, b) => {
+    const aNull = a.sort_order == null;
+    const bNull = b.sort_order == null;
+    if (aNull && bNull) return b.year - a.year;
+    if (aNull) return -1;
+    if (bNull) return 1;
+    return (a.sort_order as number) - (b.sort_order as number);
+  });
+}
+
 export async function getGames(): Promise<Game[]> {
   const supabase = getSupabaseOrNull();
   if (!supabase) return mockGames;
@@ -21,7 +33,7 @@ export async function getGames(): Promise<Game[]> {
     .order("year", { ascending: false });
 
   if (error || !data?.length) return mockGames;
-  return mapGamesWithCovers(data as DbGame[]);
+  return mapGamesWithCovers(sortGameRows(data as DbGame[]));
 }
 
 export async function getGameBySlug(slug: string): Promise<Game | undefined> {
