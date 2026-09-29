@@ -1,3 +1,4 @@
+import { sortByManualOrder } from "@/lib/sort-order";
 import { createClient } from "@/lib/supabase/server";
 import type { ContentStatus, DbProject } from "@/lib/supabase/database.types";
 
@@ -35,7 +36,17 @@ export async function listAdminProjects(tab: ProjectListTab = "all"): Promise<Ad
 
   const { data, error } = await query;
   if (error) throw new Error(error.message);
-  return (data ?? []) as AdminProject[];
+  const rows = (data ?? []) as AdminProject[];
+  return tab === "published" ? sortByManualOrder(rows, (a, b) => b.year - a.year) : rows;
+}
+
+export async function reorderProjects(ids: string[]): Promise<void> {
+  const supabase = await createClient();
+  const results = await Promise.all(
+    ids.map((id, sort_order) => supabase.from("projects").update({ sort_order }).eq("id", id)),
+  );
+  const failed = results.find((result) => result.error);
+  if (failed?.error) throw new Error(failed.error.message);
 }
 
 export async function countProjectsByStatus(status: ContentStatus): Promise<number> {

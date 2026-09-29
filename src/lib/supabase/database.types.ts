@@ -21,6 +21,7 @@ export type DbPost = {
   body: string[];
   cover_image_id: string | null;
   status: ContentStatus;
+  sort_order?: number | null;
   created_at?: string;
   updated_at?: string;
 };
@@ -41,6 +42,7 @@ export type DbProject = {
   status: ContentStatus;
   student_email?: string | null;
   student_course?: string | null;
+  sort_order?: number | null;
   external_url?: string | null;
   video_url?: string | null;
   submitted_at?: string | null;

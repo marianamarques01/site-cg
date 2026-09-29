@@ -45,3 +45,18 @@ export async function updateHeroCategory(id: string, input: HeroInput): Promise<
   if (error) throw new Error(error.message);
   return data as AdminHeroCategory;
 }
+
+export async function reorderHeroCategories(ids: string[]): Promise<void> {
+  const supabase = await createClient();
+  const results = await Promise.all(
+    ids.map((id, sort_order) => supabase.from("hero_categories").update({ sort_order }).eq("id", id)),
+  );
+  const failed = results.find((result) => result.error);
+  if (failed?.error) throw new Error(failed.error.message);
+}
+
+export async function deleteHeroCategoryById(id: string): Promise<void> {
+  const supabase = await createClient();
+  const { error } = await supabase.from("hero_categories").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}

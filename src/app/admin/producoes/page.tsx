@@ -1,10 +1,11 @@
 import Link from "next/link";
 import AdminShell from "@/components/admin/AdminShell";
 import ProjectListTabs from "@/components/admin/ProjectListTabs";
-import DeleteRowButton from "@/components/admin/DeleteRowButton";
+import AdminListTable from "@/components/admin/AdminListTable";
 import StatusBadge from "@/components/admin/StatusBadge";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import { deleteProjectAction } from "@/app/admin/producoes/actions";
+import { reorderProjectsAction } from "@/app/admin/producoes/reorder-list-actions";
 import { requireEditorPage } from "@/lib/admin/guard";
 import { countProjectsByStatus, listAdminProjects, type ProjectListTab } from "@/lib/admin/projects";
 
@@ -17,7 +18,7 @@ const VALID_TABS = new Set<ProjectListTab>(["pending", "published", "draft", "re
 function resolveTab(raw: string | undefined, pendingCount: number): ProjectListTab {
   if (raw && VALID_TABS.has(raw as ProjectListTab)) return raw as ProjectListTab;
   if (pendingCount > 0) return "pending";
-  return "all";
+  return "published";
 }
 
 export default async function AdminProjectsPage({ searchParams }: PageProps) {
@@ -62,48 +63,30 @@ export default async function AdminProjectsPage({ searchParams }: PageProps) {
       {projects.length === 0 ? (
         <p className="text-muted">Nenhuma produção nesta aba.</p>
       ) : (
-        <div className="overflow-x-auto border border-border">
-          <table className="w-full min-w-[720px] text-left text-sm">
-            <thead className="border-b border-border text-xs uppercase tracking-[0.12em] text-faint">
-              <tr>
-                <th className="px-4 py-3">Título</th>
-                <th className="px-4 py-3">Categoria</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Destaque</th>
-                <th className="px-4 py-3">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {projects.map((project) => (
-                <tr key={project.id} className="border-b border-border last:border-b-0">
-                  <td className="px-4 py-4">
-                    <p className="font-medium">{project.title}</p>
-                    <p className="text-xs text-faint">{project.student}</p>
-                    {project.student_course ? (
-                      <p className="text-xs text-faint">{project.student_course}</p>
-                    ) : null}
-                    {project.student_email ? (
-                      <p className="text-xs text-faint">{project.student_email}</p>
-                    ) : null}
-                  </td>
-                  <td className="px-4 py-4 text-muted">{project.category}</td>
-                  <td className="px-4 py-4">
-                    <StatusBadge status={project.status} />
-                  </td>
-                  <td className="px-4 py-4 text-muted">{project.featured ? "Sim" : "—"}</td>
-                  <td className="px-4 py-4">
-                    <div className="flex items-center gap-5">
-                      <Link href={`/admin/producoes/${project.id}`} className="text-brand hover:underline">
-                        {project.status === "pending" ? "Revisar" : "Editar"}
-                      </Link>
-                      <DeleteRowButton id={project.id} title={project.title} action={deleteProjectAction} />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <AdminListTable
+          headers={["Título", "Categoria", "Status", "Destaque"]}
+          minWidth="min-w-[720px]"
+          sortable={activeTab === "published"}
+          onReorder={reorderProjectsAction}
+          onDelete={deleteProjectAction}
+          rows={projects.map((project) => ({
+            id: project.id,
+            title: project.title,
+            editHref: `/admin/producoes/${project.id}`,
+            editLabel: project.status === "pending" ? "Revisar" : "Editar",
+            cells: [
+              <div key="title">
+                <p className="font-medium">{project.title}</p>
+                <p className="text-xs text-faint">{project.student}</p>
+                {project.student_course ? <p className="text-xs text-faint">{project.student_course}</p> : null}
+                {project.student_email ? <p className="text-xs text-faint">{project.student_email}</p> : null}
+              </div>,
+              <span key="c1" className="text-muted">{project.category}</span>,
+              <StatusBadge key="status" status={project.status} />,
+              <span key="c2" className="text-muted">{project.featured ? "Sim" : "—"}</span>,
+            ],
+          }))}
+        />
       )}
     </AdminShell>
   );

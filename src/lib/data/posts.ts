@@ -1,4 +1,5 @@
 import { posts as mockPosts, getPostBySlug as mockGetPostBySlug } from "@/lib/mock/posts";
+import { sortByManualOrder } from "@/lib/sort-order";
 import { getSupabaseOrNull } from "@/lib/data/client";
 import { buildMediaUrlMap, pickCoverUrl } from "@/lib/data/media-map";
 import { mapPost } from "@/lib/data/mappers";
@@ -23,7 +24,9 @@ async function fetchPostsFromDb(): Promise<BlogPost[] | null> {
     .order("published_at", { ascending: false });
 
   if (error || !data?.length) return null;
-  return mapPostsWithCovers(data as DbPost[]);
+  return mapPostsWithCovers(
+    sortByManualOrder(data as DbPost[], (a, b) => (b.published_at ?? "").localeCompare(a.published_at ?? "")),
+  );
 }
 
 const getCachedPosts = unstable_cache(fetchPostsFromDb, ["posts-list"], {

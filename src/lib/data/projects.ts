@@ -3,6 +3,7 @@ import {
   getFeaturedProjects as mockGetFeaturedProjects,
   getProjectBySlug as mockGetProjectBySlug,
 } from "@/lib/mock/projects";
+import { sortByManualOrder } from "@/lib/sort-order";
 import { getSupabaseOrNull } from "@/lib/data/client";
 import { getProjectGalleryUrls } from "@/lib/data/gallery";
 import { buildMediaUrlMap, pickCoverUrl } from "@/lib/data/media-map";
@@ -33,7 +34,7 @@ async function fetchProjectsFromDb(): Promise<Project[] | null> {
     .order("year", { ascending: false });
 
   if (error || !data?.length) return null;
-  return mapProjectsWithCovers(data as DbProject[]);
+  return mapProjectsWithCovers(sortByManualOrder(data as DbProject[], (a, b) => b.year - a.year));
 }
 
 const getCachedProjects = unstable_cache(fetchProjectsFromDb, ["projects-list"], {

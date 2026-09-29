@@ -1,10 +1,10 @@
-import Link from "next/link";
 import AdminShell from "@/components/admin/AdminShell";
 import SortableList from "@/components/admin/SortableList";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import { requireEditorPage } from "@/lib/admin/guard";
 import { listAdminFaqItems } from "@/lib/admin/faq";
 import { reorderFaqAction } from "@/app/admin/faq/reorder-actions";
+import { deleteFaqAction } from "@/app/admin/faq/actions";
 
 export default async function AdminFaqPage() {
   await requireEditorPage();
@@ -21,22 +21,12 @@ export default async function AdminFaqPage() {
           id: item.id,
           label: item.question,
           hint: item.answer,
+          editHref: `/admin/faq/${item.id}`,
         }))}
         onReorder={reorderFaqAction}
+        onDelete={deleteFaqAction}
         emptyMessage="Nenhuma pergunta cadastrada."
       />
-
-      <div className="flex flex-col gap-3 border-t border-border pt-8">
-        {items.map((item) => (
-          <Link
-            key={item.id}
-            href={`/admin/faq/${item.id}`}
-            className="text-sm text-brand hover:underline"
-          >
-            Editar: {item.question}
-          </Link>
-        ))}
-      </div>
     </AdminShell>
   );
 }

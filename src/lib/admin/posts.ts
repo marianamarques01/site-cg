@@ -1,3 +1,4 @@
+import { sortByManualOrder } from "@/lib/sort-order";
 import { createClient } from "@/lib/supabase/server";
 import type { ContentStatus, DbPost } from "@/lib/supabase/database.types";
 
@@ -11,7 +12,19 @@ export async function listAdminPosts(): Promise<AdminPost[]> {
     .order("updated_at", { ascending: false });
 
   if (error) throw new Error(error.message);
-  return (data ?? []) as AdminPost[];
+  const rows = (data ?? []) as AdminPost[];
+  return sortByManualOrder(rows, (a, b) =>
+    (b.published_at ?? b.updated_at ?? "").localeCompare(a.published_at ?? a.updated_at ?? ""),
+  );
+}
+
+export async function reorderPosts(ids: string[]): Promise<void> {
+  const supabase = await createClient();
+  const results = await Promise.all(
+    ids.map((id, sort_order) => supabase.from("posts").update({ sort_order }).eq("id", id)),
+  );
+  const failed = results.find((result) => result.error);
+  if (failed?.error) throw new Error(failed.error.message);
 }
 
 export async function getAdminPostById(id: string): Promise<AdminPost | null> {

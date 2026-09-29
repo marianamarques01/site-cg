@@ -1,4 +1,5 @@
 import { games as mockGames, getGameBySlug as mockGetGameBySlug } from "@/lib/mock/games";
+import { sortByManualOrder } from "@/lib/sort-order";
 import { getSupabaseOrNull } from "@/lib/data/client";
 import { buildMediaUrlMap, pickCoverUrl } from "@/lib/data/media-map";
 import { mapGame } from "@/lib/data/mappers";
@@ -10,16 +11,8 @@ async function mapGamesWithCovers(rows: DbGame[]): Promise<Game[]> {
   return rows.map((row) => mapGame(row, pickCoverUrl(mediaMap, row.cover_image_id)));
 }
 
-// Ordem manual (sort_order) primeiro; jogos sem posição vêm antes, do ano mais novo ao mais antigo.
 export function sortGameRows<T extends { sort_order?: number | null; year: number }>(rows: T[]): T[] {
-  return [...rows].sort((a, b) => {
-    const aNull = a.sort_order == null;
-    const bNull = b.sort_order == null;
-    if (aNull && bNull) return b.year - a.year;
-    if (aNull) return -1;
-    if (bNull) return 1;
-    return (a.sort_order as number) - (b.sort_order as number);
-  });
+  return sortByManualOrder(rows, (a, b) => b.year - a.year);
 }
 
 export async function getGames(): Promise<Game[]> {

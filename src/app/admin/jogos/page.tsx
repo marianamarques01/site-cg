@@ -1,6 +1,7 @@
 import AdminShell from "@/components/admin/AdminShell";
 import GameListTabs from "@/components/admin/GameListTabs";
-import GameTable from "@/components/admin/GameTable";
+import AdminListTable from "@/components/admin/AdminListTable";
+import StatusBadge from "@/components/admin/StatusBadge";
 import { deleteGameAction } from "@/app/admin/jogos/actions";
 import { reorderGamesAction } from "@/app/admin/jogos/reorder-actions";
 import PrimaryButton from "@/components/ui/PrimaryButton";
@@ -51,11 +52,27 @@ export default async function AdminGamesPage({ searchParams }: PageProps) {
       {games.length === 0 ? (
         <p className="text-muted">Nenhum jogo nesta aba.</p>
       ) : (
-        <GameTable
-          games={games}
+        <AdminListTable
+          headers={["Título", "Gênero", "Status"]}
           sortable={activeTab === "published"}
           onReorder={reorderGamesAction}
           onDelete={deleteGameAction}
+          rows={games.map((game) => ({
+            id: game.id,
+            title: game.title,
+            editHref: `/admin/jogos/${game.id}`,
+            editLabel: game.status === "pending" ? "Revisar" : "Editar",
+            cells: [
+              <div key="title">
+                <p className="font-medium">{game.title}</p>
+                <p className="text-xs text-faint">{game.team}</p>
+                {game.student_course ? <p className="text-xs text-faint">{game.student_course}</p> : null}
+                {game.student_email ? <p className="text-xs text-faint">{game.student_email}</p> : null}
+              </div>,
+              <span key="c1" className="text-muted">{game.genre}</span>,
+              <StatusBadge key="status" status={game.status} />,
+            ],
+          }))}
         />
       )}
     </AdminShell>

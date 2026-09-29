@@ -1,20 +1,28 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
+import DeleteRowButton from "@/components/admin/DeleteRowButton";
 
 export type SortableItem = {
   id: string;
   label: string;
   hint?: string;
+  /** Mostra o link "Editar" na linha. */
+  editHref?: string;
+  thumbUrl?: string | null;
 };
 
 type SortableListProps = {
   items: SortableItem[];
   onReorder: (ids: string[]) => Promise<void>;
   emptyMessage?: string;
+  /** Quando informado, cada linha ganha o botão Excluir. */
+  onDelete?: (formData: FormData) => void | Promise<void>;
 };
 
-export default function SortableList({ items, onReorder, emptyMessage }: SortableListProps) {
+export default function SortableList({ items, onReorder, emptyMessage, onDelete }: SortableListProps) {
   const [order, setOrder] = useState(items);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -66,10 +74,25 @@ export default function SortableList({ items, onReorder, emptyMessage }: Sortabl
           <span className="text-faint" aria-hidden="true">
             ⠿
           </span>
+          {item.thumbUrl ? (
+            <div className="relative h-10 w-10 shrink-0 overflow-hidden">
+              <Image src={item.thumbUrl} alt="" fill className="object-cover" sizes="40px" />
+            </div>
+          ) : null}
           <div className="min-w-0 flex-1">
             <p className="truncate font-medium text-foreground">{item.label}</p>
             {item.hint ? <p className="truncate text-xs text-muted">{item.hint}</p> : null}
           </div>
+          {item.editHref || onDelete ? (
+            <div className="flex shrink-0 items-center gap-5 text-sm">
+              {item.editHref ? (
+                <Link href={item.editHref} className="text-brand hover:underline">
+                  Editar
+                </Link>
+              ) : null}
+              {onDelete ? <DeleteRowButton id={item.id} title={item.label} action={onDelete} /> : null}
+            </div>
+          ) : null}
         </div>
       ))}
     </div>
