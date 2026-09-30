@@ -16,6 +16,8 @@ export default function FeaturedWork({ projects }: FeaturedWorkProps) {
           kicker="Trabalhos em destaque"
           titleLines={["Projetos", "selecionados"]}
           description="Uma seleção de trabalhos de Computação Gráfica: modelagem, concept art, animação e peças gráficas produzidas ao longo do curso."
+          href="/producoes/computacao-grafica"
+          linkLabel="Ver todos os projetos de CG"
         />
 
         <WorkGrid projects={projects} />

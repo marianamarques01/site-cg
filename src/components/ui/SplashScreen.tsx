@@ -389,7 +389,8 @@ export default function SplashScreen() {
               style={{ opacity: copyOpacity }}
             >
               <motion.p
-                className="text-center text-[0.65rem] font-medium uppercase tracking-[0.18em] text-foreground/55 sm:text-sm sm:tracking-[0.2em]"
+                aria-hidden="true"
+                className="hidden text-center text-[0.65rem] font-medium uppercase tracking-[0.18em] text-foreground/55 sm:text-sm sm:tracking-[0.2em]"
                 style={{ opacity: copyReveal }}
               >
                 Computação Gráfica · Design de Games

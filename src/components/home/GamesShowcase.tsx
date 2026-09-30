@@ -28,7 +28,7 @@ export default function GamesShowcase({ games }: GamesShowcaseProps) {
               kicker="Jogos dos alunos"
               titleLines={["Jogável, jogado,", "julgado em sala."]}
               description="Protótipos e jogos completos produzidos pelos alunos de Design de Games."
-              href="/producoes#jogos"
+              href="/producoes/jogos"
               linkLabel="Ver todos os jogos"
             />
           </Container>

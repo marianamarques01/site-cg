@@ -200,6 +200,22 @@ export default function ProjectForm({
               Preview ↗
             </a>
           ) : null}
+          {project?.status === "published" ? (
+            <a
+              href={`/producoes/${project.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-muted underline-offset-4 hover:text-brand hover:underline"
+            >
+              Ver no site ↗
+            </a>
+          ) : null}
+          <a
+            href="/admin/producoes?tab=published"
+            className="ml-auto text-sm text-muted underline-offset-4 hover:text-brand hover:underline"
+          >
+            ← Voltar para produções
+          </a>
         </div>
       </form>
 

@@ -12,7 +12,7 @@ import {
 } from "framer-motion";
 import HeroBackground from "@/components/home/HeroBackground";
 import HeroWordmark from "@/components/home/HeroWordmark";
-import HeroSidebar, { HERO_COPY, HeroCta, HeroHeadline } from "@/components/home/HeroSidebar";
+import HeroSidebar, { HERO_COPY, HERO_TRACKS, HeroCta, HeroHeadline } from "@/components/home/HeroSidebar";
 import HeroMetadata from "@/components/home/HeroMetadata";
 import HeroProjectTile from "@/components/home/HeroProjectTile";
 import HeroCategoryCarousel from "@/components/home/HeroCategoryCarousel";
@@ -142,7 +142,8 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
             delay: entrance(0.1),
             ease: EASE_EDITORIAL,
           }}
-          className="mb-2 text-center text-[0.65rem] font-medium uppercase tracking-[0.18em] text-foreground/55 sm:mb-5 sm:text-sm sm:tracking-[0.2em]"
+          aria-hidden="true"
+          className="hidden mb-2 text-center text-[0.65rem] font-medium uppercase tracking-[0.18em] text-foreground/55 sm:mb-5 sm:text-sm sm:tracking-[0.2em]"
         >
           Computação Gráfica · Design de Games
         </motion.p>
@@ -274,6 +275,14 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
             <HeroHeadline className="flex flex-col gap-1.5 font-display text-[clamp(1.35rem,5.5vw,1.75rem)] font-black uppercase leading-[0.92] tracking-tight text-foreground sm:gap-2" />
             <p className="mt-2.5 text-pretty text-[0.8125rem] leading-relaxed text-muted">{HERO_COPY}</p>
             <HeroCta active={settled} delay={entrance(STAGGER * 7)} className="mt-4 flex justify-center" />
+            <div className="mt-8">
+              <HeroHeadline
+                track="games"
+                className="flex flex-col gap-1.5 font-display text-[clamp(1.35rem,5.5vw,1.75rem)] font-black uppercase leading-[0.92] tracking-tight text-foreground sm:gap-2"
+              />
+              <p className="mt-2.5 text-pretty text-[0.8125rem] leading-relaxed text-muted">{HERO_TRACKS.games.copy}</p>
+              <HeroCta track="games" active={settled} delay={entrance(STAGGER * 8)} className="mt-4 flex justify-center" />
+            </div>
           </motion.div>
 
           <HeroCategoryCarousel
@@ -289,6 +298,12 @@ export default function Hero({ categories = HERO_CATEGORIES }: HeroProps) {
       </div>
 
       <HeroSidebar active={settled} peek={homePeek && !settled} entranceDelay={entrance(STAGGER * 6)} />
+      <HeroSidebar
+        track="games"
+        active={settled}
+        peek={homePeek && !settled}
+        entranceDelay={entrance(STAGGER * 7)}
+      />
     </section>
   );
 }

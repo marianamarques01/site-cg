@@ -502,7 +502,7 @@ html {
 
 @media (min-width: 1024px) {
   :root {
-    --hero-floor: clamp(2.5rem, 7vh, 5.5rem);
+    --hero-floor: clamp(1.5rem, 4vh, 3.5rem);
     --hero-floor-meta: clamp(3.5rem, 9vh, 6.5rem);
   }
 }

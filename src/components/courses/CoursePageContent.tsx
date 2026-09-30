@@ -39,7 +39,7 @@ export default function CoursePageContent({
   const accent = COURSE_TONE[slug];
   const isGames = slug === "design-de-games";
   const showcase = isGames ? showcaseGames.slice(0, 3) : showcaseProjects.slice(0, 3);
-  const showcaseHref = isGames ? "/producoes#jogos" : "/producoes";
+  const showcaseHref = isGames ? "/producoes/jogos" : "/producoes/computacao-grafica";
   const showcaseLabel = isGames ? "Ver todos os jogos" : "Ver todas as produções";
 
   return (

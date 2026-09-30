@@ -29,7 +29,7 @@ export const HERO_CATEGORIES: HeroCategory[] = [
   {
     id: "01",
     label: "Modelagem 3D",
-    href: "/producoes",
+    href: "/producoes/computacao-grafica",
     tone: "blue",
     aspect: "aspect-square",
     top: "32%",
@@ -48,7 +48,7 @@ export const HERO_CATEGORIES: HeroCategory[] = [
   {
     id: "02",
     label: "Concept Art",
-    href: "/producoes",
+    href: "/producoes/computacao-grafica",
     tone: "violet",
     aspect: "aspect-[4/5]",
     top: "36%",
@@ -67,7 +67,7 @@ export const HERO_CATEGORIES: HeroCategory[] = [
   {
     id: "03",
     label: "Posters",
-    href: "/producoes",
+    href: "/producoes/computacao-grafica",
     tone: "electric",
     aspect: "aspect-[3/4]",
     top: "30%",
@@ -86,7 +86,7 @@ export const HERO_CATEGORIES: HeroCategory[] = [
   {
     id: "04",
     label: "Animação",
-    href: "/producoes",
+    href: "/producoes/computacao-grafica",
     tone: "electric",
     aspect: "aspect-video",
     top: "26%",
@@ -106,11 +106,11 @@ export const HERO_CATEGORIES: HeroCategory[] = [
   {
     id: "05",
     label: "Jogos",
-    href: "/producoes#jogos",
+    href: "/producoes/jogos",
     tone: "mix",
     aspect: "aspect-video",
-    top: "72%",
-    right: "5%",
+    top: "53%",
+    right: "3%",
     width: "15%",
     rotate: -2,
     depth: 0.6,

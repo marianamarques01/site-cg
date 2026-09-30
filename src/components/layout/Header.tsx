@@ -21,15 +21,17 @@ import { DUR, EASE_EDITORIAL, EASE_MECH, HERO_HOME_ENTRANCE_DELAY, STAGGER } fro
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
-  { href: "/producoes", label: "Projetos" },
+  { href: "/producoes/computacao-grafica", label: "Computação Gráfica" },
+  { href: "/producoes/jogos", label: "Jogos" },
   { href: "/blog", label: "Blog" },
+  { href: "/extensao", label: "Extensão" },
   { href: "/sobre", label: "Sobre" },
 ];
 
 const BENTO_LINKS = [
   ...NAV_LINKS,
-  { href: "/cursos/computacao-grafica", label: "Computação Gráfica" },
-  { href: "/cursos/design-de-games", label: "Design de Games" },
+  { href: "/cursos/computacao-grafica", label: "Curso de CG" },
+  { href: "/cursos/design-de-games", label: "Curso de Games" },
 ];
 
 const FUMEC_SITE_URL = "https://www.fumec.br";

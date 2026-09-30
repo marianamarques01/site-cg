@@ -9,6 +9,7 @@ function invalidate(cacheTag: CacheTag) {
 
 export function revalidatePosts(slug?: string) {
   invalidate(CACHE_TAGS.posts);
+  revalidatePath("/");
   revalidatePath("/blog");
   if (slug) revalidatePath(`/blog/${slug}`);
   revalidatePath("/admin/posts");
@@ -17,7 +18,7 @@ export function revalidatePosts(slug?: string) {
 export function revalidateProjects(slug?: string) {
   invalidate(CACHE_TAGS.projects);
   revalidatePath("/");
-  revalidatePath("/producoes");
+  revalidatePath("/producoes/computacao-grafica");
   if (slug) revalidatePath(`/producoes/${slug}`);
   revalidatePath("/admin/producoes");
   revalidatePath("/admin/producoes/destaques");
@@ -28,7 +29,7 @@ export function revalidateProjects(slug?: string) {
 export function revalidateGames(slug?: string) {
   invalidate(CACHE_TAGS.games);
   revalidatePath("/");
-  revalidatePath("/producoes");
+  revalidatePath("/producoes/jogos");
   if (slug) revalidatePath(`/producoes/${slug}`);
   revalidatePath("/admin/jogos");
 }

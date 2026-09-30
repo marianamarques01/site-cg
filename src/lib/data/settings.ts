@@ -4,14 +4,14 @@ import type { DbSiteSettings } from "@/lib/supabase/database.types";
 import { unstable_cache } from "next/cache";
 
 export const DEFAULT_MARQUEE_ITEMS: DbSiteSettings["marquee_items"] = [
-  { label: "MODELAGEM 3D", href: "/producoes" },
+  { label: "MODELAGEM 3D", href: "/producoes/computacao-grafica" },
   { label: "DESIGN DE GAMES", href: "/cursos/design-de-games" },
-  { label: "CONCEPT ART", href: "/producoes" },
-  { label: "JOGOS", href: "/producoes#jogos" },
+  { label: "CONCEPT ART", href: "/producoes/computacao-grafica" },
+  { label: "JOGOS", href: "/producoes/jogos" },
   { label: "COMPUTAÇÃO GRÁFICA", href: "/cursos/computacao-grafica" },
-  { label: "ANIMAÇÃO", href: "/producoes" },
-  { label: "POSTERS", href: "/producoes" },
-  { label: "PRODUÇÕES DOS ALUNOS", href: "/producoes" },
+  { label: "ANIMAÇÃO", href: "/producoes/computacao-grafica" },
+  { label: "POSTERS", href: "/producoes/computacao-grafica" },
+  { label: "PRODUÇÕES DOS ALUNOS", href: "/producoes/computacao-grafica" },
 ];
 
 const DEFAULT_SETTINGS: DbSiteSettings = {

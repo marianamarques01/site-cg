@@ -50,7 +50,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
         videoUrl={project.videoUrl}
         galleryUrls={project.galleryUrls}
         externalUrl={project.externalUrl}
-        back={{ href: "/producoes", label: "Todos os projetos" }}
+        back={{ href: "/producoes/computacao-grafica", label: "Todos os projetos de CG" }}
       />
     );
   }
@@ -77,7 +77,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
       videoUrl={game.videoUrl}
       playEmbedUrl={game.playEmbedUrl}
       externalUrl={game.externalUrl}
-      back={{ href: "/producoes#jogos", label: "Todos os jogos" }}
+      back={{ href: "/producoes/jogos", label: "Todos os jogos" }}
     />
   );
 }
