@@ -97,11 +97,12 @@ export async function createProjectAction(_prev: ActionState, formData: FormData
   const parsed = parseProjectForm(formData);
   const err = validate(parsed);
   if (err) return { error: err };
-  if (await isProjectSlugTaken(parsed.slug)) return { error: "Slug já em uso." };
+  let slug = parsed.slug;
+  for (let n = 2; await isProjectSlugTaken(slug); n++) slug = `${parsed.slug}-${n}`;
 
   let redirectTo: string;
   try {
-    const input = await buildInput(formData, null);
+    const input = { ...(await buildInput(formData, null)), slug };
     const project = await insertProject(input);
     await syncProjectGallery(project.id, parseGalleryIds(formData));
     revalidateProjects(project.slug);
