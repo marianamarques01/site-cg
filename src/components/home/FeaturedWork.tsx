@@ -2,22 +2,25 @@ import Container from "@/components/ui/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
 import WorkGrid from "@/components/home/WorkGrid";
 import type { Project } from "@/lib/mock/types";
+import type { HomeSectionTexts } from "@/lib/supabase/database.types";
+import { splitLines } from "@/lib/data/text";
 
 type FeaturedWorkProps = {
   projects: Project[];
+  texts: HomeSectionTexts;
 };
 
-export default function FeaturedWork({ projects }: FeaturedWorkProps) {
+export default function FeaturedWork({ projects, texts }: FeaturedWorkProps) {
 
   return (
     <section id="trabalhos" className="py-[var(--section-y)]">
       <Container className="flex flex-col gap-10 md:gap-12">
         <SectionHeading
-          kicker="Trabalhos em destaque"
-          titleLines={["Projetos", "selecionados"]}
-          description="Uma seleção de trabalhos de Computação Gráfica: modelagem, concept art, animação e peças gráficas produzidas ao longo do curso."
+          kicker={texts.kicker}
+          titleLines={splitLines(texts.title)}
+          description={texts.description}
           href="/producoes/computacao-grafica"
-          linkLabel="Ver todos os projetos de CG"
+          linkLabel={texts.linkLabel}
         />
 
         <WorkGrid projects={projects} />

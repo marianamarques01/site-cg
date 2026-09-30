@@ -4,12 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const LINKS = [
-  { href: "/admin/posts", label: "Posts" },
-  { href: "/admin/producoes", label: "Produções" },
+  { href: "/admin/hero", label: "Página principal" },
+  { href: "/admin/producoes", label: "CG" },
   { href: "/admin/jogos", label: "Jogos" },
+  { href: "/admin/posts", label: "Blog" },
   { href: "/admin/cursos", label: "Cursos" },
   { href: "/admin/faq", label: "FAQ" },
-  { href: "/admin/hero", label: "Página principal" },
   { href: "/admin/midia", label: "Mídia" },
   { href: "/admin/configuracoes", label: "Config" },
 ] as const;

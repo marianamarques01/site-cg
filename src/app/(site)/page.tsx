@@ -11,6 +11,7 @@ import { getHeroCategories } from "@/lib/data/categories";
 import { getFeaturedProjects } from "@/lib/data/projects";
 import { getGames } from "@/lib/data/games";
 import { getSiteSettings } from "@/lib/data/settings";
+import { splitLines } from "@/lib/data/text";
 import { getPosts } from "@/lib/data/posts";
 
 export const dynamic = "force-dynamic";
@@ -26,8 +27,8 @@ export default async function Home() {
 
   const marqueeItems: MarqueeItem[] = settings.marquee_items;
 
-  const ctaTitleLines =
-    settings.cta_title?.split("\n").map((line) => line.trim()).filter(Boolean) ?? undefined;
+  const texts = settings.home_texts;
+  const ctaTitleLines = splitLines(settings.cta_title);
 
   return (
     <PageTransition>
@@ -35,12 +36,14 @@ export default async function Home() {
       <SplashScreen />
       <Hero categories={heroCategories} />
       <Marquee items={marqueeItems} />
-      <FeaturedWork projects={featuredProjects} />
-      <GamesShowcase games={games} />
-      <BlogHighlights posts={posts.slice(0, 3)} />
+      <FeaturedWork projects={featuredProjects} texts={texts.featured} />
+      <GamesShowcase games={games} texts={texts.games} />
+      <BlogHighlights posts={posts.slice(0, 3)} texts={texts.blog} />
       <CtaSection
         titleLines={ctaTitleLines}
         description={settings.cta_description ?? undefined}
+        kicker={texts.ctaKicker}
+        buttonLabel={texts.ctaButton}
       />
     </PageTransition>
   );

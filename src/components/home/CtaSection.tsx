@@ -19,11 +19,13 @@ const PATHS = [
 type CtaSectionProps = {
   titleLines?: string[];
   description?: string;
+  kicker?: string;
+  buttonLabel?: string;
 };
 
 const DEFAULT_TITLE = ["Pronto para", "entrar em cena?"];
 
-export default function CtaSection({ titleLines, description }: CtaSectionProps) {
+export default function CtaSection({ titleLines, description, kicker, buttonLabel }: CtaSectionProps) {
   const lines = titleLines?.length ? titleLines : DEFAULT_TITLE;
   const reduceMotion = useReducedMotion();
 
@@ -58,7 +60,7 @@ export default function CtaSection({ titleLines, description }: CtaSectionProps)
       <Container className="relative flex flex-col gap-10">
         <RevealPass from="left">
           <span className="text-xs font-medium uppercase tracking-[0.2em] text-brand">
-            Computação Gráfica · Design de Games
+            {kicker ?? "Computação Gráfica · Design de Games"}
           </span>
         </RevealPass>
 
@@ -79,7 +81,7 @@ export default function CtaSection({ titleLines, description }: CtaSectionProps)
           </p>
           <Magnetic className="shrink-0" strength={0.4}>
             <PrimaryButton href="/sobre#cursos" cursorLabel="explorar">
-              Conhecer os cursos
+              {buttonLabel ?? "Conhecer os cursos"}
             </PrimaryButton>
           </Magnetic>
         </RevealPass>

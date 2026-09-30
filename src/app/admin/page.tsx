@@ -7,14 +7,14 @@ import { getAdminStats } from "@/lib/admin/stats";
 import { signOut } from "@/app/admin/actions";
 
 const SECTIONS = [
-  { href: "/admin/posts", label: "Posts", description: "Blog e notícias", statKey: "posts" as const },
-  { href: "/admin/producoes", label: "Produções", description: "Portfólio de alunos", statKey: "projects" as const },
+  { href: "/admin/hero", label: "Página principal", description: "Categorias e textos da home" },
+  { href: "/admin/producoes", label: "CG", description: "Portfólio de alunos", statKey: "projects" as const },
   { href: "/admin/jogos", label: "Jogos", description: "Jogos estudantis", statKey: "games" as const },
+  { href: "/admin/posts", label: "Blog", description: "Blog e notícias", statKey: "posts" as const },
   { href: "/admin/cursos", label: "Cursos", description: "Textos dos cursos" },
   { href: "/admin/faq", label: "FAQ", description: "Perguntas da home" },
-  { href: "/admin/hero", label: "Página principal", description: "Categorias do topo da home" },
   { href: "/admin/midia", label: "Mídia", description: "Biblioteca de imagens", statKey: "media" as const },
-  { href: "/admin/configuracoes", label: "Configurações", description: "Contato, chamada final, marquee" },
+  { href: "/admin/configuracoes", label: "Configurações", description: "Contato e redes sociais" },
 ] as const;
 
 export default async function AdminDashboardPage() {

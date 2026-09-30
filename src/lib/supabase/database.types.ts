@@ -114,7 +114,24 @@ export type DbSiteSettings = {
   marquee_items: { label: string; href: string }[];
   cta_title: string | null;
   cta_description: string | null;
+  home_texts?: Partial<HomeTexts> | null;
   updated_at?: string;
+};
+
+export type HomeSectionTexts = {
+  kicker: string;
+  /** Uma linha do título por quebra de linha. */
+  title: string;
+  description: string;
+  linkLabel: string;
+};
+
+export type HomeTexts = {
+  featured: HomeSectionTexts;
+  games: HomeSectionTexts;
+  blog: HomeSectionTexts;
+  ctaKicker: string;
+  ctaButton: string;
 };
 
 export type DbProfile = {

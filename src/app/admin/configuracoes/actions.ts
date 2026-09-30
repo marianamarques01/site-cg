@@ -6,16 +6,6 @@ import { DEFAULT_MARQUEE_ITEMS } from "@/lib/data/settings";
 import { getSiteSettings, upsertSiteSettings } from "@/lib/admin/settings";
 import type { ActionState } from "@/lib/admin/types";
 
-function parseMarquee(raw: string): { label: string; href: string }[] {
-  try {
-    const parsed = JSON.parse(raw) as { label: string; href: string }[];
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter((item) => item.label?.trim() && item.href?.trim());
-  } catch {
-    return [];
-  }
-}
-
 export async function updateSettingsAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   if (!(await requireEditorProfile())) return { error: "Sessão expirada." };
 
@@ -23,9 +13,6 @@ export async function updateSettingsAction(_prev: ActionState, formData: FormDat
   const contact_address = String(formData.get("contact_address") ?? "").trim() || null;
   const instagram = String(formData.get("instagram") ?? "").trim();
   const youtube = String(formData.get("youtube") ?? "").trim();
-  const cta_title = String(formData.get("cta_title") ?? "").trim() || null;
-  const cta_description = String(formData.get("cta_description") ?? "").trim() || null;
-  const marquee_items = parseMarquee(String(formData.get("marquee_items") ?? "[]"));
 
   try {
     await upsertSiteSettings({
@@ -35,9 +22,6 @@ export async function updateSettingsAction(_prev: ActionState, formData: FormDat
         ...(instagram ? { instagram } : {}),
         ...(youtube ? { youtube } : {}),
       },
-      marquee_items,
-      cta_title,
-      cta_description,
     });
 
     revalidateSettings();

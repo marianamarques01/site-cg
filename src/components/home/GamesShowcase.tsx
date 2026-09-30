@@ -9,14 +9,17 @@ import ScrollRail from "@/components/ui/ScrollRail";
 import MediaMorph from "@/components/ui/MediaMorph";
 import SectionRule from "@/components/ui/SectionRule";
 import type { Game } from "@/lib/mock/types";
+import type { HomeSectionTexts } from "@/lib/supabase/database.types";
+import { splitLines } from "@/lib/data/text";
 
 type GamesShowcaseProps = {
   games: Game[];
+  texts: HomeSectionTexts;
 };
 
-export default function GamesShowcase({ games }: GamesShowcaseProps) {
+export default function GamesShowcase({ games, texts }: GamesShowcaseProps) {
   return (
-    <section id="jogos" className="py-[var(--section-y)]">
+    <section id="jogos" className="pt-[var(--section-y)]">
       <SectionRule className="mb-[calc(var(--section-y)*0.75)]" />
 
       <ScrollRail
@@ -25,11 +28,11 @@ export default function GamesShowcase({ games }: GamesShowcaseProps) {
         header={
           <Container>
             <SectionHeading
-              kicker="Jogos dos alunos"
-              titleLines={["Jogável, jogado,", "julgado em sala."]}
-              description="Protótipos e jogos completos produzidos pelos alunos de Design de Games."
+              kicker={texts.kicker}
+              titleLines={splitLines(texts.title)}
+              description={texts.description}
               href="/producoes/jogos"
-              linkLabel="Ver todos os jogos"
+              linkLabel={texts.linkLabel}
             />
           </Container>
         }
@@ -66,8 +69,6 @@ export default function GamesShowcase({ games }: GamesShowcaseProps) {
           </Link>
         ))}
       </ScrollRail>
-
-      <SectionRule className="mt-[calc(var(--section-y)*0.65)]" origin="right" />
     </section>
   );
 }
