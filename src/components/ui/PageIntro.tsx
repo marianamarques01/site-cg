@@ -32,7 +32,7 @@ export default function PageIntro({ kicker, titleLines, description, compact }: 
         <MaskedLines
           as="h1"
           lines={titleLines}
-          className="max-w-4xl font-display text-[14vw] leading-[0.88] text-foreground sm:text-[9vw] md:text-[6.5vw]"
+          className="max-w-4xl font-display text-[10.1vw] leading-[0.95] text-foreground sm:text-[6.5vw] md:text-[4.7vw]"
         />
 
         {description && (

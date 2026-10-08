@@ -43,7 +43,7 @@ export default function BlogFeaturedPost({ post }: BlogFeaturedPostProps) {
             <MaskedLines
               as="h2"
               lines={[post.title]}
-              className="font-display text-[11vw] leading-[0.88] tracking-tight text-foreground transition-colors duration-300 group-hover:text-brand group-focus-visible:text-brand sm:text-5xl md:text-4xl lg:text-5xl"
+              className="font-display text-[7.9vw] leading-[0.95] tracking-tight text-foreground transition-colors duration-300 group-hover:text-brand group-focus-visible:text-brand sm:text-5xl md:text-4xl lg:text-5xl"
             />
 
             <p className="max-w-lg text-sm leading-relaxed text-muted sm:text-base">{post.excerpt}</p>

@@ -68,7 +68,7 @@ export default function CtaSection({ titleLines, description, kicker, buttonLabe
         <MaskedLines
           as="h2"
           lines={lines}
-          className="max-w-4xl font-display text-[15vw] leading-[0.85] text-foreground sm:text-[9vw] md:text-[7vw]"
+          className="max-w-4xl font-display text-[10.8vw] leading-[0.95] text-foreground sm:text-[6.5vw] md:text-[5vw]"
         />
 
         <RevealPass

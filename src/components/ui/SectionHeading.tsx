@@ -41,7 +41,7 @@ export default function SectionHeading({
         <MaskedLines
           as="h2"
           lines={titleLines}
-          className="font-display text-[13vw] leading-[0.88] text-foreground sm:text-[8vw] md:text-[5.5vw] lg:text-[4.5vw]"
+          className="font-display text-[9.4vw] leading-[0.95] text-foreground sm:text-[5.8vw] md:text-[4vw] lg:text-[3.2vw]"
         />
 
         {(description || href) && (

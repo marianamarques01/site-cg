@@ -17,13 +17,6 @@ import { COURSE_TONE } from "@/lib/mock/courses";
 import type { Course, CourseSlug, Game, Project } from "@/lib/mock/types";
 import { DUR, EASE_MECH } from "@/lib/motion";
 
-const ASPECT_CLASS: Record<string, string> = {
-  portrait: "aspect-[3/4]",
-  square: "aspect-square",
-  landscape: "aspect-[4/3]",
-  wide: "aspect-[16/9]",
-};
-
 type CoursePageContentProps = {
   course: Course;
   showcaseProjects: Project[];
@@ -70,7 +63,7 @@ export default function CoursePageContent({
           <MaskedLines
             as="h2"
             lines={["O que você", "aprende"]}
-            className="font-display text-[13vw] leading-[0.85] tracking-tight text-foreground sm:text-[7vw] md:text-[4.2vw]"
+            className="font-display text-[9.4vw] leading-[0.95] tracking-tight text-foreground sm:text-[5vw] md:text-[3vw]"
           />
 
           <div className="relative grid gap-px border border-border sm:grid-cols-2 lg:grid-cols-3">
@@ -109,7 +102,7 @@ export default function CoursePageContent({
             <MaskedLines
               as="h2"
               lines={[isGames ? "Jogos da turma" : "Produções da turma"]}
-              className="font-display text-[10vw] leading-[0.88] tracking-tight text-foreground sm:text-5xl md:text-6xl"
+              className="font-display text-[7.2vw] leading-[0.95] tracking-tight text-foreground sm:text-5xl md:text-6xl"
             />
             <ActionLink href={showcaseHref}>{showcaseLabel}</ActionLink>
           </div>
@@ -122,9 +115,6 @@ export default function CoursePageContent({
                 : (item as Project).category;
               const title = item.title;
               const tone = item.tone;
-              const aspect = isGames
-                ? "aspect-[4/3]"
-                : ASPECT_CLASS[(item as Project).aspect];
 
               return (
                 <RevealPass key={href} index={i} from="bottom">
@@ -142,7 +132,7 @@ export default function CoursePageContent({
                         kind={isGames ? "tilemap" : undefined}
                         src={item.coverUrl}
                         alt={title}
-                        className={`${aspect} w-full`}
+                        className="aspect-[297/420] w-full"
                       />
                     </MediaMorph>
                     <h3 className="mt-3 font-display text-xl leading-none tracking-tight text-foreground transition-colors duration-300 group-hover:text-brand group-focus-visible:text-brand">

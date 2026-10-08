@@ -8,7 +8,7 @@ import MediaMorph from "@/components/ui/MediaMorph";
 import type { Project } from "@/lib/mock/types";
 
 /**
- * Grade de projetos em destaque — todas as capas no mesmo formato (4:3),
+ * Grade de projetos em destaque — todas as capas no mesmo formato (A3 retrato, 297×420),
  * alinhadas em colunas regulares para a seção ler como uma vitrine única.
  */
 export default function WorkGrid({ projects }: { projects: Project[] }) {
@@ -32,7 +32,7 @@ function Card({ project, index }: { project: Project; index: number }) {
         className="group flex flex-col gap-3 focus-visible:outline-none"
         data-cursor-label="ver"
       >
-        <TiltCard className="aspect-[4/3] w-full overflow-hidden" max={4}>
+        <TiltCard className="aspect-[297/420] w-full overflow-hidden" max={4}>
           <MediaMorph name={`work-${project.slug}`}>
             <div className="relative h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04] group-focus-visible:scale-[1.04]">
               <PlaceholderMedia

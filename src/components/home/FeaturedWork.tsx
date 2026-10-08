@@ -1,6 +1,6 @@
 import Container from "@/components/ui/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
-import WorkGrid from "@/components/home/WorkGrid";
+import MediaCarousel from "@/components/home/MediaCarousel";
 import type { Project } from "@/lib/mock/types";
 import type { HomeSectionTexts } from "@/lib/supabase/database.types";
 import { splitLines } from "@/lib/data/text";
@@ -11,10 +11,9 @@ type FeaturedWorkProps = {
 };
 
 export default function FeaturedWork({ projects, texts }: FeaturedWorkProps) {
-
   return (
-    <section id="trabalhos" className="py-[var(--section-y)]">
-      <Container className="flex flex-col gap-10 md:gap-12">
+    <section id="trabalhos" className="flex flex-col gap-4 py-[var(--section-y)] md:gap-6">
+      <Container>
         <SectionHeading
           kicker={texts.kicker}
           titleLines={splitLines(texts.title)}
@@ -22,9 +21,22 @@ export default function FeaturedWork({ projects, texts }: FeaturedWorkProps) {
           href="/producoes/computacao-grafica"
           linkLabel={texts.linkLabel}
         />
-
-        <WorkGrid projects={projects} />
       </Container>
+
+      <MediaCarousel
+        ariaLabel="Produções em destaque"
+        items={projects.map((project) => ({
+          key: project.slug,
+          href: `/producoes/${project.slug}`,
+          title: project.title,
+          label: project.category,
+          meta: project.student,
+          year: project.year,
+          tone: project.tone,
+          coverUrl: project.coverUrl,
+          morphName: `work-${project.slug}`,
+        }))}
+      />
     </section>
   );
 }

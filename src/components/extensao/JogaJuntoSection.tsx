@@ -39,7 +39,7 @@ export default function JogaJuntoSection() {
               <MaskedLines
                 as="h2"
                 lines={["Joga", "Junto."]}
-                className="mt-2 font-display text-[14vw] leading-[0.84] text-foreground sm:text-[9vw] lg:text-[5.8vw]"
+                className="mt-2 font-display text-[10.1vw] leading-[0.95] text-foreground sm:text-[6.5vw] lg:text-[4.2vw]"
               />
 
               <RevealPass delay={0.06} className="mt-3">

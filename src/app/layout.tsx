@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Big_Shoulders, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import { VisualModeProvider } from "@/components/ui/VisualModeProvider";
 import ThemeScript from "@/components/ui/ThemeScript";
@@ -7,6 +8,7 @@ import VisualModeScript from "@/components/ui/VisualModeScript";
 import { withBasePath } from "@/lib/base-path";
 import "./globals.css";
 
+// Só o wordmark "FUMEC CRIATIVA" usa Big Shoulders; os títulos usam Figtree.
 const bigShoulders = Big_Shoulders({
   variable: "--font-big-shoulders",
   subsets: ["latin"],
@@ -15,6 +17,15 @@ const bigShoulders = Big_Shoulders({
   // Next.js 16 não tem métricas precalculadas para Big Shoulders;
   // sem isso, o dev server loga o aviso a cada request.
   adjustFontFallback: false,
+});
+
+const figtree = localFont({
+  variable: "--font-figtree",
+  src: [
+    { path: "./fonts/Figtree-VariableFont_wght.ttf", weight: "300 900", style: "normal" },
+    { path: "./fonts/Figtree-Italic-VariableFont_wght.ttf", weight: "300 900", style: "italic" },
+  ],
+  display: "swap",
 });
 
 const inter = Inter({
@@ -45,7 +56,7 @@ export default function RootLayout({
       lang="pt-BR"
       data-theme="dark"
       data-visual="minimal"
-      className={`${bigShoulders.variable} ${inter.variable} h-full`}
+      className={`${bigShoulders.variable} ${figtree.variable} ${inter.variable} h-full`}
       suppressHydrationWarning
     >
       <head>

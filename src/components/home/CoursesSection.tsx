@@ -92,7 +92,7 @@ export default function CoursesSection({ courses, compact }: CoursesSectionProps
                 <MaskedLines
                   as="h3"
                   lines={[course.name]}
-                  className="font-display text-[13vw] leading-[0.85] tracking-tight text-foreground sm:text-[7vw] md:text-[4.2vw]"
+                  className="font-display text-[9.4vw] leading-[0.95] tracking-tight text-foreground sm:text-[5vw] md:text-[3vw]"
                 />
                 <RevealPass from="left" delay={0.08} className="flex flex-col gap-6">
                   <p

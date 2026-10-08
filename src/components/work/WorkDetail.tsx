@@ -124,7 +124,7 @@ export default function WorkDetail({
                 kind={cover.kind}
                 src={cover.src}
                 alt={title}
-                className="aspect-[16/9] w-full"
+                className="aspect-[297/420] w-full max-w-[34rem]"
                 showCaption={false}
                 interactive={false}
               />

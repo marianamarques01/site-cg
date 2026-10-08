@@ -3,7 +3,7 @@ import Container from "@/components/ui/Container";
 import PageIntro from "@/components/ui/PageIntro";
 import PageTransition from "@/components/ui/PageTransition";
 import ProjectsIntroFigure from "@/components/producoes/ProjectsIntroFigure";
-import WorkGrid from "@/components/home/WorkGrid";
+import { MediaGrid } from "@/components/home/MediaCarousel";
 import { getProjects } from "@/lib/data/projects";
 
 export const metadata: Metadata = {
@@ -27,7 +27,20 @@ export default async function ComputacaoGraficaPage() {
 
       <section id="computacao-grafica" className="scroll-mt-[calc(var(--header-offset)+1rem)] pb-[var(--section-y)]">
         <Container className="flex flex-col gap-10 md:gap-12">
-          <WorkGrid projects={projects} />
+          <MediaGrid
+            ariaLabel="Produções de Computação Gráfica"
+            items={projects.map((project) => ({
+              key: project.slug,
+              href: `/producoes/${project.slug}`,
+              title: project.title,
+              label: project.category,
+              meta: project.student,
+              year: project.year,
+              tone: project.tone,
+              coverUrl: project.coverUrl,
+              morphName: `work-${project.slug}`,
+            }))}
+          />
         </Container>
       </section>
 
