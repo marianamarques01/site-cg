@@ -1068,11 +1068,23 @@ html {
   }
 }
 
-/* O wordmark "FUMEC CRIATIVA" mantém a fonte condensada original */
+/* O wordmark: "CRIATIVA" mantém a fonte condensada original, "FUMEC" usa Figtree */
 .font-display.hero-wordmark-text {
   font-family: var(--font-big-shoulders), "Arial Narrow", sans-serif;
   font-stretch: condensed;
   letter-spacing: -0.03em;
+}
+
+.font-display.hero-wordmark-text .hero-wordmark-fumec {
+  font-family: var(--font-figtree), system-ui, sans-serif;
+  font-stretch: normal;
+  letter-spacing: -0.04em;
+}
+
+/* Big Shoulders tem maiúsculas mais altas (0,81em) que a Figtree (0,712em):
+   reduz "CRIATIVA" para as duas palavras terem a mesma altura de caixa-alta. */
+.font-display.hero-wordmark-text .hero-wordmark-criativa {
+  font-size: 0.879em;
 }
 
 /* Focus visibility — kept crisp and on-brand, never suppressed */
